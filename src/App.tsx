@@ -6,12 +6,21 @@ import { SmoothCursor } from "./component/cursor";
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { SparklesText } from "./component/sparkle_text";
 import { RetroGrid } from "./component/retro_grid";
+import { useEffect, useState } from "react";
 
 export default function App() {
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    if (window.screen.width > 425) {
+      setIsMobile(false);
+    }
+  }, []);
+
   return (
     <>
+      {isMobile ? null : <SmoothCursor />}
       <RetroGrid className="absolute " />
-      <SmoothCursor />
       <main className="flex flex-col p-4 lg:max-w-5xl lg:p-0 lg:mx-auto gap-24 mb-8">
         <div
           className="h-screen flex flex-col gap-8 items-center justify-center fade-in overflow-x-hidden"
