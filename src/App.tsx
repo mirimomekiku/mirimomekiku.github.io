@@ -7,6 +7,7 @@ import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { SparklesText } from "./component/sparkle_text";
 import { RetroGrid } from "./component/retro_grid";
 import { useEffect, useState } from "react";
+import images from "./types/images";
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(true);
@@ -582,6 +583,20 @@ export default function App() {
               </div>
             ))}
           </div>
+        </div>
+        <div className="flex flex-col gap-12" id="arts">
+          <details className="collapse collapse-arrow text-4xl">
+            <summary className="collapse-title font-bold  hover:bg-base-200">Arts</summary>
+            <div className="collapse-content grid grid-cols-2 lg:grid-cols-3 mt-4 gap-4">
+              {images.map((image) => (
+                <img
+                  src={image.src}
+                  className="w-full h-full aspect-square object-contain rounded-3xl"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </details>
         </div>
         <div className="flex flex-col gap-12" id="contact-me">
           <h1 className="text-4xl font-bold">Contact me?</h1>
