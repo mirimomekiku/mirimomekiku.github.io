@@ -1,13 +1,14 @@
 import education from "./types/education";
 import experience from "./types/experience";
 import projects from "./types/projects";
+import images from "./types/images";
+import ReactLenis from "lenis/react";
 
 import { SmoothCursor } from "./component/cursor";
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { SparklesText } from "./component/sparkle_text";
 import { RetroGrid } from "./component/retro_grid";
 import { useEffect, useState } from "react";
-import images from "./types/images";
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(true);
@@ -20,6 +21,7 @@ export default function App() {
 
   return (
     <>
+      <ReactLenis root />
       {isMobile ? null : <SmoothCursor />}
       <RetroGrid className="absolute " />
       <main className="flex flex-col p-4 lg:max-w-5xl lg:p-0 lg:mx-auto gap-24 mb-8">
@@ -586,7 +588,9 @@ export default function App() {
         </div>
         <div className="flex flex-col gap-12" id="arts">
           <details className="collapse collapse-arrow text-4xl">
-            <summary className="collapse-title font-bold  hover:bg-base-200">Arts</summary>
+            <summary className="collapse-title font-bold  hover:bg-base-200">
+              Arts
+            </summary>
             <div className="collapse-content grid grid-cols-2 lg:grid-cols-3 mt-4 gap-4">
               {images.map((image) => (
                 <img
