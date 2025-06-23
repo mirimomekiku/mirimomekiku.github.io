@@ -29,11 +29,11 @@ export default function App() {
           className="h-screen flex flex-col gap-8 items-center justify-center fade-in overflow-x-hidden"
           id="landing"
         >
-          <h1 className="xl:text-7xl text-4xl text-center">
+          <h1 className="xl:text-7xl text-2xl text-center">
             <SparklesText>Full-stack developer</SparklesText>
             with a focus on back-end development.
           </h1>
-          <div className="grid grid-cols-1 gap-2 lg:gap-0 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 lg:gap-2 lg:grid-cols-2">
             <div className="flex flex-row gap-2 items-center">
               <p className="px-4 py-2 rounded-3xl bg-base-300">1+</p>
               <p>Years of experience</p>
@@ -48,11 +48,12 @@ export default function App() {
             <p>Scroll</p>
           </div>
         </div>
+        <img src="/assets/images/contribute.png" className="w-full lg:block hidden"/>
         <div
           className="flex flex-col gap-12 mt-[2rem] lg:mt-[12rem]"
           id="about-me"
         >
-          <h1 className="text-4xl font-bold">About me</h1>
+          <h1 className="text-4xl font-bold">Jhon Lloyd Viernes</h1>
           <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-12">
             <div>
               <p className="text-lg">
