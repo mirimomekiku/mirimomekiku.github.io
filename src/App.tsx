@@ -26,9 +26,15 @@ export default function App() {
       <RetroGrid className="absolute " />
       <main className="flex flex-col p-4 lg:max-w-5xl lg:p-0 lg:mx-auto gap-24 mb-8">
         <div
-          className="h-screen flex flex-col gap-8 items-center justify-center fade-in overflow-x-hidden"
+          className="h-screen flex flex-col gap-6 items-center justify-center fade-in overflow-x-hidden"
           id="landing"
         >
+          <div className="flex flex-row items-center gap-4">
+            <p className="px-4 py-2 rounded-3xl bg-base-300">
+              Jhon Lloyd Viernes
+            </p>
+            <a href="./assets/VIERNES-RESUME-2025.pdf" target="_blank" className="btn btn-primary" >View CV</a>
+          </div>
           <h1 className="xl:text-7xl text-2xl text-center">
             <SparklesText>Full-stack developer</SparklesText>
             with a focus on back-end development.
@@ -48,39 +54,11 @@ export default function App() {
             <p>Scroll</p>
           </div>
         </div>
-        <img src="/assets/images/contribute.png" className="w-full lg:block hidden"/>
-        <div
-          className="flex flex-col gap-12 mt-[2rem] lg:mt-[12rem]"
-          id="about-me"
-        >
-          <h1 className="text-4xl font-bold">Jhon Lloyd Viernes</h1>
-          <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-12">
-            <div>
-              <p className="text-lg">
-                I've been fascinated by computers since childhood, always
-                curious about <strong>how things work behind the scenes</strong>
-                . I started coding in <strong>BATCH</strong> and modding games
-                like <strong>GTA</strong>, even creating a{" "}
-                <strong>teleportation mod</strong>. In high school, I built an{" "}
-                <strong>AOSP ROM</strong> for my Galaxy Grand Prime just to see
-                if I could.
-              </p>
-              <br></br>
-              <p className="text-lg">
-                Today, I focus on building{" "}
-                <strong>accessible, user-friendly interfaces</strong> and enjoy
-                projects that combine <strong> design, coding</strong>, and{" "}
-                <strong>back-end</strong>. In my free time, I explore{" "}
-                <strong>side projects</strong> to learn new things and unwind
-                with <strong>games and music</strong>.
-              </p>
-            </div>
-            <img
-              src="/assets/images/profile.jpeg"
-              className="w-[240px] h-[240px] aspect-square rounded-full object-cover"
-            />
-          </div>
-        </div>
+        <img
+          src="/assets/images/contribute.png"
+          className="w-full lg:block hidden"
+        />
+
         <div className="flex flex-col gap-12" id="experience">
           <h1 className="text-4xl font-bold">Experience</h1>
 
@@ -585,6 +563,38 @@ export default function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+        <div
+          className="flex flex-col gap-12 mt-[2rem] lg:mt-[12rem]"
+          id="about-me"
+        >
+          <h1 className="text-4xl font-bold">Jhon Lloyd Viernes</h1>
+          <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-12">
+            <div>
+              <p className="text-lg">
+                I've been fascinated by computers since childhood, always
+                curious about <strong>how things work behind the scenes</strong>
+                . I started coding in <strong>BATCH</strong> and modding games
+                like <strong>GTA</strong>, even creating a{" "}
+                <strong>teleportation mod</strong>. In high school, I built an{" "}
+                <strong>AOSP ROM</strong> for my Galaxy Grand Prime just to see
+                if I could.
+              </p>
+              <br></br>
+              <p className="text-lg">
+                Today, I focus on building{" "}
+                <strong>accessible, user-friendly interfaces</strong> and enjoy
+                projects that combine <strong> design, coding</strong>, and{" "}
+                <strong>back-end</strong>. In my free time, I explore{" "}
+                <strong>side projects</strong> to learn new things and unwind
+                with <strong>games and music</strong>.
+              </p>
+            </div>
+            <img
+              src="/assets/images/profile.jpeg"
+              className="w-[240px] h-[240px] aspect-square rounded-full object-cover"
+            />
           </div>
         </div>
         <div className="flex flex-col gap-12" id="arts">
