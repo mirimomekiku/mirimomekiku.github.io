@@ -58,6 +58,22 @@ const experience: Experience[] = [
         side: 'start',
         showMore: true,
     },
+    {
+        position: 'Freelance Developer (Automation Commission)',
+        period: 'February 2025 - March 2025',
+        description:
+            'Built a web-based automation tool to scrape and export sales data into XLSX format. Automated data collection and formatting processes for seamless report generation.',
+        details: [
+            'Developed a system for automatic scraping of online sales data',
+            'Implemented data transformation and export to Excel (XLSX) format',
+            'Integrated scheduling to run data scraping at defined intervals',
+            'Ensured data accuracy, error handling, and logging for reliability',
+            'Optimized scraping logic for performance and scalability',
+        ],
+        skills: ['Node.js', 'Puppeteer', 'XLSX', 'JavaScript', 'Web Scraping'],
+        side: 'end',
+        showMore: true,
+    },
 ];
 
 
