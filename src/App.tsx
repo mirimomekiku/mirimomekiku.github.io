@@ -33,7 +33,13 @@ export default function App() {
             <p className="px-4 py-2 rounded-3xl bg-base-300">
               Jhon Lloyd Viernes
             </p>
-            <a href="./assets/VIERNES-RESUME-2025.pdf" target="_blank" className="btn btn-primary" >View CV</a>
+            <a
+              href="./assets/VIERNES-RESUME-2025.pdf"
+              target="_blank"
+              className="btn btn-primary"
+            >
+              View CV
+            </a>
           </div>
           <h1 className="xl:text-7xl text-2xl text-center">
             <SparklesText>Full-stack developer</SparklesText>
@@ -54,11 +60,6 @@ export default function App() {
             <p>Scroll</p>
           </div>
         </div>
-        <img
-          src="/assets/images/contribute.png"
-          className="w-full lg:block hidden"
-        />
-
         <div className="flex flex-col gap-12" id="experience">
           <h1 className="text-4xl font-bold">Experience</h1>
 
@@ -144,6 +145,10 @@ export default function App() {
             ))}
           </ul>
         </div>
+        <img
+          src="/assets/images/contribute.png"
+          className="w-full lg:block hidden"
+        />
         <div className="flex flex-col gap-12" id="stack">
           <h1 className="text-4xl font-bold">Tech Stack</h1>
           <div className="flex flex-row gap-4 flex-wrap">
