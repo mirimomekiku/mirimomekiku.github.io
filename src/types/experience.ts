@@ -10,6 +10,20 @@ interface Experience {
 
 const experience: Experience[] = [
     {
+        position: 'Freelance Developer (Automation Commission)',
+        period: 'February 2023',
+        description:
+            'Created a lightweight Python script to automate retrieving Spotify API access tokens.',
+        details: [
+            'Automated the POST flow to fetch short-lived Spotify access tokens',
+            'Utilized Python libraries to handle HTTP requests and token parsing',
+            'Ensured secure handling of client credentials and tokens',
+        ],
+        skills: ['Python', 'Requests',],
+        side: 'start',
+        showMore: true,
+    },
+    {
         position: 'Freelance Developer (Frontend)',
         period: 'March 2023 - May 2023',
         description:
@@ -21,7 +35,7 @@ const experience: Experience[] = [
             'Adapted components for responsiveness across various screen sizes and devices',
         ],
         skills: ['React', 'Figma', 'Tailwind CSS'],
-        side: 'start',
+        side: 'end',
         showMore: true,
     },
     {
@@ -36,7 +50,7 @@ const experience: Experience[] = [
             'Improved overall codebase maintainability and structure',
         ],
         skills: ['Vite', 'TailwindCSS'],
-        side: 'end',
+        side: 'start',
         showMore: true,
     },
     {
@@ -55,14 +69,14 @@ const experience: Experience[] = [
             "Tested and debugged AI integration to ensure accurate content generation"
         ],
         skills: ['Next.js', 'Prisma', 'Gemini',],
-        side: 'start',
+        side: 'end',
         showMore: true,
     },
     {
         position: 'Freelance Developer (Automation Commission)',
         period: 'February 2025 - March 2025',
         description:
-            'Built a web-based automation tool to scrape and export sales data into XLSX format. Automated data collection and formatting processes for seamless report generation.',
+            'Built a web-based automation tool to scrape and export sales data into XLSX format. Automated data collection and formatting processes for seamless report generation. (WITH CONSENT)',
         details: [
             'Developed a system for automatic scraping of online sales data',
             'Implemented data transformation and export to Excel (XLSX) format',
@@ -70,8 +84,8 @@ const experience: Experience[] = [
             'Ensured data accuracy, error handling, and logging for reliability',
             'Optimized scraping logic for performance and scalability',
         ],
-        skills: ['Node.js', 'Puppeteer', 'XLSX', 'JavaScript', 'Web Scraping'],
-        side: 'end',
+        skills: ["Selenium", "BeautifulSoup", "Pandas", "XLSXWriter",],
+        side: 'start',
         showMore: true,
     },
 ];
