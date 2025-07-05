@@ -11,28 +11,18 @@ const projects: ProjectInterface[] = [
     {
         title: "SwitchDeals",
         devices: "Web & Android",
-        description: "A web app that tracks deals on Nintendo eShop.",
+        description: "Find the best deals here on Nintendo eShop store!",
         imageSrc: "/assets/projects/switchdeals/1.jpg",
         link: "https://switchdeals.vercel.app",
         stack: ['Next.js', 'Expo']
     },
     {
-        title: "Wii Parental Control Password Reset Tool",
+        title: "PSDrops",
         devices: "Web",
-        description:
-            "A tool that generates a Wii unlock code for Wii that has locked parental controls.",
-        imageSrc: "/assets/projects/wii parental controls unlock tool.png",
-        link: "/web/wii-master-key-generator",
-        stack: ['Vite']
-    },
-    {
-        title: "3DS Parental Control Password Reset Tool",
-        devices: "Web",
-        description:
-            "A tool that generates a unlock code for 3DS that has locked parental controls.",
-        imageSrc: "/assets/projects/wii parental controls unlock tool.png",
-        link: "/web/3ds-master-key-generator",
-        stack: ['Vite']
+        description: "Find deals on PlayStation store.",
+        imageSrc: "/assets/projects/psdrops/1.png",
+        link: "https://psdrops.vercel.app",
+        stack: ['Next.js']
     },
 ];
 
