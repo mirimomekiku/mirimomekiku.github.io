@@ -36,7 +36,7 @@ export default function App() {
             <a
               href="./assets/VIERNES-RESUME-2025.pdf"
               target="_blank"
-              className="btn btn-primary"
+              className="hidden btn btn-primary"
             >
               View CV
             </a>
