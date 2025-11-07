@@ -24,6 +24,14 @@ const projects: ProjectInterface[] = [
         link: "https://psdrops.vercel.app",
         stack: ['Next.js']
     },
+    {
+        title: "PlayLog",
+        devices: "Android",
+        description: "A game backlog tracker for Android.",
+        imageSrc: "/assets/projects/playlog/1.jpg",
+        link: "https://github.com/dlord213/playlog",
+        stack: ['Kotlin', "Jetpack Compose"]
+    }
 ];
 
 export default projects

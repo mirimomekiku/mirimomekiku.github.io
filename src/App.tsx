@@ -82,9 +82,8 @@ export default function App() {
                   </svg>
                 </div>
                 <div
-                  className={`timeline-${exp.side} ${
-                    exp.side === "start" ? "mb-10 md:text-end" : "md:mb-10"
-                  }`}
+                  className={`timeline-${exp.side} ${exp.side === "start" ? "mb-10 md:text-end" : "md:mb-10"
+                    }`}
                 >
                   <time className="font-mono italic">{exp.period}</time>
                   <div className="text-lg font-black">{exp.position}</div>
@@ -102,11 +101,10 @@ export default function App() {
                           ))}
                         </ul>
                         <div
-                          className={`flex flex-row gap-2 my-2 ${
-                            exp.side === "start"
-                              ? "lg:justify-end"
-                              : "lg:justify-start"
-                          }`}
+                          className={`flex flex-row gap-2 my-2 ${exp.side === "start"
+                            ? "lg:justify-end"
+                            : "lg:justify-start"
+                            }`}
                         >
                           {exp.skills.map((skill, idx) => (
                             <p
@@ -123,11 +121,10 @@ export default function App() {
 
                   {!exp.showMore && (
                     <div
-                      className={`flex flex-row gap-2 my-2 ${
-                        exp.side === "start"
-                          ? "lg:justify-end"
-                          : "lg:justify-start"
-                      }`}
+                      className={`flex flex-row gap-2 my-2 ${exp.side === "start"
+                        ? "lg:justify-end"
+                        : "lg:justify-start"
+                        }`}
                     >
                       {exp.skills.map((skill, idx) => (
                         <p
@@ -145,10 +142,37 @@ export default function App() {
             ))}
           </ul>
         </div>
-        <img
-          src="/assets/images/contribute.png"
-          className="w-full lg:block hidden"
-        />
+        <div className="flex flex-col gap-12" id="projects">
+          <h1 className="text-4xl font-bold">Projects</h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {projects.map((project) => (
+              <a
+                href={project.link}
+                target="_blank"
+                className="flex flex-col relative justify-center transition-all delay-0 duration-300 hover:scale-105"
+              >
+                <img
+                  src={project.imageSrc}
+                  className="rounded-xl absolute w-full h-full object-cover brightness-[0.3] -z-10"
+                />
+                <div className="p-4">
+                  <h1 className="font-bold text-white text-4xl">
+                    {project.title}
+                  </h1>
+                  <p className="text-white/50">{project.devices}</p>
+                  <p className="text-white/50">{project.description}</p>
+                  <div className="flex flex-row gap-2 items-center mt-2">
+                    {project.stack.map((s) => (
+                      <p className="px-4 py-1 rounded-3xl bg-black/50 text-white">
+                        {s}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
         <div className="flex flex-col gap-12" id="stack">
           <h1 className="text-4xl font-bold">Tech Stack</h1>
           <div className="flex flex-row gap-4 flex-wrap">
@@ -514,36 +538,6 @@ export default function App() {
                 d="M91.46 1.43 48.954 9.758a1.56 1.56 0 0 0-1.258 1.437l-2.617 44.168a1.563 1.563 0 0 0 1.91 1.614l11.836-2.735a1.562 1.562 0 0 1 1.88 1.836l-3.517 17.219a1.562 1.562 0 0 0 1.985 1.805l7.308-2.223c1.133-.344 2.223.652 1.985 1.812l-5.59 27.047c-.348 1.692 1.902 2.614 2.84 1.164l.625-.968 34.64-69.13c.582-1.16-.421-2.48-1.69-2.234l-12.185 2.352a1.558 1.558 0 0 1-1.793-1.965l7.95-27.562A1.56 1.56 0 0 0 91.46 1.43Zm0 0"
               />
             </svg>
-          </div>
-        </div>
-        <div className="flex flex-col gap-12" id="projects">
-          <h1 className="text-4xl font-bold">Projects</h1>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {projects.map((project) => (
-              <a
-                href={project.link}
-                className="flex flex-col relative justify-center transition-all delay-0 duration-300 hover:scale-105"
-              >
-                <img
-                  src={project.imageSrc}
-                  className="rounded-xl absolute w-full h-full object-cover brightness-[0.3] -z-10"
-                />
-                <div className="p-4">
-                  <h1 className="font-bold text-white text-4xl">
-                    {project.title}
-                  </h1>
-                  <p className="text-white/50">{project.devices}</p>
-                  <p className="text-white/50">{project.description}</p>
-                  <div className="flex flex-row gap-2 items-center mt-2">
-                    {project.stack.map((s) => (
-                      <p className="px-4 py-1 rounded-3xl bg-black/50 text-white">
-                        {s}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </a>
-            ))}
           </div>
         </div>
         <div className="flex flex-col gap-12" id="education">
