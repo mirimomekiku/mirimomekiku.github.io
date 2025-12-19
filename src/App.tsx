@@ -9,6 +9,7 @@ import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { SparklesText } from "./component/sparkle_text";
 import { RetroGrid } from "./component/retro_grid";
 import { useEffect, useState } from "react";
+import { Highlighter } from "./component/highlighter";
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(true);
@@ -42,7 +43,11 @@ export default function App() {
             </a>
           </div>
           <h1 className="xl:text-7xl text-2xl text-center">
-            <SparklesText>Full-stack developer</SparklesText>
+            <SparklesText>
+              <Highlighter action="underline" isView={false} color="#ffdd35">
+                Software Developer
+              </Highlighter>
+            </SparklesText>
             with a focus on back-end development.
           </h1>
           <div className="grid grid-cols-1 gap-2 lg:gap-2 lg:grid-cols-2">
@@ -82,8 +87,9 @@ export default function App() {
                   </svg>
                 </div>
                 <div
-                  className={`timeline-${exp.side} ${exp.side === "start" ? "mb-10 md:text-end" : "md:mb-10"
-                    }`}
+                  className={`timeline-${exp.side} ${
+                    exp.side === "start" ? "mb-10 md:text-end" : "md:mb-10"
+                  }`}
                 >
                   <time className="font-mono italic">{exp.period}</time>
                   <div className="text-lg font-black">{exp.position}</div>
@@ -101,10 +107,11 @@ export default function App() {
                           ))}
                         </ul>
                         <div
-                          className={`flex flex-row gap-2 my-2 ${exp.side === "start"
-                            ? "lg:justify-end"
-                            : "lg:justify-start"
-                            }`}
+                          className={`flex flex-row flex-wrap gap-2 my-2 ${
+                            exp.side === "start"
+                              ? "lg:justify-end"
+                              : "lg:justify-start"
+                          }`}
                         >
                           {exp.skills.map((skill, idx) => (
                             <p
@@ -121,10 +128,11 @@ export default function App() {
 
                   {!exp.showMore && (
                     <div
-                      className={`flex flex-row gap-2 my-2 ${exp.side === "start"
-                        ? "lg:justify-end"
-                        : "lg:justify-start"
-                        }`}
+                      className={`flex flex-row gap-2 my-2 ${
+                        exp.side === "start"
+                          ? "lg:justify-end"
+                          : "lg:justify-start"
+                      }`}
                     >
                       {exp.skills.map((skill, idx) => (
                         <p
@@ -335,7 +343,7 @@ export default function App() {
               />
             </svg>
             <img
-              src="https://images.seeklogo.com/logo-png/46/2/pocketbase-logo-png_seeklogo-465584.png"
+              src="https://images.icon-icons.com/3914/PNG/512/pocketbase_logo_icon_248816.png"
               className="w-[64px] aspect-square object-contain"
             />
             <svg
