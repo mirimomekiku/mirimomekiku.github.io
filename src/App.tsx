@@ -161,7 +161,7 @@ export default function App() {
               >
                 <img
                   src={project.imageSrc}
-                  className="rounded-xl absolute w-full h-full object-cover brightness-[0.3] -z-10"
+                  className="rounded-xl absolute w-full h-full object-cover brightness-[0.5] -z-10"
                 />
                 <div className="p-4">
                   <h1 className="font-bold text-white text-4xl">
