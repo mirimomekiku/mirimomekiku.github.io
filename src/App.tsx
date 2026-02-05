@@ -41,13 +41,16 @@ export default function App() {
             Jhon Lloyd Viernes
           </h1>
           <div className="flex flex-row gap-6 flex-wrap">
-            <a>
+            <a target="_blank" href="mailto:viernes.jhonlloydd@gmail.com">
               <Mail size={28} className="shrink-0 text-rose-300" />
             </a>
-            <a>
+            <a
+              target="_blank"
+              href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
+            >
               <Linkedin size={28} className="shrink-0 text-rose-300" />
             </a>
-            <a>
+            <a target="_blank" href="https://github.com/dlord213">
               <Github size={28} className="shrink-0 text-rose-300" />
             </a>
           </div>
