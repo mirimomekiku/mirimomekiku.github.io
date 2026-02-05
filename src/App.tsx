@@ -28,7 +28,7 @@ export default function App() {
     <>
       <ReactLenis root />
       <main className="flex flex-col xl:grid xl:grid-cols-[0.4fr_1fr] gap-16 my-16 max-w-7xl xl:mx-auto mx-8">
-        <div className="hidden xl:flex flex-col gap-8 p-8 overflow-hidden rounded-3xl xl:min-h-[85vh] xl:max-h-[85vh] 2xl:min-h-[80vh] 2xl:max-h-[80vh] sticky top-8 justify-end pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="hidden xl:flex flex-col gap-8 p-8 overflow-hidden rounded-3xl xl:min-h-[85vh] xl:max-h-[85vh] 2xl:min-h-[80vh] 2xl:max-h-[80vh] 3xl:min-h-[70vh] 3xl:max-h-[70vh] sticky top-8 justify-end pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <img
             src="./assets/images/profile.jpeg"
             className="absolute inset-0 -z-20 w-full h-full object-cover blur-[1px]"
