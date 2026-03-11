@@ -29,7 +29,7 @@ const projects: ProjectInterface[] = [
     devices: "Android",
     description: "A game backlog tracker for Android.",
     imageSrc: "/assets/projects/playlog/1.jpg",
-    link: "https://github.com/dlord213/playlog",
+    link: "https://play.google.com/store/apps/details?id=com.mirimomekiku.checkpoint",
     stack: ["Kotlin", "Jetpack Compose"],
   },
   {
@@ -40,6 +40,15 @@ const projects: ProjectInterface[] = [
     imageSrc: "/assets/projects/wavvy/1.jpg",
     link: "https://github.com/dlord213/wavvy-flutter",
     stack: ["Flutter", "Dart", "Kotlin"],
+  },
+  {
+    title: "QuickEase",
+    devices: "Web & Android",
+    description:
+      "A community-first forum with study assistant that helps you generate flashcards and quizzes effortlessly.",
+    imageSrc: "/assets/projects/quickease/1.png",
+    link: "https://quickease.online/",
+    stack: ["React", "Vite", "Fastify", "Expo"],
   },
 ];
 
