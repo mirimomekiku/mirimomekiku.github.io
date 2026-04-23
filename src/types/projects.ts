@@ -50,6 +50,15 @@ const projects: ProjectInterface[] = [
     link: "https://quickease.online/",
     stack: ["React", "Vite", "Fastify", "Expo"],
   },
+  {
+    title: "TheoryPocket",
+    devices: "Android",
+    description:
+      "A comprehensive, interactive music theory and utility toolset built with Flutter",
+    imageSrc: "/assets/projects/theorypocket/1.jpeg",
+    link: "https://github.com/dlord213/theorypocket",
+    stack: ["Dart", "Flutter"],
+  },
 ];
 
 export default projects;
