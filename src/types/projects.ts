@@ -59,6 +59,15 @@ const projects: ProjectInterface[] = [
     link: "https://github.com/dlord213/theorypocket",
     stack: ["Dart", "Flutter"],
   },
+  {
+    title: "Zync",
+    devices: "Android/Windows/Linux",
+    description:
+      "A cross-platform peer-to-peer (P2P) file-sharing application designed for fast, local transfers between Android, Windows, and Linux devices.",
+    imageSrc: "/assets/projects/zync/1.jpeg",
+    link: "https://github.com/dlord213/zync",
+    stack: ["Dart", "Flutter"],
+  },
 ];
 
 export default projects;
