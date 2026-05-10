@@ -133,10 +133,10 @@ export default function App() {
                   </div>
                   <div className="flex flex-col flex-1">
                     <h1 className="text-2xl font-bold">
-                      Cerebrox IT Solutions
+                      AdaptiveHub
                     </h1>
                     <p className="text-rose-900 opacity-50">
-                      Mobile Developer (Flutter)
+                      Full-stack Developer
                     </p>
                   </div>
                 </div>
