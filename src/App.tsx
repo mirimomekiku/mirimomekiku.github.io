@@ -198,7 +198,7 @@ export default function App() {
                 </div>
 
                 {/* Work */}
-                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <h1 className="text-xl font-bold text-rose-800 tracking-wide">
                     CURRENTLY WORKING AT
                   </h1>
@@ -220,7 +220,7 @@ export default function App() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Projects */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
