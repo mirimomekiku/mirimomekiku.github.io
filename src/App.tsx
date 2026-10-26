@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Check, X } from "lucide-react";
+import { ArrowUpRight, Bookmark, Github, Linkedin, Mail, X } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
 import experience from "./types/experience";
@@ -7,6 +7,8 @@ import images from "./types/images";
 import { Mascot } from "./component/mascot";
 
 const EMAIL = "viernes.jhonlloydd@gmail.com";
+const LINKEDIN = "https://www.linkedin.com/in/jhon-lloyd-viernes/";
+const GITHUB = "https://github.com/dlord213";
 const verbs = [
   "Building",
   "Shipping",
@@ -14,8 +16,6 @@ const verbs = [
   "Sketching",
   "Debugging",
   "Wiring",
-  "Listening",
-  "Learning",
 ];
 const filters = ["All", "Web", "Mobile", "AI & systems"];
 const playlists = [
@@ -24,10 +24,36 @@ const playlists = [
   { id: "1447603840", title: "- self" },
   { id: "1440835774", title: "MAY 18." },
 ];
-const socials = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/jhon-lloyd-viernes/" },
-  { label: "GitHub", href: "https://github.com/dlord213" },
-  { label: "Email", href: `mailto:${EMAIL}` },
+const footerLists = [
+  {
+    title: "working",
+    items: [
+      { label: "AdaptiveHub", href: "https://adaptivehub.app" },
+      { label: "Antimony Technologies" },
+      { label: "Oronikola", href: "https://oronikola.org" },
+    ],
+  },
+  {
+    title: "making",
+    items: [
+      { label: "Checkpoint", href: "https://play.google.com/store/apps/details?id=com.mirimomekiku.checkpoint" },
+      { label: "Wavvy", href: "https://github.com/dlord213/wavvy-flutter" },
+      { label: "Zync", href: "https://github.com/dlord213/zync" },
+      { label: "TheoryPocket", href: "https://github.com/dlord213/theorypocket" },
+    ],
+  },
+  {
+    title: "listening",
+    items: playlists.map((p) => ({ label: p.title, href: "#playground" })),
+  },
+  {
+    title: "elsewhere",
+    items: [
+      { label: "LinkedIn", href: LINKEDIN },
+      { label: "GitHub", href: GITHUB },
+      { label: "Email", href: `mailto:${EMAIL}` },
+    ],
+  },
 ];
 
 function categoriesOf(project: ProjectInterface) {
@@ -41,7 +67,7 @@ function categoriesOf(project: ProjectInterface) {
   );
 }
 
-function useReveal() {
+function useReveal(...deps: unknown[]) {
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>("[data-reveal]");
     if (!("IntersectionObserver" in window)) {
@@ -60,19 +86,86 @@ function useReveal() {
     );
     nodes.forEach((n) => io.observe(n));
     return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+}
+
+function RotatingVerb() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setI((n) => (n + 1) % verbs.length), 2600);
+    return () => clearInterval(t);
   }, []);
+  return (
+    <span className="verb" key={i} aria-hidden="true">
+      {verbs[i]}
+    </span>
+  );
+}
+
+function Paws() {
+  const steps = [
+    [0, 0, -22], [80, -44, -8], [168, -22, -30], [250, -70, -14], [338, -48, -34], [420, -96, -18],
+  ];
+  return (
+    <svg className="paws" viewBox="0 -40 560 260" aria-hidden="true">
+      <defs>
+        <filter id="soft"><feGaussianBlur stdDeviation="1.6" /></filter>
+      </defs>
+      {steps.map(([x, y, r], n) => (
+        <g
+          key={n}
+          className="paw"
+          style={{ animationDelay: `${0.4 + n * 0.45}s` }}
+          transform={`translate(${x + 40} ${y + 120}) rotate(${r})`}
+          filter="url(#soft)"
+        >
+          <ellipse cx="0" cy="8" rx="22" ry="17" />
+          <ellipse cx="-24" cy="-14" rx="8" ry="11" transform="rotate(-24 -24 -14)" />
+          <ellipse cx="-8" cy="-26" rx="8" ry="11" transform="rotate(-6 -8 -26)" />
+          <ellipse cx="9" cy="-26" rx="8" ry="11" transform="rotate(6 9 -26)" />
+          <ellipse cx="25" cy="-14" rx="8" ry="11" transform="rotate(24 25 -14)" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function Cover({ project }: { project: ProjectInterface }) {
+  const imgs = project.images ?? [];
+  if (!imgs.length)
+    return (
+      <div className="cover plain" style={{ background: project.tint }}>
+        <span>{project.title}</span>
+      </div>
+    );
+  if (project.shot === "web")
+    return (
+      <div className="cover web" style={{ background: project.tint }}>
+        <div className="browser">
+          <i /><i /><i />
+          <img src={imgs[0]} alt="" loading="lazy" />
+        </div>
+      </div>
+    );
+  return (
+    <div className="cover phones" style={{ background: project.tint }}>
+      {imgs.slice(0, 3).map((src, n) => (
+        <img key={src} src={src} alt="" loading="lazy" data-n={n} />
+      ))}
+    </div>
+  );
 }
 
 function ProjectCard({
   project,
-  index,
   onOpen,
 }: {
   project: ProjectInterface;
-  index: number;
   onOpen: () => void;
 }) {
-  const cover = project.images?.[0];
+  const tags = [project.group ?? "Personal", ...categoriesOf(project).slice(0, 2)];
   return (
     <article className="card" data-reveal>
       <button
@@ -80,22 +173,21 @@ function ProjectCard({
         onClick={onOpen}
         aria-label={`Open ${project.title}`}
       />
-      <div className="card-text">
-        <span className="card-num">{String(index + 1).padStart(2, "0")}</span>
-        <p className="card-tag">
-          {project.group ?? "Personal"} · {project.devices}
+      <Cover project={project} />
+      <div className="card-row">
+        <h3>
+          {project.title}
+          {(project.link || project.store) && (
+            <ArrowUpRight size={15} aria-hidden="true" />
+          )}
+        </h3>
+        <p className="chips">
+          {tags.map((t) => (
+            <span key={t}>{t}</span>
+          ))}
         </p>
-        <h3>{project.title}</h3>
-        <p className="card-desc">{project.description}</p>
-        <p className="card-stack">{project.stack.join(" / ")}</p>
       </div>
-      <div className={`card-media${cover ? "" : " empty"}`} aria-hidden="true">
-        {cover ? (
-          <img src={cover} alt="" loading="lazy" />
-        ) : (
-          <span>{project.title}</span>
-        )}
-      </div>
+      <p className="card-desc">{project.description}</p>
     </article>
   );
 }
@@ -105,13 +197,10 @@ export default function App() {
   const [selected, setSelected] = useState<ProjectInterface | null>(null);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [artCount, setArtCount] = useState(6);
-  const [copied, setCopied] = useState(false);
   const projectDialog = useRef<HTMLDialogElement>(null);
   const artDialog = useRef<HTMLDialogElement>(null);
-  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useReveal();
+  useReveal(filter, artCount);
 
-  useEffect(() => () => clearTimeout(copyTimer.current), []);
   useEffect(() => {
     const d = projectDialog.current;
     if (!d) return;
@@ -129,23 +218,26 @@ export default function App() {
     (p) => filter === "All" || categoriesOf(p).includes(filter),
   );
 
-  async function copyEmail() {
-    try {
-      await navigator.clipboard.writeText(EMAIL);
-      setCopied(true);
-      clearTimeout(copyTimer.current);
-      copyTimer.current = setTimeout(() => setCopied(false), 2500);
-    } catch {
-      location.href = `mailto:${EMAIL}`;
-    }
-  }
-
   return (
     <div id="home">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <header className="nav">
+        <div className="nav-icons">
+          <a href={LINKEDIN} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <Linkedin size={20} />
+          </a>
+          <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub">
+            <Github size={20} />
+          </a>
+          <a href={`mailto:${EMAIL}`} aria-label="Email">
+            <Mail size={20} />
+          </a>
+          <a href="#work" aria-label="Selected work">
+            <Bookmark size={20} />
+          </a>
+        </div>
         <a className="brand" href="#home">
           mirimomekiku
         </a>
@@ -157,70 +249,44 @@ export default function App() {
       </header>
 
       <main id="main">
-        <section className="hero">
-          <div className="hero-copy">
-            <p className="socials">
-              {socials.map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noreferrer">
-                  {s.label}
-                </a>
-              ))}
-            </p>
-            <h1>
-              Software that feels <em>alive</em>.
-            </h1>
-            <p className="hero-sub">
-              I’m mirimomekiku — a developer building mobile apps, web
-              experiences, and the systems that make them work together.
-            </p>
-          </div>
-          <Mascot className="hero-mascot" />
+        <section className="hero" aria-labelledby="hero-title">
+          <h1 id="hero-title">
+            <RotatingVerb />
+            <span className="sr-only">Building</span>
+            <span className="hero-rest"> apps people love.</span>
+          </h1>
+          <Paws />
         </section>
 
-        <div className="ticker" aria-hidden="true">
-          <div className="ticker-track">
-            {[...verbs, ...verbs, ...verbs, ...verbs].map((v, i) => (
-              <span key={i}>{v}</span>
+        <section id="work" className="work" aria-labelledby="work-title">
+          <h2 id="work-title" className="script" data-reveal>
+            Selected projects
+          </h2>
+          <div className="filters" role="group" aria-label="Filter projects">
+            {filters.map((f) => (
+              <button
+                key={f}
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
+              >
+                {f}
+              </button>
             ))}
-          </div>
-        </div>
-
-        <section id="work" className="section" aria-labelledby="work-title">
-          <div className="section-head" data-reveal>
-            <h2 id="work-title">Selected projects</h2>
-            <div className="filters" role="group" aria-label="Filter projects">
-              {filters.map((f) => (
-                <button
-                  key={f}
-                  aria-pressed={filter === f}
-                  onClick={() => setFilter(f)}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
           </div>
           <div className="cards">
-            {visible.map((p, i) => (
-              <ProjectCard
-                key={p.title}
-                project={p}
-                index={i}
-                onOpen={() => setSelected(p)}
-              />
+            {visible.map((p) => (
+              <ProjectCard key={p.title} project={p} onOpen={() => setSelected(p)} />
             ))}
           </div>
         </section>
 
-        <section
-          id="playground"
-          className="section"
-          aria-labelledby="play-title"
-        >
-          <div className="section-head" data-reveal>
-            <h2 id="play-title">Playground</h2>
-            <p className="muted">A sketchbook, a few playlists, a different flow.</p>
-          </div>
+        <section id="playground" className="block" aria-labelledby="play-title">
+          <h2 id="play-title" className="script" data-reveal>
+            Playground
+          </h2>
+          <p className="lede" data-reveal>
+            A sketchbook and a few playlists, for a different kind of flow.
+          </p>
           <div className="art-grid">
             {images.slice(0, artCount).map((image, i) => (
               <button
@@ -241,10 +307,8 @@ export default function App() {
           </div>
           {artCount < images.length && (
             <button
-              className="pill"
-              onClick={() =>
-                setArtCount((c) => Math.min(c + 6, images.length))
-              }
+              className="mono-btn"
+              onClick={() => setArtCount((c) => Math.min(c + 6, images.length))}
             >
               More sketches +
             </button>
@@ -259,17 +323,17 @@ export default function App() {
                   height="166"
                   loading="lazy"
                   allow="autoplay"
-                  src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${pl.id}&color=%23ff7a59&auto_play=false&hide_related=true&show_comments=false`}
+                  src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${pl.id}&color=%23e8532f&auto_play=false&hide_related=true&show_comments=false`}
                 />
               </div>
             ))}
           </div>
         </section>
 
-        <section id="about" className="section about" aria-labelledby="about-title">
-          <div className="section-head" data-reveal>
-            <h2 id="about-title">About</h2>
-          </div>
+        <section id="about" className="block about" aria-labelledby="about-title">
+          <h2 id="about-title" className="script" data-reveal>
+            About
+          </h2>
           <div className="about-grid" data-reveal>
             <div className="about-copy">
               <p>
@@ -300,9 +364,7 @@ export default function App() {
             </dl>
           </div>
 
-          <h3 className="sub" data-reveal>
-            Experience
-          </h3>
+          <h3 className="sub" data-reveal>Experience</h3>
           <ul className="timeline">
             <li data-reveal>
               <span className="when">Project work</span>
@@ -327,9 +389,7 @@ export default function App() {
             ))}
           </ul>
 
-          <h3 className="sub" data-reveal>
-            Education
-          </h3>
+          <h3 className="sub" data-reveal>Education</h3>
           <ul className="timeline">
             {education.map((e) => (
               <li key={e.school} data-reveal>
@@ -342,27 +402,49 @@ export default function App() {
             ))}
           </ul>
         </section>
-
-        <section className="section contact" aria-labelledby="contact-title">
-          <h2 id="contact-title" data-reveal>
-            Let’s make something <em>together</em>.
-          </h2>
-          <button className="pill big" onClick={copyEmail} data-reveal>
-            {copied ? (
-              <>
-                Copied <Check size={16} />
-              </>
-            ) : (
-              EMAIL
-            )}
-          </button>
-        </section>
       </main>
 
       <footer className="footer">
-        <p>© {new Date().getFullYear()} mirimomekiku</p>
-        <p>Last updated on Oct 27 2026</p>
-        <a href="#home">Back to top ↑</a>
+        <Mascot className="footer-mascot" />
+        <div className="footer-lists">
+          {footerLists.map((list) => (
+            <div key={list.title}>
+              <h2 className="script">{list.title}</h2>
+              <ul>
+                {list.items.map((item) => (
+                  <li key={item.label}>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        {...(item.href.startsWith("http")
+                          ? { target: "_blank", rel: "noreferrer" }
+                          : {})}
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      item.label
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="footer-bar">
+          <p>Copyright @ mirimomekiku</p>
+          <p>Lives in the Philippines</p>
+          <p>Last updated on Oct 27 2026</p>
+          <a className="paw-btn" href="#home" aria-label="Back to top">
+            <svg viewBox="-30 -36 60 60" aria-hidden="true">
+              <ellipse cx="0" cy="8" rx="14" ry="11" />
+              <ellipse cx="-16" cy="-8" rx="5" ry="7" transform="rotate(-24 -16 -8)" />
+              <ellipse cx="-5" cy="-17" rx="5" ry="7" />
+              <ellipse cx="6" cy="-17" rx="5" ry="7" />
+              <ellipse cx="17" cy="-8" rx="5" ry="7" transform="rotate(24 17 -8)" />
+            </svg>
+          </a>
+        </div>
       </footer>
 
       <dialog
@@ -382,7 +464,7 @@ export default function App() {
             >
               <X size={18} />
             </button>
-            <p className="card-tag">
+            <p className="sheet-tag">
               {selected.group ?? "Personal"} · {selected.devices}
             </p>
             <h2 id="sheet-title">{selected.title}</h2>
@@ -406,11 +488,11 @@ export default function App() {
                 ))}
               </ul>
             )}
-            <p className="card-stack">{selected.stack.join(" / ")}</p>
+            <p className="sheet-tag">{selected.stack.join(" / ")}</p>
             <div className="sheet-actions">
               {selected.link && (
                 <a
-                  className="pill"
+                  className="mono-btn"
                   href={selected.link}
                   target="_blank"
                   rel="noreferrer"
@@ -420,7 +502,7 @@ export default function App() {
               )}
               {selected.store && (
                 <a
-                  className="pill"
+                  className="mono-btn"
                   href={selected.store}
                   target="_blank"
                   rel="noreferrer"

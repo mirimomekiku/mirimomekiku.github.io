@@ -3,6 +3,8 @@ export interface ProjectInterface {
   devices: string;
   description: string;
   images?: string[];
+  shot?: "phone" | "web";
+  tint?: string;
   link?: string;
   store?: string;
   year?: string;
@@ -21,6 +23,8 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "An adaptive learning platform that connects students, teachers, and school teams.",
+    shot: "phone",
+    tint: "linear-gradient(135deg,#dbe7ff,#bcd2ff)",
     stack: ["Laravel", "Flutter", "MySQL"],
     category: ["Web", "Mobile", "AI & systems"],
     images: [1, 2, 3].map((n) => `${A}/adaptivehub/${n}.webp`),
@@ -39,6 +43,8 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "A connected library experience, from catalog discovery to the circulation desk.",
+    shot: "phone",
+    tint: "linear-gradient(135deg,#e4f3df,#c5e6bd)",
     stack: ["Laravel", "Expo", "React Native"],
     category: ["Web", "Mobile", "AI & systems"],
     images: [1, 2, 3].map((n) => `${A}/adaptivelibrary/${n}.webp`),
@@ -57,6 +63,8 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "A school billing and payment workspace with connected client and personnel portals.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#e6ecfb,#d3def7)",
     stack: ["Next.js", "Drizzle", "MySQL"],
     category: ["Web", "AI & systems"],
     images: [`${A}/adaptivepay/1.png`],
@@ -72,6 +80,8 @@ const projects: ProjectInterface[] = [
     devices: "Web",
     group: "AdaptiveHub",
     description: "Classroom conferencing connected to the learning platform.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#ece9ff,#d9d4fb)",
     stack: ["React", "TypeScript", "LiveKit"],
     category: ["Web", "AI & systems"],
     images: [`${A}/adaptivemeet/1.svg`],
@@ -88,6 +98,7 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "Scheduling and recruitment automation that adapts to how teams work.",
+    tint: "linear-gradient(135deg,#7a3f55,#c4684a)",
     stack: ["Laravel", "Inertia", "React"],
     category: ["Web", "AI & systems"],
     highlights: [
@@ -102,6 +113,7 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "Companion apps for commuters and drivers sharing one Flutter foundation.",
+    tint: "linear-gradient(135deg,#1f5a46,#5fae83)",
     stack: ["Flutter", "Dart", "Maps"],
     category: ["Mobile"],
     highlights: [
@@ -116,6 +128,8 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "A company marketing site and publishing workspace built on a shared API.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#cfe0ff,#a8c4f5)",
     stack: ["Astro", "React", "Express", "Drizzle"],
     category: ["Web"],
     images: [`${A}/oronikola/1.png`],
@@ -132,6 +146,8 @@ const projects: ProjectInterface[] = [
     group: "AdaptiveHub",
     description:
       "A unified institutional support hub for the AdaptiveHub products.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#ffe9d6,#ffd2b3)",
     stack: ["Laravel", "Inertia", "React"],
     category: ["Web"],
     images: [`${A}/helpcenter/1.png`],
@@ -147,6 +163,8 @@ const projects: ProjectInterface[] = [
     description: "Find the best deals here on Nintendo eShop store!",
     images: [`${A}/switchdeals/1.jpg`],
     link: "https://switchdeals.vercel.app",
+    shot: "web",
+    tint: "linear-gradient(135deg,#ffd9d9,#ffb8b8)",
     stack: ["Next.js", "Expo"],
   },
   {
@@ -155,6 +173,8 @@ const projects: ProjectInterface[] = [
     description: "Find deals on PlayStation store.",
     images: [`${A}/psdrops/1.png`],
     link: "https://psdrops.vercel.app",
+    shot: "web",
+    tint: "linear-gradient(135deg,#dbe5ff,#b9c9f7)",
     stack: ["Next.js"],
   },
   {
@@ -163,6 +183,8 @@ const projects: ProjectInterface[] = [
     description: "A game backlog tracker for Android.",
     images: [`${A}/playlog/1.jpg`],
     link: "https://play.google.com/store/apps/details?id=com.mirimomekiku.checkpoint",
+    shot: "phone",
+    tint: "linear-gradient(135deg,#f6efc9,#e9dc8f)",
     stack: ["Kotlin", "Jetpack Compose"],
   },
   {
@@ -172,6 +194,8 @@ const projects: ProjectInterface[] = [
       "A music player/downloader for Android, with custom native audio effects.",
     images: [`${A}/wavvy/1.jpg`],
     link: "https://github.com/dlord213/wavvy-flutter",
+    shot: "phone",
+    tint: "linear-gradient(135deg,#f9d6ec,#efb2d8)",
     stack: ["Flutter", "Dart", "Kotlin"],
   },
   {
@@ -182,6 +206,8 @@ const projects: ProjectInterface[] = [
       "A community-first forum with study assistant that helps you generate flashcards and quizzes effortlessly.",
     images: [`${A}/quickease/1.png`],
     link: "https://quickease.online/",
+    shot: "web",
+    tint: "linear-gradient(135deg,#e1f6e7,#bfe8cc)",
     stack: ["React", "Vite", "Fastify", "Expo"],
   },
   {
@@ -191,6 +217,8 @@ const projects: ProjectInterface[] = [
       "A comprehensive, interactive music theory and utility toolset built with Flutter",
     images: [`${A}/theorypocket/1.jpeg`],
     link: "https://github.com/dlord213/theorypocket",
+    shot: "phone",
+    tint: "linear-gradient(135deg,#ffe0c7,#ffc59c)",
     stack: ["Dart", "Flutter"],
   },
   {
@@ -200,6 +228,8 @@ const projects: ProjectInterface[] = [
       "A cross-platform peer-to-peer (P2P) file-sharing application designed for fast, local transfers between Android, Windows, and Linux devices.",
     images: [`${A}/zync/1.jpeg`],
     link: "https://github.com/dlord213/zync",
+    shot: "phone",
+    tint: "linear-gradient(135deg,#d6f0f5,#a9dce6)",
     stack: ["Dart", "Flutter"],
   },
 ];
