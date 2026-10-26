@@ -89,7 +89,6 @@ export function SmoothCursor({
     restDelta: 0.001,
   },
 }: SmoothCursorProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [, setIsMoving] = useState(false);
   const lastMousePos = useRef<Position>({ x: 0, y: 0 });
   const velocity = useRef<Position>({ x: 0, y: 0 });
