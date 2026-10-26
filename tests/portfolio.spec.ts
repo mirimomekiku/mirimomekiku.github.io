@@ -7,7 +7,7 @@ test("portfolio renders the mirimomekiku brand and curated projects", async ({
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.locator(".brand")).toHaveText("mirimomekiku");
-  await expect(page.locator(".card")).toHaveCount(15);
+  await expect(page.locator(".card")).toHaveCount(13);
   for (const removed of [
     "Crest",
     "EDUCENTRA",

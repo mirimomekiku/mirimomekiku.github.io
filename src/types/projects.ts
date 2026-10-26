@@ -93,36 +93,6 @@ const projects: ProjectInterface[] = [
     ],
   },
   {
-    title: "Adaptive Human Resource",
-    devices: "Web",
-    group: "AdaptiveHub",
-    description:
-      "Scheduling and recruitment automation that adapts to how teams work.",
-    tint: "linear-gradient(135deg,#7a3f55,#c4684a)",
-    stack: ["Laravel", "Inertia", "React"],
-    category: ["Web", "AI & systems"],
-    highlights: [
-      "Tenant-scoped availability, event types, and public booking flows.",
-      "Interview loops, scorecards, workflows, and webhooks.",
-      "Database-per-tenant architecture and enterprise SSO workflows.",
-    ],
-  },
-  {
-    title: "KAWAY Mobile",
-    devices: "Android & iOS",
-    group: "AdaptiveHub",
-    description:
-      "Companion apps for commuters and drivers sharing one Flutter foundation.",
-    tint: "linear-gradient(135deg,#1f5a46,#5fae83)",
-    stack: ["Flutter", "Dart", "Maps"],
-    category: ["Mobile"],
-    highlights: [
-      "Separate commuter and driver app flavors with shared sign-in and design.",
-      "Driver onboarding, vehicle verification, routes, and foreground GPS updates.",
-      "Commuter live maps, waiting pins, trip tracking, and booking on eligible routes.",
-    ],
-  },
-  {
     title: "Oronikola",
     devices: "Web",
     group: "AdaptiveHub",

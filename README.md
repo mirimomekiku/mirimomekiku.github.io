@@ -1,6 +1,6 @@
 # mirimomekiku — Portfolio
 
-A React + TypeScript portfolio in a light editorial style: Ovo + Caveat + DM Mono typography, a typewriter hero where each verb is typed in its own playful typeface, a floating bottom nav (Work / Experience / Art / Contact), a two-column grid of tinted project covers (phone or browser mockups), and a deep-green footer.
+A React + TypeScript portfolio in a light editorial style: Ovo + Caveat + DM Mono typography, a typewriter hero where each verb is typed in its own playful typeface, liquid-glass surfaces, a scramble/letter-wave/rolling-word hero over an animated orb, ring and glyph backdrop, a floating bottom nav (Work / Experience / Art / Contact), a two-column grid of tinted project covers (phone or browser mockups), and a deep-green footer.
 
 - Brand: **mirimomekiku**. The favicon and OG image are original SVG drawings (`public/favicon.svg`); the primary color is Tailwind green-500.
 - Project screenshots come from the Google Play listings (AdaptiveHub, Adaptive Library) and live captures of the public sites. AdaptiveHub Meet uses an illustration while its site is offline.
