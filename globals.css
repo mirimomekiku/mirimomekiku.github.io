@@ -14,6 +14,30 @@
   scroll-behavior: smooth;
   scroll-padding-top: 25px;
 }
+html.lenis,
+html:has(.motion-off) {
+  scroll-behavior: auto;
+}
+.hero-line {
+  display: block;
+  overflow: clip;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+  font-weight: 600;
+}
+.hero-line:last-child {
+  font-weight: 400;
+}
+.hero-line-inner {
+  display: inline-block;
+}
+.project-grid,
+.creative-content {
+  position: relative;
+}
+.detail-content {
+  display: flow-root;
+}
 * {
   box-sizing: border-box;
 }
@@ -1239,13 +1263,13 @@ h1 > span {
   color: #55564e;
   margin-top: 7px;
 }
-.experience-entry > p,
+.detail-content > p,
 .experience-entry li {
   font-size: 12px;
   line-height: 1.8;
   color: #4f5148;
 }
-.experience-entry > p {
+.detail-content > p {
   margin-bottom: 18px;
 }
 .experience-entry ul {
@@ -1477,6 +1501,7 @@ dialog {
   box-shadow: 7px 7px 0 #111;
 }
 dialog::backdrop {
+  opacity: var(--backdrop-opacity, 1);
   background: #0c142bc9;
   backdrop-filter: blur(5px);
 }
@@ -1573,17 +1598,6 @@ dialog::backdrop {
   background: #ffffff20;
   color: white;
 }
-.motion-on .reveal {
-  opacity: 0.25;
-  transform: translateY(25px);
-  transition:
-    opacity 0.7s,
-    transform 0.7s;
-}
-.motion-on .reveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
 .motion-on .avatar:hover {
   animation: avatar-nod 0.55s ease-in-out;
 }
@@ -1593,10 +1607,6 @@ dialog::backdrop {
 .motion-off * {
   animation: none !important;
   transition: none !important;
-}
-.motion-off .reveal {
-  opacity: 1;
-  transform: none;
 }
 @keyframes avatar-dance {
   0%,
@@ -2563,7 +2573,7 @@ dialog::backdrop {
   .experience-entry summary > span:last-child {
     font-size: 8px;
   }
-  .experience-entry > p,
+  .detail-content > p,
   .experience-entry li {
     font-size: 11px;
   }
@@ -2822,11 +2832,4 @@ dialog::backdrop {
     animation: none !important;
     transition: none !important;
   }
-  .motion-on .reveal {
-    opacity: 1;
-    transform: none;
-  }
-}
-html:has(.motion-off) {
-  scroll-behavior: auto;
 }
