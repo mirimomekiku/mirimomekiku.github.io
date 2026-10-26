@@ -6,7 +6,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
-import { ArrowUpRight, Mail, Pause, Play } from "lucide-react";
+import { ArrowUpRight, Mail } from "lucide-react";
 
 const EMAIL = "viernes.jhonlloydd@gmail.com";
 
@@ -164,39 +164,7 @@ function Stars() {
   );
 }
 
-function Music() {
-  const [playing, setPlaying] = useState(true);
-  return (
-    <>
-      <div className="music-top">
-        <span className={`eq${playing ? " on" : ""}`} aria-hidden="true">
-          <i />
-          <i />
-          <i />
-          <i />
-        </span>
-        <div>
-          <strong>. untitled .</strong>
-          <small>SoundCloud playlist</small>
-        </div>
-      </div>
-      <div className="music-bar" aria-hidden="true">
-        <i className={playing ? "on" : ""} />
-      </div>
-      <div className="music-ctl">
-        <button
-          onClick={() => setPlaying((p) => !p)}
-          aria-label={playing ? "Pause visualizer" : "Play visualizer"}
-        >
-          {playing ? <Pause size={16} /> : <Play size={16} />}
-        </button>
-        <a href="#art">Listen below ↓</a>
-      </div>
-    </>
-  );
-}
-
-export function HeroDesk({ onOpenLatest }: { onOpenLatest: () => void }) {
+export function HeroDesk() {
   return (
     <div className="desk">
       <Widget className="p-photo w-paper" rotate={-5} delay={0.5}>
@@ -204,10 +172,6 @@ export function HeroDesk({ onOpenLatest }: { onOpenLatest: () => void }) {
           <img src="/assets/images/profile.jpeg" alt="mirimomekiku" width="557" height="991" />
           <span className="cap">mirimomekiku · CDO</span>
         </a>
-      </Widget>
-
-      <Widget className="p-music w-dark" rotate={2} delay={0.65}>
-        <Music />
       </Widget>
 
       <Widget className="p-hi w-dark" rotate={-4} delay={0.8}>
@@ -239,7 +203,7 @@ export function HeroDesk({ onOpenLatest }: { onOpenLatest: () => void }) {
       </Widget>
 
       <Widget className="p-dock w-paper" rotate={3} delay={1.25}>
-        <span className="w-label">Apps I use</span>
+        <span className="w-label">My tech stack</span>
         <div className="dock">
           {dock.map((d) => (
             <a
@@ -279,19 +243,6 @@ export function HeroDesk({ onOpenLatest }: { onOpenLatest: () => void }) {
           </svg>
           <span className="w-label">My projects</span>
         </a>
-      </Widget>
-
-      <Widget className="p-latest w-paper" rotate={2} delay={1.7}>
-        <button className="latest" onClick={onOpenLatest}>
-          <span className="w-label">Latest project</span>
-          <span className="latest-img">
-            <img src="/assets/projects/adaptivelibrary/1.webp" alt="" loading="lazy" />
-            <img src="/assets/projects/adaptivelibrary/2.webp" alt="" loading="lazy" />
-          </span>
-          <strong>
-            Adaptive Library <ArrowUpRight size={14} />
-          </strong>
-        </button>
       </Widget>
 
       <Widget className="p-links w-blue" rotate={-4} delay={1.85}>

@@ -371,11 +371,7 @@ export default function App() {
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
-          <HeroDesk
-            onOpenLatest={() =>
-              setSelected(projects.find((p) => p.title === "Adaptive Library") ?? null)
-            }
-          />
+          <HeroDesk />
           <div className="hero-inner">
             <h1 id="hero-title">
               <span className="sr-only">Building apps people love.</span>
