@@ -4,6 +4,7 @@ import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
 import experience from "./types/experience";
 import images from "./types/images";
+import { HeroDesk } from "./component/hero_desk";
 
 const EMAIL = "viernes.jhonlloydd@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/jhon-lloyd-viernes/";
@@ -15,16 +16,6 @@ const verbs = [
   { word: "Sketching", font: "'Gochi Hand', cursive" },
   { word: "Debugging", font: "'VT323', monospace" },
   { word: "Wiring", font: "'Audiowide', sans-serif" },
-];
-const appIcons = [
-  { name: "Flutter", src: "/assets/icons/flutter.svg" },
-  { name: "Kotlin", src: "/assets/icons/kotlin.svg" },
-  { name: "React", src: "/assets/icons/react.svg" },
-  { name: "Figma", src: "/assets/icons/figma.svg" },
-  { name: "Godot", src: "/assets/icons/godotengine.svg" },
-  { name: "GitHub", src: "/assets/icons/github.svg" },
-  { name: "Fedora", src: "/assets/icons/fedora.svg" },
-  { name: "Spotify", src: "/assets/icons/spotify.svg" },
 ];
 const navItems = [
   { id: "work", label: "Work" },
@@ -180,33 +171,6 @@ function Roller({ words }: { words: string[] }) {
       <span className="roll-in" key={`i${i}`}>{words[i]}</span>
       <span className="roll-size">{words.reduce((a, b) => (b.length > a.length ? b : a))}</span>
     </span>
-  );
-}
-
-/** A panning dot grid and floating glass tiles for the apps and tools I use daily. */
-function HeroBackdrop() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || prefersReduced()) return;
-    const move = (e: PointerEvent) => {
-      el.style.setProperty("--mx", String((e.clientX / innerWidth - 0.5) * 2));
-      el.style.setProperty("--my", String((e.clientY / innerHeight - 0.5) * 2));
-    };
-    addEventListener("pointermove", move, { passive: true });
-    return () => removeEventListener("pointermove", move);
-  }, []);
-  return (
-    <div className="backdrop" ref={ref} aria-hidden="true">
-      <div className="dots" />
-      <div className="layer l2">
-        {appIcons.map(({ name, src }, n) => (
-          <span key={name} className={`tile glass t${n + 1}`}>
-            <img src={src} alt="" width="34" height="34" />
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -407,7 +371,11 @@ export default function App() {
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
-          <HeroBackdrop />
+          <HeroDesk
+            onOpenLatest={() =>
+              setSelected(projects.find((p) => p.title === "Adaptive Library") ?? null)
+            }
+          />
           <div className="hero-inner">
             <h1 id="hero-title">
               <span className="sr-only">Building apps people love.</span>
