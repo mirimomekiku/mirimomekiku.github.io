@@ -13,9 +13,23 @@ npm ci
 npm run dev
 npm run build
 npm run lint
+npx playwright install chromium
+npm run test:e2e
 ```
 
 The production output is `dist/`. GitHub Pages publishes from the workflow in `.github/workflows` when `main` is pushed.
+
+## Motion
+
+- `src/component/smooth_scroll.tsx` mounts the modern `ReactLenis` adapter from `lenis/react`. GSAP's ticker drives its animation frames, and Lenis notifies ScrollTrigger on scroll. Wheel scrolling is smoothed; touch scrolling stays native.
+- `src/hooks/use_portfolio_motion.ts` owns the hero entrance, section reveals, project tour triggers, and desktop parallax. `useGSAP` scopes and cleans up animations and ScrollTriggers.
+- `src/hooks/use_animated_layout.ts` captures the layout before filtering, search, gallery expansion, or tab changes. GSAP Flip animates the new positions and container height after React commits.
+- `src/hooks/use_animated_dialog.ts` coordinates dialog entrances/exits with native focus restoration. The page stays locked until the exit finishes, while the dialog keeps native scrolling.
+- `src/component/animated_details.tsx` animates experience accordions and supports reversing an in-progress transition.
+
+The motion control disables smooth scrolling and GSAP animation. Changes to the operating system's reduced-motion preference are respected immediately. Anchor navigation updates the URL and moves focus to the destination after scrolling; the skip link remains immediate.
+
+`npm run test:e2e` builds and serves the production site, then runs Chromium checks for navigation, rapid filtering, modal scroll/focus, interrupted transitions, responsive widths, and accessibility. External artwork and music are stubbed in tests so availability does not affect these interaction checks.
 
 ## Content
 

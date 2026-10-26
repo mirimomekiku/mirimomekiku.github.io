@@ -19,6 +19,12 @@ import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
 import experience from "./types/experience";
 import images from "./types/images";
+import { SmoothScroll } from "./component/smooth_scroll";
+import { AnimatedDetails } from "./component/animated_details";
+import { useAnimatedLayout } from "./hooks/use_animated_layout";
+import { useAnimatedDialog } from "./hooks/use_animated_dialog";
+import { usePortfolioMotion } from "./hooks/use_portfolio_motion";
+import { gsap, ScrollTrigger, useGSAP } from "./lib/animation";
 
 const filters = ["All work", "Web", "Mobile", "AI & systems"];
 const playlists = [
@@ -286,12 +292,29 @@ export default function App() {
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [dancing, setDancing] = useState(false);
-  const [motion, setMotion] = useState(
-    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  const [motionEnabled, setMotion] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
+  const motion = motionEnabled && !reducedMotion;
   const [activeStory, setActiveStory] = useState(0);
-  const projectDialog = useRef<HTMLDialogElement>(null);
-  const artDialog = useRef<HTMLDialogElement>(null);
+  const root = useRef<HTMLDivElement>(null);
+  const { ref: projectDialog, close: closeProject } = useAnimatedDialog(
+    selectedProject !== null,
+    motion,
+    () => setSelectedProject(null),
+  );
+  const { ref: artDialog, close: closeArt } = useAnimatedDialog(
+    lightbox !== null,
+    motion,
+    () => setLightbox(null),
+  );
+  const projectLayout = useAnimatedLayout(`${filter}:${query}`, motion);
+  const creativeLayout = useAnimatedLayout(
+    `${creativeTab}:${artCount}`,
+    motion,
+  );
+  usePortfolioMotion(root, motion, setActiveStory);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -299,14 +322,6 @@ export default function App() {
     undefined,
   );
 
-  useEffect(() => {
-    if (selectedProject) projectDialog.current?.showModal();
-    else projectDialog.current?.close();
-  }, [selectedProject]);
-  useEffect(() => {
-    if (lightbox !== null) artDialog.current?.showModal();
-    else artDialog.current?.close();
-  }, [lightbox]);
   useEffect(() => {
     if (!selectedProject && lightbox === null) return;
     const overflow = document.body.style.overflow;
@@ -323,37 +338,52 @@ export default function App() {
     [],
   );
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting)
-            setActiveStory(Number((entry.target as HTMLElement).dataset.story));
-        });
-      },
-      { rootMargin: "-30% 0px -35% 0px", threshold: 0 },
-    );
-    document
-      .querySelectorAll("[data-story]")
-      .forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(preference.matches);
+    preference.addEventListener("change", update);
+    return () => preference.removeEventListener("change", update);
   }, []);
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.08 },
-    );
-    document
-      .querySelectorAll(".reveal")
-      .forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+    let mounted = true;
+    document.fonts.ready.then(() => {
+      if (mounted) ScrollTrigger.refresh();
+    });
+    return () => {
+      mounted = false;
+    };
   }, []);
+  useGSAP(
+    () => {
+      if (!motion) return;
+      gsap.fromTo(
+        ".tour-guide .speech",
+        { opacity: 0.4, y: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.45,
+          ease: "power2.out",
+        },
+      );
+    },
+    { scope: root, dependencies: [activeStory, motion], revertOnUpdate: true },
+  );
+  useGSAP(
+    () => {
+      if (lightbox === null || !motion) return;
+      gsap.fromTo(
+        ".art-dialog > img",
+        { opacity: 0.2, scale: 0.98 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+      );
+    },
+    { scope: root, dependencies: [lightbox, motion], revertOnUpdate: true },
+  );
 
   const visibleProjects = projects.filter((project) => {
     const categories =
@@ -389,7 +419,13 @@ export default function App() {
   }
 
   return (
-    <div className={motion ? "portfolio motion-on" : "portfolio motion-off"}>
+    <div
+      ref={root}
+      className={motion ? "portfolio motion-on" : "portfolio motion-off"}
+    >
+      {motion && (
+        <SmoothScroll locked={selectedProject !== null || lightbox !== null} />
+      )}
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -413,11 +449,15 @@ export default function App() {
         <div className="hero-main">
           <div className="hero-text">
             <h1 id="hero-title">
-              I build apps
-              <br />
-              with a little
-              <br />
-              <span>character.</span>
+              <span className="hero-line">
+                <span className="hero-line-inner">I build apps</span>
+              </span>
+              <span className="hero-line">
+                <span className="hero-line-inner">with a little</span>
+              </span>
+              <span className="hero-line">
+                <span className="hero-line-inner">character.</span>
+              </span>
             </h1>
             <a className="scroll-note" href="#intro">
               <span className="scroll-icon">
@@ -449,7 +489,7 @@ export default function App() {
             <span className="dot" /> A quick introduction
           </div>
           <div>
-            <h2 className="intro-copy reveal">
+            <h2 className="intro-copy">
               I’m a software developer with a soft spot for{" "}
               <span>mobile experiences</span> and the systems that make them
               work.
@@ -546,7 +586,10 @@ export default function App() {
                 <button
                   key={item}
                   aria-pressed={filter === item}
-                  onClick={() => setFilter(item)}
+                  onClick={() => {
+                    projectLayout.capture();
+                    setFilter(item);
+                  }}
                 >
                   {item}
                 </button>
@@ -557,7 +600,10 @@ export default function App() {
               <input
                 type="search"
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => {
+                  projectLayout.capture();
+                  setQuery(event.target.value);
+                }}
                 placeholder="Project or technology"
                 aria-label="Search projects"
               />
@@ -567,9 +613,14 @@ export default function App() {
             {visibleProjects.length} projects
             {query ? ` matching “${query}”` : ""}
           </p>
-          <div className="project-grid">
+          <div className="project-grid" ref={projectLayout.ref}>
             {visibleProjects.map((project) => (
-              <article className="project-card" key={project.title}>
+              <article
+                className="project-card"
+                key={project.title}
+                data-layout-item
+                data-flip-id={`project-${project.title}`}
+              >
                 <button
                   className="project-cover"
                   onClick={() => setSelectedProject(project)}
@@ -597,6 +648,7 @@ export default function App() {
               <button
                 className="pill"
                 onClick={() => {
+                  projectLayout.capture();
                   setFilter("All work");
                   setQuery("");
                 }}
@@ -654,28 +706,35 @@ export default function App() {
               </div>
             </div>
             <h3 className="background-subtitle">Experience</h3>
-            <details className="experience-entry" open>
-              <summary>
-                <span>
-                  AdaptiveHub<small>Full-stack & mobile development</small>
-                </span>
-                <span>Project work</span>
-              </summary>
+            <AnimatedDetails
+              enabled={motion}
+              open
+              summary={
+                <>
+                  <span>
+                    AdaptiveHub<small>Full-stack & mobile development</small>
+                  </span>
+                  <span>Project work</span>
+                </>
+              }
+            >
               <p>
                 Connected school and business products across web, mobile, and
                 backend services: LMS, Library, Crest, AdaptivePay, attendance,
                 scheduling, conferencing, and AI services.
               </p>
-            </details>
+            </AnimatedDetails>
             {[...experience].reverse().map((item) => (
-              <details
-                className="experience-entry"
+              <AnimatedDetails
+                enabled={motion}
                 key={item.position + item.period}
+                summary={
+                  <>
+                    <span>{item.position}</span>
+                    <span>{item.period}</span>
+                  </>
+                }
               >
-                <summary>
-                  <span>{item.position}</span>
-                  <span>{item.period}</span>
-                </summary>
                 <p>{item.description}</p>
                 {item.details && (
                   <ul>
@@ -689,7 +748,7 @@ export default function App() {
                     <span key={skill}>{skill}</span>
                   ))}
                 </div>
-              </details>
+              </AnimatedDetails>
             ))}
             <h3 className="background-subtitle">Education</h3>
             {education.map((item) => (
@@ -719,7 +778,10 @@ export default function App() {
                 <button
                   key={tab}
                   aria-pressed={creativeTab === tab}
-                  onClick={() => setCreativeTab(tab)}
+                  onClick={() => {
+                    creativeLayout.capture();
+                    setCreativeTab(tab);
+                  }}
                 >
                   {tab === "Music" && <Music2 size={15} />}
                   {tab}
@@ -730,60 +792,72 @@ export default function App() {
           <p className="creative-intro">
             A few things from the other side of my brain.
           </p>
-          {creativeTab === "Art" ? (
-            <>
-              <div className="art-grid">
-                {images.slice(0, artCount).map((image, index) => (
+          <div className="creative-content" ref={creativeLayout.ref}>
+            {creativeTab === "Art" ? (
+              <>
+                <div className="art-grid">
+                  {images.slice(0, artCount).map((image, index) => (
+                    <button
+                      key={image.src}
+                      data-layout-item
+                      data-flip-id={`art-${index}`}
+                      onClick={() => setLightbox(index)}
+                      aria-label={`View artwork ${index + 1}`}
+                    >
+                      <img
+                        src={image.src}
+                        alt={`Personal artwork ${index + 1}`}
+                        width={image.width}
+                        height={image.height}
+                        loading="lazy"
+                      />
+                      <span>
+                        Sketchbook / {String(index + 1).padStart(2, "0")}{" "}
+                        <ArrowUpRight size={17} />
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                {artCount < images.length && (
                   <button
-                    key={image.src}
-                    onClick={() => setLightbox(index)}
-                    aria-label={`View artwork ${index + 1}`}
+                    className="pill gallery-more"
+                    onClick={() => {
+                      creativeLayout.capture();
+                      setArtCount((count) =>
+                        Math.min(count + 6, images.length),
+                      );
+                    }}
                   >
-                    <img
-                      src={image.src}
-                      alt={`Personal artwork ${index + 1}`}
-                      width={image.width}
-                      height={image.height}
-                      loading="lazy"
-                    />
-                    <span>
-                      Sketchbook / {String(index + 1).padStart(2, "0")}{" "}
-                      <ArrowUpRight size={17} />
-                    </span>
+                    More from the sketchbook <ArrowDown size={16} />
                   </button>
+                )}
+              </>
+            ) : (
+              <div className="music-grid">
+                {playlists.map((playlist) => (
+                  <div
+                    className="playlist"
+                    key={playlist.id}
+                    data-layout-item
+                    data-flip-id={`playlist-${playlist.id}`}
+                  >
+                    <h3>
+                      <Music2 size={17} />
+                      {playlist.title}
+                    </h3>
+                    <iframe
+                      title={`SoundCloud playlist: ${playlist.title}`}
+                      width="100%"
+                      height="166"
+                      loading="lazy"
+                      allow="autoplay"
+                      src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%232261e9&auto_play=false&hide_related=true&show_comments=false`}
+                    />
+                  </div>
                 ))}
               </div>
-              {artCount < images.length && (
-                <button
-                  className="pill gallery-more"
-                  onClick={() =>
-                    setArtCount((count) => Math.min(count + 6, images.length))
-                  }
-                >
-                  More from the sketchbook <ArrowDown size={16} />
-                </button>
-              )}
-            </>
-          ) : (
-            <div className="music-grid">
-              {playlists.map((playlist) => (
-                <div className="playlist" key={playlist.id}>
-                  <h3>
-                    <Music2 size={17} />
-                    {playlist.title}
-                  </h3>
-                  <iframe
-                    title={`SoundCloud playlist: ${playlist.title}`}
-                    width="100%"
-                    height="166"
-                    loading="lazy"
-                    allow="autoplay"
-                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%232261e9&auto_play=false&hide_related=true&show_comments=false`}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+            )}
+          </div>
         </section>
         <section className="contact-section grid-surface" id="contact">
           <div className="contact-top">
@@ -839,7 +913,14 @@ export default function App() {
       </main>
       <button
         className="motion-toggle"
-        aria-label={motion ? "Pause animations" : "Enable animations"}
+        aria-label={
+          reducedMotion
+            ? "Animations disabled by system preference"
+            : motion
+              ? "Pause animations"
+              : "Enable animations"
+        }
+        disabled={reducedMotion}
         aria-pressed={!motion}
         onClick={() => {
           setMotion(!motion);
@@ -851,11 +932,15 @@ export default function App() {
       <dialog
         ref={projectDialog}
         className="project-dialog"
+        data-lenis-prevent
         aria-labelledby="project-dialog-title"
-        onCancel={() => setSelectedProject(null)}
+        onCancel={(event) => {
+          event.preventDefault();
+          closeProject();
+        }}
         onClose={() => setSelectedProject(null)}
         onClick={(event) => {
-          if (event.target === event.currentTarget) setSelectedProject(null);
+          if (event.target === event.currentTarget) closeProject();
         }}
       >
         {selectedProject && (
@@ -864,7 +949,7 @@ export default function App() {
               className="dialog-close icon-button"
               autoFocus
               aria-label="Close project"
-              onClick={() => setSelectedProject(null)}
+              onClick={closeProject}
             >
               <X />
             </button>
@@ -899,10 +984,7 @@ export default function App() {
                     Visit project <ArrowUpRight size={16} />
                   </a>
                 )}
-                <button
-                  className="pill"
-                  onClick={() => setSelectedProject(null)}
-                >
+                <button className="pill" onClick={closeProject}>
                   Back to projects <ArrowUpRight size={16} />
                 </button>
               </div>
@@ -919,11 +1001,15 @@ export default function App() {
       <dialog
         ref={artDialog}
         className="art-dialog"
+        data-lenis-prevent
         aria-label="Artwork viewer"
-        onCancel={() => setLightbox(null)}
+        onCancel={(event) => {
+          event.preventDefault();
+          closeArt();
+        }}
         onClose={() => setLightbox(null)}
         onClick={(event) => {
-          if (event.target === event.currentTarget) setLightbox(null);
+          if (event.target === event.currentTarget) closeArt();
         }}
         onKeyDown={(event) => {
           if (event.key === "ArrowLeft")
@@ -940,7 +1026,7 @@ export default function App() {
               className="dialog-close icon-button"
               aria-label="Close artwork"
               autoFocus
-              onClick={() => setLightbox(null)}
+              onClick={closeArt}
             >
               <X />
             </button>
