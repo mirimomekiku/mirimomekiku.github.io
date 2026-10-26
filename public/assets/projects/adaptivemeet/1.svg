@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" role="img" aria-label="AdaptiveHub Meet classroom conferencing illustration">
+  <rect width="1280" height="800" fill="#eef2ff"/>
+  <rect x="120" y="100" width="1040" height="600" rx="28" fill="#fff" stroke="#c7d2fe" stroke-width="3"/>
+  <g>
+    <rect x="160" y="140" width="440" height="270" rx="18" fill="#2563eb"/>
+    <rect x="620" y="140" width="240" height="130" rx="18" fill="#93c5fd"/>
+    <rect x="880" y="140" width="240" height="130" rx="18" fill="#bfdbfe"/>
+    <rect x="620" y="280" width="240" height="130" rx="18" fill="#c7d2fe"/>
+    <rect x="880" y="280" width="240" height="130" rx="18" fill="#a5b4fc"/>
+    <g fill="#fff"><circle cx="380" cy="250" r="46"/><path d="M290 380a90 90 0 0 1 180 0z"/></g>
+    <g fill="#fff" opacity=".85"><circle cx="740" cy="200" r="22"/><path d="M700 258a40 40 0 0 1 80 0z"/>
+    <circle cx="1000" cy="200" r="22"/><path d="M960 258a40 40 0 0 1 80 0z"/>
+    <circle cx="740" cy="340" r="22"/><path d="M700 398a40 40 0 0 1 80 0z"/>
+    <circle cx="1000" cy="340" r="22"/><path d="M960 398a40 40 0 0 1 80 0z"/></g>
+  </g>
+  <g transform="translate(640 560)">
+    <rect x="-190" y="-34" width="380" height="68" rx="34" fill="#1e293b"/>
+    <circle cx="-130" cy="0" r="22" fill="#334155"/><circle cx="-60" cy="0" r="22" fill="#334155"/>
+    <circle cx="10" cy="0" r="22" fill="#334155"/><circle cx="80" cy="0" r="22" fill="#334155"/>
+    <circle cx="150" cy="0" r="22" fill="#ef4444"/>
+  </g>
+  <text x="640" y="660" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="600" fill="#1e3a8a">AdaptiveHub Meet</text>
+</svg>
