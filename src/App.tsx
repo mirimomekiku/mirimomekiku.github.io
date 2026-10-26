@@ -2,17 +2,18 @@
 import {
   ArrowDown,
   ArrowUpRight,
+  ArrowUp,
   Check,
   ChevronLeft,
   ChevronRight,
-  Code2,
   Github,
   Linkedin,
   Mail,
-  Menu,
   Music2,
   Search,
   X,
+  Pause,
+  Play,
 } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
@@ -26,6 +27,57 @@ const playlists = [
   { id: "1447603840", title: "- self" },
   { id: "1440835774", title: "MAY 18." },
 ];
+const featured = [
+  {
+    title: "AdaptiveHub LMS",
+    theme: "navy",
+    note: "First up: learning that adapts. One connected experience for students, teachers, and school teams.",
+    caption: "A little less friction. A lot more learning.",
+    kind: "learning",
+  },
+  {
+    title: "Crest",
+    theme: "lilac",
+    note: "Behind every good product is a lot of moving parts. This one brings the business side together.",
+    caption: "From the first conversation to everyday operations.",
+    kind: "operations",
+  },
+  {
+    title: "Checkpoint",
+    theme: "yellow",
+    note: "And something a little more personal. A home for the games you’re playing, finishing, and saving for later.",
+    caption: "For the backlog that keeps getting bigger.",
+    kind: "games",
+  },
+];
+
+function Avatar({
+  dancing,
+  onClick,
+  className = "",
+}: {
+  dancing: boolean;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      className={`avatar ${dancing ? "dancing" : ""} ${className}`}
+      onClick={onClick}
+      aria-label="Make Jhon’s avatar dance"
+      title="Go on, give me a click."
+    >
+      <img
+        src="/assets/images/avatar-halftone.png"
+        alt="Illustrated Jhon wearing a flat cap and glasses"
+        width="800"
+        height="1000"
+        fetchPriority="high"
+        draggable="false"
+      />
+    </button>
+  );
+}
 
 function ProjectVisual({ project }: { project: ProjectInterface }) {
   if (project.imageSrc)
@@ -39,31 +91,186 @@ function ProjectVisual({ project }: { project: ProjectInterface }) {
     );
   return (
     <div className={`project-visual ${project.color}`} aria-hidden="true">
-      <div className="visual-grid" />
       <span className="visual-wordmark">
         {project.mark}
-        <span>✳</span>
+        <span>↗</span>
       </span>
       <div className="visual-window">
-        <div className="window-dots">
+        <div className="window-bar">
           <i />
           <i />
           <i />
+          <span>{project.title}</span>
         </div>
-        <div className="window-content">
-          <span />
-          <span />
-          <span />
-          <div>
-            <i />
-            <i />
-            <i />
-            <i />
+        <div className="window-layout">
+          <div className="mini-sidebar">
+            <b />
+            <b />
+            <b />
+            <b />
+          </div>
+          <div className="mini-content">
+            <strong />
+            <span />
+            <div>
+              <i />
+              <i />
+              <i />
+            </div>
+            <p />
+            <p />
+            <p />
           </div>
         </div>
       </div>
-      <span className="visual-caption">
-        {project.title} <ArrowUpRight size={14} />
+      <span className="visual-caption">{project.devices}</span>
+    </div>
+  );
+}
+
+function ProductScene({ kind }: { kind: string }) {
+  if (kind === "games")
+    return (
+      <div className="game-scene">
+        <div className="game-type" aria-hidden="true">
+          One more
+          <br />
+          <i>side quest.</i>
+        </div>
+        <div className="game-screen">
+          <div className="phone-camera" />
+          <img
+            src="/assets/projects/playlog/1.jpg"
+            alt="Checkpoint game backlog app"
+            loading="lazy"
+          />
+        </div>
+        <span className="scene-sticker">PLAY. TRACK. REPEAT. ↗</span>
+      </div>
+    );
+  const learning = kind === "learning";
+  return (
+    <div
+      className={`product-scene ${kind}`}
+      role="img"
+      aria-label={
+        learning
+          ? "Illustrative AdaptiveHub learning dashboard with classes and a learning path"
+          : "Illustrative Crest workspace connecting clients, delivery, and revenue"
+      }
+    >
+      <div className="browser-frame">
+        <div className="browser-bar">
+          <span className="browser-dots">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span>
+            {learning ? "AdaptiveHub / My learning" : "Crest / Workspace"}
+          </span>
+          <ArrowUpRight size={14} />
+        </div>
+        <div className="product-layout">
+          <div className="product-sidebar">
+            <b className="product-logo">{learning ? "a↗" : "crest."}</b>
+            {(learning
+              ? [
+                  "Overview",
+                  "My classes",
+                  "Learning path",
+                  "Library",
+                  "Messages",
+                ]
+              : ["Workspace", "Clients", "Projects", "Finance", "People"]
+            ).map((item, i) => (
+              <span key={item} className={i === 0 ? "active" : ""}>
+                <i />
+                {item}
+              </span>
+            ))}
+            <small>
+              {learning
+                ? "A little progress, every day."
+                : "Everything, working together."}
+            </small>
+          </div>
+          <div className="product-content">
+            <div className="product-topline">
+              <span>
+                {learning ? "YOUR LEARNING SPACE" : "THE BIG PICTURE"}
+              </span>
+              <span>◉</span>
+            </div>
+            <h4>
+              {learning
+                ? "Keep your curiosity going."
+                : "Good work starts here."}
+            </h4>
+            <p>
+              {learning
+                ? "Your next discovery is just around the corner."
+                : "A clearer view of what’s next."}
+            </p>
+            <div className="product-banner">
+              <span>
+                {learning ? "Your learning path" : "Client relationships"}
+                <strong>
+                  {learning
+                    ? "Small steps. Big ideas."
+                    : "Connected from day one."}
+                </strong>
+                <button tabIndex={-1} aria-hidden="true" disabled>
+                  {learning ? "Continue learning" : "Explore workspace"} ↗
+                </button>
+              </span>
+              <span className="banner-orbit" aria-hidden="true">
+                ✳
+              </span>
+            </div>
+            <div className="product-heading">
+              {learning
+                ? "Pick up where you left off"
+                : "Your workspace, connected"}
+              <ArrowUpRight size={14} />
+            </div>
+            <div className="product-tiles">
+              {(learning
+                ? ["Discover", "Practice", "Master"]
+                : ["Client records", "Delivery", "Revenue"]
+              ).map((item, index) => (
+                <div key={item}>
+                  <span className={`tile-art tile-${index}`}>
+                    {["↗", "✳", "◉"][index]}
+                  </span>
+                  <b>{item}</b>
+                  <small>
+                    {learning
+                      ? [
+                          "Explore new concepts",
+                          "Build your confidence",
+                          "Make progress visible",
+                        ][index]
+                      : [
+                          "One shared view",
+                          "Keep things moving",
+                          "Follow the full picture",
+                        ][index]}
+                  </small>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="floating-label">
+        {learning
+          ? "Built for the way you learn."
+          : "The details make the difference."}
+        <span>Web + mobile + everything behind it</span>
+      </div>
+      <span className="scene-label">
+        Interface illustration · Product capabilities from project documentation
       </span>
     </div>
   );
@@ -72,16 +279,23 @@ function ProjectVisual({ project }: { project: ProjectInterface }) {
 export default function App() {
   const [filter, setFilter] = useState("All work");
   const [query, setQuery] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [creativeTab, setCreativeTab] = useState("Art");
-  const [artCount, setArtCount] = useState(8);
+  const [artCount, setArtCount] = useState(6);
   const [selectedProject, setSelectedProject] =
     useState<ProjectInterface | null>(null);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [dancing, setDancing] = useState(false);
+  const [motion, setMotion] = useState(
+    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const [activeStory, setActiveStory] = useState(0);
   const projectDialog = useRef<HTMLDialogElement>(null);
   const artDialog = useRef<HTMLDialogElement>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const danceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
 
@@ -101,7 +315,45 @@ export default function App() {
       document.body.style.overflow = overflow;
     };
   }, [selectedProject, lightbox]);
-  useEffect(() => () => clearTimeout(copyTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(copyTimer.current);
+      clearTimeout(danceTimer.current);
+    },
+    [],
+  );
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting)
+            setActiveStory(Number((entry.target as HTMLElement).dataset.story));
+        });
+      },
+      { rootMargin: "-30% 0px -35% 0px", threshold: 0 },
+    );
+    document
+      .querySelectorAll("[data-story]")
+      .forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08 },
+    );
+    document
+      .querySelectorAll(".reveal")
+      .forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
 
   const visibleProjects = projects.filter((project) => {
     const categories =
@@ -118,7 +370,13 @@ export default function App() {
         .includes(query.toLowerCase().trim())
     );
   });
-
+  function dance() {
+    if (!motion) return;
+    setDancing(false);
+    requestAnimationFrame(() => setDancing(true));
+    clearTimeout(danceTimer.current);
+    danceTimer.current = setTimeout(() => setDancing(false), 1700);
+  }
   async function copyEmail() {
     try {
       await navigator.clipboard.writeText("viernes.jhonlloydd@gmail.com");
@@ -131,142 +389,155 @@ export default function App() {
   }
 
   return (
-    <>
+    <div className={motion ? "portfolio motion-on" : "portfolio motion-off"}>
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <header className="site-header">
-        <a className="brand" href="#home" aria-label="Jhon Lloyd Viernes, home">
-          jlv<span>✳</span>
-        </a>
-        <nav
-          id="mobile-nav"
-          className={menuOpen ? "main-nav open" : "main-nav"}
-          aria-label="Main navigation"
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              setMenuOpen(false);
-              document
-                .querySelector<HTMLButtonElement>(".menu-toggle")
-                ?.focus();
-            }
-          }}
-        >
-          {[
-            ["Work", "#work"],
-            ["Background", "#background"],
-            ["Off the clock", "#creative"],
-          ].map(([label, href]) => (
-            <a key={href} href={href} onClick={() => setMenuOpen(false)}>
-              {label}
-            </a>
-          ))}
-        </nav>
-        <a
-          className="header-contact"
-          href="mailto:viernes.jhonlloydd@gmail.com"
-        >
-          Let’s talk <ArrowUpRight size={16} />
-        </a>
-        <button
-          className="icon-button menu-toggle"
-          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X /> : <Menu />}
-        </button>
-      </header>
-      <main id="main">
-        <section
-          className="hero page-width"
-          id="home"
-          aria-labelledby="hero-title"
-        >
-          <div className="hero-copy">
-            <p className="eyebrow">
-              <span className="status-dot" /> A developer. A maker. Always
-              curious.
-            </p>
+      <section
+        className="hero grid-surface"
+        id="home"
+        aria-labelledby="hero-title"
+      >
+        <header className="site-header">
+          <a
+            className="brand"
+            href="#home"
+            aria-label="Jhon Lloyd Viernes, home"
+          >
+            Jhon Lloyd Viernes<span>Software developer</span>
+          </a>
+          <a className="pill" href="#contact">
+            Get in touch <ArrowDown size={17} />
+          </a>
+        </header>
+        <div className="hero-main">
+          <div className="hero-text">
             <h1 id="hero-title">
-              Thoughtful code.
+              I build apps
               <br />
-              Useful things.
+              with a little
               <br />
-              <span>A little personality.</span>
+              <span>character.</span>
             </h1>
-            <p className="hero-description">
-              Hi, I’m <strong>Jhon Lloyd Viernes</strong>. I build mobile apps,
-              web experiences, and the systems behind them — with care for the
-              people using them.
-            </p>
-            <div className="hero-actions">
-              <a className="button primary" href="#work">
-                Explore my work <ArrowDown size={17} />
-              </a>
-              <a className="text-link" href="#background">
-                A bit about me <ArrowUpRight size={17} />
-              </a>
-            </div>
-            <div className="hero-note">
-              <Code2 size={16} />
-              <span>From Android tinkering to connected platforms.</span>
-            </div>
-          </div>
-          <div className="hero-portrait">
-            <div className="portrait-label">
-              <span className="status-dot" /> Behind the code
-            </div>
-            <img
-              src="/assets/images/profile.jpeg"
-              alt="Jhon Lloyd Viernes"
-              fetchPriority="high"
-              width="640"
-              height="720"
-            />
-            <span className="portrait-spark" aria-hidden="true">
-              ✳
-            </span>
-            <div className="portrait-caption">
-              <span>
-                Jhon Lloyd Viernes
-                <small>Software developer & curious human</small>
+            <a className="scroll-note" href="#intro">
+              <span className="scroll-icon">
+                <ArrowDown size={18} />
               </span>
-              <span className="caption-arrow">
-                <ArrowUpRight size={22} />
-              </span>
-            </div>
-            <div className="floating-note">
-              Made with care.<span>Always a work in progress.</span>
-            </div>
+              Scroll down. I’ll show you around.
+            </a>
           </div>
-        </section>
-        <div className="stack-strip">
-          <div className="page-width">
-            <span>My everyday toolkit</span>
-            <p>
-              Flutter <i>·</i> React <i>·</i> TypeScript <i>·</i> Laravel{" "}
-              <i>·</i> Next.js <i>·</i> Node.js
+          <div className="hero-character">
+            <p className="speech hero-speech">
+              Hey, I’m Jhon.
+              <br />I make things that <em>work.</em>
+              <span className="speech-star">✳</span>
             </p>
+            <Avatar dancing={dancing} onClick={dance} />
+            <span className="avatar-hint">Psst. Give me a click.</span>
           </div>
         </div>
+        <div className="hero-bottom">
+          <span>Mobile, web & everything behind it.</span>
+          <a href="#work">
+            Selected work <ArrowDown size={14} />
+          </a>
+        </div>
+      </section>
+      <main id="main">
+        <section className="intro-section grid-surface" id="intro">
+          <div className="intro-label">
+            <span className="dot" /> A quick introduction
+          </div>
+          <div>
+            <h2 className="intro-copy reveal">
+              I’m a software developer with a soft spot for{" "}
+              <span>mobile experiences</span> and the systems that make them
+              work.
+            </h2>
+            <p className="intro-detail">
+              From custom Android ROMs to connected school platforms, I’ve
+              always liked figuring out how things work — then making them a
+              little better. These days, that means Flutter, React, Laravel,
+              TypeScript, and a healthy amount of curiosity.
+            </p>
+            <nav className="inline-nav" aria-label="Explore portfolio">
+              <a href="#work">
+                Work <ArrowDown size={15} />
+              </a>
+              <a href="#background">
+                Background <ArrowDown size={15} />
+              </a>
+              <a href="#creative">
+                Off the clock <ArrowDown size={15} />
+              </a>
+            </nav>
+          </div>
+        </section>
         <section
-          className="work-section page-width section-space"
+          className={`project-tour grid-surface theme-${featured[activeStory].theme}`}
           id="work"
-          aria-labelledby="work-title"
+          aria-label="Selected project tour"
+        >
+          <aside className="tour-guide">
+            <div className="guide-inner">
+              <p className="speech" aria-live="polite">
+                {featured[activeStory].note}
+              </p>
+              <Avatar dancing={dancing} onClick={dance} />
+              <span className="tour-counter">
+                {String(activeStory + 1).padStart(2, "0")} / 03{" "}
+                <span>Keep scrolling ↓</span>
+              </span>
+            </div>
+          </aside>
+          <div className="tour-stories">
+            {featured.map((item, index) => (
+              <article
+                className="featured-project"
+                key={item.title}
+                data-story={index}
+              >
+                <div className="featured-header">
+                  <h2>{item.title}</h2>
+                  <button
+                    className="pill"
+                    onClick={() =>
+                      setSelectedProject(
+                        projects.find(
+                          (project) => project.title === item.title,
+                        )!,
+                      )
+                    }
+                  >
+                    View project <ArrowUpRight size={17} />
+                  </button>
+                </div>
+                <ProductScene kind={item.kind} />
+                <p className="featured-caption">
+                  {item.caption}
+                  <span>
+                    {projects
+                      .find((project) => project.title === item.title)!
+                      .stack.join(" / ")}
+                  </span>
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section
+          className="archive-section grid-surface"
+          id="all-work"
+          aria-labelledby="archive-title"
         >
           <div className="section-heading">
-            <div>
-              <p className="eyebrow">Ideas into interfaces</p>
-              <h2 id="work-title">
-                Things I’ve been building<span>.</span>
-              </h2>
-            </div>
+            <h2 id="archive-title">
+              All work<span>({projects.length})</span>
+            </h2>
             <p>
-              School platforms, everyday utilities,
+              Some for work. Some for fun.
               <br />
-              and a few things just for the fun of it.
+              All made with care.
             </p>
           </div>
           <div className="work-controls">
@@ -287,16 +558,14 @@ export default function App() {
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Find a project or stack…"
+                placeholder="Project or technology"
                 aria-label="Search projects"
               />
             </label>
           </div>
           <p className="results-count" role="status">
-            {visibleProjects.length} projects{" "}
-            {filter === "All work" && !query
-              ? "· Professional & personal work"
-              : "found"}
+            {visibleProjects.length} projects
+            {query ? ` matching “${query}”` : ""}
           </p>
           <div className="project-grid">
             {visibleProjects.map((project) => (
@@ -308,158 +577,139 @@ export default function App() {
                 >
                   <ProjectVisual project={project} />
                   <span className="cover-arrow">
-                    <ArrowUpRight size={20} />
+                    <ArrowUpRight size={24} />
                   </span>
                 </button>
-                <div className="project-meta">
-                  <span>{project.group ?? "Personal project"}</span>
-                  <span>{project.devices}</span>
-                </div>
                 <h3>
                   <button onClick={() => setSelectedProject(project)}>
                     {project.title}
-                    <ArrowUpRight size={19} />
+                    <span>{project.group ?? "Personal"}</span>
                   </button>
                 </h3>
                 <p>{project.description}</p>
-                <div className="tags">
-                  {project.stack.map((stack) => (
-                    <span key={stack}>{stack}</span>
-                  ))}
-                </div>
               </article>
             ))}
           </div>
           {visibleProjects.length === 0 && (
             <div className="empty-state">
-              <Search size={28} />
-              <h3>No projects found</h3>
-              <p>Try a different name, technology, or filter.</p>
+              <h3>No projects found.</h3>
+              <p>Try another name or technology.</p>
               <button
-                className="button secondary"
+                className="pill"
                 onClick={() => {
                   setFilter("All work");
                   setQuery("");
                 }}
               >
-                Reset filters
+                Reset filters <ArrowUpRight size={16} />
               </button>
             </div>
           )}
         </section>
         <section
-          className="background-section"
+          className="background-section grid-surface"
           id="background"
           aria-labelledby="background-title"
         >
-          <div className="page-width section-space">
-            <div className="section-heading">
+          <div className="background-heading">
+            <span className="section-label">A little context</span>
+            <h2 id="background-title">
+              Curiosity.
+              <br />
+              Then code.
+              <br />
+              <span>Repeat.</span>
+            </h2>
+            <img
+              className="background-photo"
+              src="/assets/images/profile.jpeg"
+              alt="Jhon Lloyd Viernes"
+              loading="lazy"
+            />
+            <p>
+              Somewhere between making things
+              <br />
+              and figuring things out.
+            </p>
+          </div>
+          <div className="background-content">
+            <p className="background-lead">
+              I started by modding games and tinkering with Android. Now I build
+              the interfaces, APIs, and workflows that connect entire products.
+            </p>
+            <div className="skill-groups">
               <div>
-                <p className="eyebrow">The person behind the projects</p>
-                <h2 id="background-title">
-                  Built on curiosity<span>.</span>
-                </h2>
+                <h3>On the screen</h3>
+                <p>
+                  Flutter / Dart / Kotlin / Jetpack Compose / React / Expo /
+                  Tailwind CSS
+                </p>
               </div>
-              <span className="section-doodle" aria-hidden="true">
-                ✳
-              </span>
+              <div>
+                <h3>Behind the scenes</h3>
+                <p>
+                  Laravel / Node.js / Next.js / Express / Fastify / MySQL /
+                  PostgreSQL / AI integrations
+                </p>
+              </div>
             </div>
-            <div className="background-grid">
-              <div className="about-copy">
-                <h3>It started with “what if?”</h3>
-                <p>
-                  Modding GTA and building custom Android ROMs in high school
-                  turned curiosity into a love for making software. Today, that
-                  same instinct takes me from mobile interfaces to backend
-                  services and full-stack platforms.
-                </p>
-                <p>
-                  My work spans adaptive learning, library systems, school
-                  operations, payments, and real-time experiences. I care about
-                  clear interfaces, dependable data flows, and making complex
-                  workflows feel approachable.
-                </p>
-                <div className="skill-groups">
-                  <div>
-                    <span>Interfaces & mobile</span>
-                    <p>
-                      Flutter · Dart · Kotlin · Jetpack Compose · React · Expo ·
-                      Tailwind CSS
-                    </p>
-                  </div>
-                  <div>
-                    <span>Behind the scenes</span>
-                    <p>
-                      Laravel · Node.js · Next.js · Express · Fastify · MySQL ·
-                      PostgreSQL · AI integrations
-                    </p>
-                  </div>
+            <h3 className="background-subtitle">Experience</h3>
+            <details className="experience-entry" open>
+              <summary>
+                <span>
+                  AdaptiveHub<small>Full-stack & mobile development</small>
+                </span>
+                <span>Project work</span>
+              </summary>
+              <p>
+                Connected school and business products across web, mobile, and
+                backend services: LMS, Library, Crest, AdaptivePay, attendance,
+                scheduling, conferencing, and AI services.
+              </p>
+            </details>
+            {[...experience].reverse().map((item) => (
+              <details
+                className="experience-entry"
+                key={item.position + item.period}
+              >
+                <summary>
+                  <span>{item.position}</span>
+                  <span>{item.period}</span>
+                </summary>
+                <p>{item.description}</p>
+                {item.details && (
+                  <ul>
+                    {item.details.map((detail) => (
+                      <li key={detail}>{detail}</li>
+                    ))}
+                  </ul>
+                )}
+                <div className="tags">
+                  {item.skills.map((skill) => (
+                    <span key={skill}>{skill}</span>
+                  ))}
                 </div>
-                <a
-                  className="text-link"
-                  href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Connect on LinkedIn <ArrowUpRight size={16} />
-                </a>
+              </details>
+            ))}
+            <h3 className="background-subtitle">Education</h3>
+            {education.map((item) => (
+              <div className="education-entry" key={item.school}>
+                <span>{item.date}</span>
+                <h4>{item.degree}</h4>
+                <p>{item.school}</p>
               </div>
-              <div className="timeline">
-                <h3>Experience & education</h3>
-                <article className="timeline-item">
-                  <span className="timeline-dot" />
-                  <p className="timeline-label">AdaptiveHub · Project work</p>
-                  <h4>Full-stack & mobile development</h4>
-                  <p>
-                    Connected school and business products across web, mobile,
-                    and backend services. Work includes LMS and library
-                    experiences, Crest, AdaptivePay, attendance, scheduling,
-                    conferencing, and AI services.
-                  </p>
-                </article>
-                {[...experience].reverse().map((item) => (
-                  <article
-                    className="timeline-item"
-                    key={item.position + item.period}
-                  >
-                    <span className="timeline-dot" />
-                    <p className="timeline-label">{item.period}</p>
-                    <h4>{item.position}</h4>
-                    <p>{item.description}</p>
-                    <div className="tags">
-                      {item.skills.map((skill) => (
-                        <span key={skill}>{skill}</span>
-                      ))}
-                    </div>
-                  </article>
-                ))}
-                {education.map((item) => (
-                  <article
-                    className="timeline-item education-item"
-                    key={item.school}
-                  >
-                    <span className="timeline-dot" />
-                    <p className="timeline-label">{item.date} · Education</p>
-                    <h4>{item.degree}</h4>
-                    <p>{item.school}</p>
-                  </article>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </section>
         <section
-          className="page-width section-space creative-section"
+          className="creative-section grid-surface"
           id="creative"
           aria-labelledby="creative-title"
         >
           <div className="section-heading">
-            <div>
-              <p className="eyebrow">A different kind of making</p>
-              <h2 id="creative-title">
-                Off the clock<span>.</span>
-              </h2>
-            </div>
+            <h2 id="creative-title">
+              Off the clock<span>↗</span>
+            </h2>
             <div
               className="filters"
               role="group"
@@ -478,8 +728,7 @@ export default function App() {
             </div>
           </div>
           <p className="creative-intro">
-            Away from the editor, you’ll find me exploring art, getting lost in
-            music, or playing a game.
+            A few things from the other side of my brain.
           </p>
           {creativeTab === "Art" ? (
             <>
@@ -496,12 +745,9 @@ export default function App() {
                       width={image.width}
                       height={image.height}
                       loading="lazy"
-                      onError={(event) => {
-                        event.currentTarget.style.visibility = "hidden";
-                      }}
                     />
                     <span>
-                      Artwork {String(index + 1).padStart(2, "0")}{" "}
+                      Sketchbook / {String(index + 1).padStart(2, "0")}{" "}
                       <ArrowUpRight size={17} />
                     </span>
                   </button>
@@ -509,9 +755,9 @@ export default function App() {
               </div>
               {artCount < images.length && (
                 <button
-                  className="button secondary gallery-more"
+                  className="pill gallery-more"
                   onClick={() =>
-                    setArtCount((count) => Math.min(count + 8, images.length))
+                    setArtCount((count) => Math.min(count + 6, images.length))
                   }
                 >
                   More from the sketchbook <ArrowDown size={16} />
@@ -523,7 +769,8 @@ export default function App() {
               {playlists.map((playlist) => (
                 <div className="playlist" key={playlist.id}>
                   <h3>
-                    <Music2 size={17} /> {playlist.title}
+                    <Music2 size={17} />
+                    {playlist.title}
                   </h3>
                   <iframe
                     title={`SoundCloud playlist: ${playlist.title}`}
@@ -531,86 +778,76 @@ export default function App() {
                     height="166"
                     loading="lazy"
                     allow="autoplay"
-                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%23b33e63&auto_play=false&hide_related=true&show_comments=false`}
+                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%232261e9&auto_play=false&hide_related=true&show_comments=false`}
                   />
-                  <a
-                    className="text-link"
-                    target="_blank"
-                    rel="noreferrer"
-                    href={`https://soundcloud.com/mirimomekiku/sets`}
-                  >
-                    Listen on SoundCloud <ArrowUpRight size={15} />
-                  </a>
                 </div>
               ))}
             </div>
           )}
         </section>
-        <section className="contact-section page-width" id="contact">
-          <span className="contact-spark" aria-hidden="true">
-            ✳
-          </span>
-          <p className="eyebrow">Have something in mind?</p>
-          <h2>
-            Let’s make something
-            <br />
-            <em>worth using.</em>
-          </h2>
-          <p>
-            A project, a collaboration, or a simple hello.
-            <br />
-            I’d love to hear from you.
-          </p>
-          <div className="contact-actions">
-            <a
-              className="button primary"
-              href="mailto:viernes.jhonlloydd@gmail.com"
-            >
-              Get in touch <ArrowUpRight size={18} />
+        <section className="contact-section grid-surface" id="contact">
+          <div className="contact-top">
+            <p>Got something in mind?</p>
+            <a href="#home" className="top-link">
+              Back to top <ArrowUp size={17} />
             </a>
-            <button
-              className="text-link"
-              onClick={copyEmail}
-              aria-label={copied ? "Email copied!" : "Copy email address"}
-            >
-              {copied ? <Check size={16} /> : <Mail size={16} />}
-              <span role="status">
-                {copied ? "Email copied!" : "Copy email address"}
-              </span>
-            </button>
+          </div>
+          <h2>
+            Let’s make
+            <br />
+            <span>it happen.</span>
+          </h2>
+          <button
+            className="email-button"
+            onClick={copyEmail}
+            aria-label={copied ? "Email copied!" : "Copy email address"}
+          >
+            <span>viernes.jhonlloydd@gmail.com</span>
+            {copied ? <Check /> : <ArrowUpRight />}
+            <small role="status">
+              {copied ? "Copied. Talk soon!" : "Click to copy. Say hello."}
+            </small>
+          </button>
+          <div className="contact-bottom">
+            <p>
+              Jhon Lloyd Viernes
+              <br />
+              <span>Software developer & curious human.</span>
+            </p>
+            <div>
+              <a href="mailto:viernes.jhonlloydd@gmail.com">
+                <Mail size={16} /> Email
+              </a>
+              <a
+                href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Linkedin size={16} /> LinkedIn
+              </a>
+              <a
+                href="https://github.com/dlord213"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Github size={16} /> GitHub
+              </a>
+            </div>
+            <span>© {new Date().getFullYear()}</span>
           </div>
         </section>
       </main>
-      <footer className="site-footer page-width">
-        <p>
-          © {new Date().getFullYear()} Jhon Lloyd Viernes
-          <span>Crafted with curiosity & care.</span>
-        </p>
-        <div>
-          <a
-            href="https://github.com/dlord213"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub"
-          >
-            <Github size={19} />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn"
-          >
-            <Linkedin size={19} />
-          </a>
-          <a href="mailto:viernes.jhonlloydd@gmail.com" aria-label="Email">
-            <Mail size={19} />
-          </a>
-          <a className="back-top" href="#home">
-            Back to top ↑
-          </a>
-        </div>
-      </footer>
+      <button
+        className="motion-toggle"
+        aria-label={motion ? "Pause animations" : "Enable animations"}
+        aria-pressed={!motion}
+        onClick={() => {
+          setMotion(!motion);
+          setDancing(false);
+        }}
+      >
+        {motion ? <Pause size={17} /> : <Play size={17} />}
+      </button>
       <dialog
         ref={projectDialog}
         className="project-dialog"
@@ -633,8 +870,8 @@ export default function App() {
             </button>
             <ProjectVisual project={selectedProject} />
             <div className="dialog-content">
-              <p className="eyebrow">
-                {selectedProject.group ?? "Personal project"} ·{" "}
+              <p className="section-label">
+                {selectedProject.group ?? "Personal project"} /{" "}
                 {selectedProject.devices}
               </p>
               <h2 id="project-dialog-title">{selectedProject.title}</h2>
@@ -651,27 +888,30 @@ export default function App() {
                   <span key={stack}>{stack}</span>
                 ))}
               </div>
-              {selectedProject.link ? (
-                <a
-                  className="button primary"
-                  href={selectedProject.link}
-                  target="_blank"
-                  rel="noreferrer"
+              <div className="dialog-actions">
+                {selectedProject.link && (
+                  <a
+                    className="pill dark-pill"
+                    href={selectedProject.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Visit project <ArrowUpRight size={16} />
+                  </a>
+                )}
+                <button
+                  className="pill"
+                  onClick={() => setSelectedProject(null)}
                 >
-                  Visit project <ArrowUpRight size={16} />
-                </a>
-              ) : (
+                  Back to projects <ArrowUpRight size={16} />
+                </button>
+              </div>
+              {!selectedProject.link && (
                 <p className="project-access">
                   Professional project · Public source and demo links aren’t
                   listed.
                 </p>
               )}
-              <button
-                className="button secondary"
-                onClick={() => setSelectedProject(null)}
-              >
-                Back to projects
-              </button>
             </div>
           </>
         )}
@@ -732,6 +972,6 @@ export default function App() {
           </>
         )}
       </dialog>
-    </>
+    </div>
   );
 }
