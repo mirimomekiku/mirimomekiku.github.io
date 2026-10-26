@@ -1,54 +1,46 @@
-# React + TypeScript + Vite
+﻿# Jhon Lloyd Viernes — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive React + TypeScript portfolio with searchable project work, professional background, artwork, and music.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```sh
+npm ci
+npm run dev
+npm run build
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The production output is `dist/`. GitHub Pages publishes from the workflow in `.github/workflows` when `main` is pushed.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Content
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- `src/types/projects.ts`: project descriptions, technology tags, filters, and optional external links.
+- `src/types/experience.ts`: professional and freelance background.
+- `src/types/education.ts`: education history.
+- `src/types/images.ts`: existing artwork collection.
+- `src/App.tsx`: layout, project search, native accessible dialogs, gallery, and music.
+- `globals.css`: responsive styling, focus states, and reduced-motion support.
+
+Project covers for the AdaptiveHub work are illustrative identity treatments, not product screenshots. External source/demo links are optional; professional projects without a verified public link open an informational dialog.
+
+## AdaptiveHub content review
+
+The October 2026 update draws on README, PRODUCT, package manifests, and relevant routes in the sibling `../adaptivehub` workspace. No private source, operational configuration, credentials, or customer records are copied into this portfolio.
+
+| Portfolio project       | Source folders                                                    |
+| ----------------------- | ----------------------------------------------------------------- |
+| AdaptiveHub LMS         | `main-hub-web`, `hub-web`, `hub-mobile`                           |
+| Adaptive Library        | `library-web`, `library-mobile`                                   |
+| Crest                   | `Crest` (web and mobile)                                          |
+| AdaptivePay             | `adaptive-pay`                                                    |
+| Adaptive Station        | `adaptive-station`, `adaptive-station-mobile`                     |
+| EDUCENTRA               | `educentra.ai`, with `educentra` as its earlier Laravel reference |
+| Adaptive Human Resource | `calendar`                                                        |
+| AdaptiveHub Meet        | `adaptivehub-meet`, with `livekit` as supporting infrastructure   |
+| AdaptiveHub AI          | `hub-ai`                                                          |
+| KAWAY Mobile            | `kaway-mobile`                                                    |
+| Oronikola               | `oronikola-web`                                                   |
+| Help Center             | `help-center` (application foundation only)                       |
+
+Duplicate working copies, datasets, documentation, build-only folders, scripts, and infrastructure are represented under their parent products rather than listed as separate completed products. Background text does not invent employment dates or measured outcomes. Existing education and employment dates are retained from the original data.

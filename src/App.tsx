@@ -1,415 +1,737 @@
-import ReactLenis from "lenis/react";
-import projects from "./types/projects";
+﻿import { useEffect, useRef, useState } from "react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Code2,
+  Github,
+  Linkedin,
+  Mail,
+  Menu,
+  Music2,
+  Search,
+  X,
+} from "lucide-react";
+import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
+import experience from "./types/experience";
 import images from "./types/images";
 
-import { SparklesText } from "./component/sparkle_text";
-import { Highlighter } from "./component/highlighter";
-import { BubbleBackground } from "./component/bubble_background";
-import { RetroGrid } from "./component/retro_grid";
-import {
-  Mail,
-  Linkedin,
-  Github,
-  Briefcase,
-  User2,
-  GalleryHorizontal,
-  Music,
-} from "lucide-react";
-import { useState, useEffect } from "react";
+const filters = ["All work", "Web", "Mobile", "AI & systems"];
+const playlists = [
+  { id: "1852158159", title: ". untitled ." },
+  { id: "1653426820", title: "[ 1 ]" },
+  { id: "1447603840", title: "- self" },
+  { id: "1440835774", title: "MAY 18." },
+];
+
+function ProjectVisual({ project }: { project: ProjectInterface }) {
+  if (project.imageSrc)
+    return (
+      <img
+        className="project-image"
+        src={project.imageSrc}
+        alt={`${project.title} application preview`}
+        loading="lazy"
+      />
+    );
+  return (
+    <div className={`project-visual ${project.color}`} aria-hidden="true">
+      <div className="visual-grid" />
+      <span className="visual-wordmark">
+        {project.mark}
+        <span>✳</span>
+      </span>
+      <div className="visual-window">
+        <div className="window-dots">
+          <i />
+          <i />
+          <i />
+        </div>
+        <div className="window-content">
+          <span />
+          <span />
+          <span />
+          <div>
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+        </div>
+      </div>
+      <span className="visual-caption">
+        {project.title} <ArrowUpRight size={14} />
+      </span>
+    </div>
+  );
+}
 
 export default function App() {
-  const [tabIndex, setTabIndex] = useState(0);
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [filter, setFilter] = useState("All work");
+  const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [creativeTab, setCreativeTab] = useState("Art");
+  const [artCount, setArtCount] = useState(8);
+  const [selectedProject, setSelectedProject] =
+    useState<ProjectInterface | null>(null);
+  const [lightbox, setLightbox] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+  const projectDialog = useRef<HTMLDialogElement>(null);
+  const artDialog = useRef<HTMLDialogElement>(null);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
-    if (lightboxIndex === null && !profileOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setLightboxIndex(null);
-        setProfileOpen(false);
-      }
-      if (lightboxIndex !== null) {
-        if (e.key === "ArrowLeft") setLightboxIndex((i) => (i! - 1 + images.length) % images.length);
-        if (e.key === "ArrowRight") setLightboxIndex((i) => (i! + 1) % images.length);
-      }
+    if (selectedProject) projectDialog.current?.showModal();
+    else projectDialog.current?.close();
+  }, [selectedProject]);
+  useEffect(() => {
+    if (lightbox !== null) artDialog.current?.showModal();
+    else artDialog.current?.close();
+  }, [lightbox]);
+  useEffect(() => {
+    if (!selectedProject && lightbox === null) return;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = overflow;
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [lightboxIndex, profileOpen]);
+  }, [selectedProject, lightbox]);
+  useEffect(() => () => clearTimeout(copyTimer.current), []);
 
-  const tabClass = (index: number) =>
-    `cursor-pointer transition-all duration-300 rounded-full p-3 ${
-      tabIndex === index
-        ? "bg-rose-300 text-white shadow-lg shadow-rose-300/30 scale-110"
-        : "text-rose-400 hover:text-rose-600 hover:bg-rose-100"
-    }`;
+  const visibleProjects = projects.filter((project) => {
+    const categories =
+      project.category ??
+      ["Web", "Mobile"].filter((category) =>
+        category === "Web"
+          ? project.devices.includes("Web")
+          : /Android|Windows|Linux/.test(project.devices),
+      );
+    return (
+      (filter === "All work" || categories.includes(filter)) &&
+      `${project.title} ${project.description} ${project.stack.join(" ")} ${project.group ?? "Personal"}`
+        .toLowerCase()
+        .includes(query.toLowerCase().trim())
+    );
+  });
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText("viernes.jhonlloydd@gmail.com");
+      setCopied(true);
+      clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setCopied(false), 2500);
+    } catch {
+      window.location.href = "mailto:viernes.jhonlloydd@gmail.com";
+    }
+  }
 
   return (
     <>
-      <ReactLenis root />
-      <BubbleBackground />
-      <RetroGrid
-        className="z-[1]"
-        angle={65}
-        cellSize={40}
-        opacity={0.12}
-        lightLineColor="rgba(244,114,182,0.4)"
-      />
-
-      <main className="flex flex-col min-h-screen relative z-10">
-        {/* Mobile Header */}
-        <header className="flex flex-col items-center gap-4 pt-12 pb-6 px-6 md:hidden">
-          <div className="relative cursor-pointer" onClick={() => setProfileOpen(true)}>
-            <img
-              src="./assets/images/profile.jpeg"
-              className="w-28 h-28 rounded-full object-cover border-4 border-rose-300 shadow-xl shadow-rose-300/30 hover:scale-105 transition-transform duration-300"
-              alt="Profile"
-            />
-            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-400 rounded-full border-4 border-white flex items-center justify-center">
-              <span className="text-white text-xs">✦</span>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
+      <header className="site-header">
+        <a className="brand" href="#home" aria-label="Jhon Lloyd Viernes, home">
+          jlv<span>✳</span>
+        </a>
+        <nav
+          id="mobile-nav"
+          className={menuOpen ? "main-nav open" : "main-nav"}
+          aria-label="Main navigation"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setMenuOpen(false);
+              document
+                .querySelector<HTMLButtonElement>(".menu-toggle")
+                ?.focus();
+            }
+          }}
+        >
+          {[
+            ["Work", "#work"],
+            ["Background", "#background"],
+            ["Off the clock", "#creative"],
+          ].map(([label, href]) => (
+            <a key={href} href={href} onClick={() => setMenuOpen(false)}>
+              {label}
+            </a>
+          ))}
+        </nav>
+        <a
+          className="header-contact"
+          href="mailto:viernes.jhonlloydd@gmail.com"
+        >
+          Let’s talk <ArrowUpRight size={16} />
+        </a>
+        <button
+          className="icon-button menu-toggle"
+          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+      </header>
+      <main id="main">
+        <section
+          className="hero page-width"
+          id="home"
+          aria-labelledby="hero-title"
+        >
+          <div className="hero-copy">
+            <p className="eyebrow">
+              <span className="status-dot" /> A developer. A maker. Always
+              curious.
+            </p>
+            <h1 id="hero-title">
+              Thoughtful code.
+              <br />
+              Useful things.
+              <br />
+              <span>A little personality.</span>
+            </h1>
+            <p className="hero-description">
+              Hi, I’m <strong>Jhon Lloyd Viernes</strong>. I build mobile apps,
+              web experiences, and the systems behind them — with care for the
+              people using them.
+            </p>
+            <div className="hero-actions">
+              <a className="button primary" href="#work">
+                Explore my work <ArrowDown size={17} />
+              </a>
+              <a className="text-link" href="#background">
+                A bit about me <ArrowUpRight size={17} />
+              </a>
+            </div>
+            <div className="hero-note">
+              <Code2 size={16} />
+              <span>From Android tinkering to connected platforms.</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-rose-800">Jhon Lloyd Viernes</h1>
-          <p className="text-rose-500 text-sm">Software Developer</p>
-          <div className="flex flex-row gap-4">
-            <a target="_blank" href="mailto:viernes.jhonlloydd@gmail.com" className="p-2 rounded-full bg-rose-100 text-rose-500 hover:bg-rose-200 transition-colors">
-              <Mail size={20} />
-            </a>
-            <a target="_blank" href="https://www.linkedin.com/in/jhon-lloyd-viernes/" className="p-2 rounded-full bg-rose-100 text-rose-500 hover:bg-rose-200 transition-colors">
-              <Linkedin size={20} />
-            </a>
-            <a target="_blank" href="https://github.com/dlord213" className="p-2 rounded-full bg-rose-100 text-rose-500 hover:bg-rose-200 transition-colors">
-              <Github size={20} />
-            </a>
+          <div className="hero-portrait">
+            <div className="portrait-label">
+              <span className="status-dot" /> Behind the code
+            </div>
+            <img
+              src="/assets/images/profile.jpeg"
+              alt="Jhon Lloyd Viernes"
+              fetchPriority="high"
+              width="640"
+              height="720"
+            />
+            <span className="portrait-spark" aria-hidden="true">
+              ✳
+            </span>
+            <div className="portrait-caption">
+              <span>
+                Jhon Lloyd Viernes
+                <small>Software developer & curious human</small>
+              </span>
+              <span className="caption-arrow">
+                <ArrowUpRight size={22} />
+              </span>
+            </div>
+            <div className="floating-note">
+              Made with care.<span>Always a work in progress.</span>
+            </div>
           </div>
-        </header>
-
-        <div className="flex flex-col lg:grid lg:grid-cols-[0.35fr_1fr] gap-8 lg:gap-12 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 lg:my-12">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:flex flex-col items-center gap-5 py-10 px-6 lg:sticky lg:top-8 lg:min-h-[80vh] lg:max-h-[80vh] justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
-            {/* Floating decorations */}
-            <div className="absolute top-8 left-8 w-3 h-3 rounded-full bg-rose-300/40 float" style={{ animationDelay: "0s" }} />
-            <div className="absolute top-16 right-10 w-2 h-2 rounded-full bg-pink-400/50 float" style={{ animationDelay: "0.5s" }} />
-            <div className="absolute bottom-20 left-12 w-4 h-4 rounded-full bg-rose-200/50 float" style={{ animationDelay: "1s" }} />
-            <div className="absolute top-1/3 right-6 w-2.5 h-2.5 rounded-full bg-rose-400/30 float" style={{ animationDelay: "1.5s" }} />
-
-            {/* Profile image with ring */}
-            <div className="relative mb-2 cursor-pointer group" onClick={() => setProfileOpen(true)}>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-rose-300 to-pink-400 animate-spin" style={{ animationDuration: "8s" }} />
-              <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white to-rose-50" />
-              <img
-                src="./assets/images/profile.jpeg"
-                className="relative w-36 h-36 2xl:w-48 2xl:h-48 rounded-full object-cover border-4 border-white shadow-xl shadow-rose-200/40 group-hover:scale-105 transition-transform duration-300"
-                alt="Profile"
+        </section>
+        <div className="stack-strip">
+          <div className="page-width">
+            <span>My everyday toolkit</span>
+            <p>
+              Flutter <i>·</i> React <i>·</i> TypeScript <i>·</i> Laravel{" "}
+              <i>·</i> Next.js <i>·</i> Node.js
+            </p>
+          </div>
+        </div>
+        <section
+          className="work-section page-width section-space"
+          id="work"
+          aria-labelledby="work-title"
+        >
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Ideas into interfaces</p>
+              <h2 id="work-title">
+                Things I’ve been building<span>.</span>
+              </h2>
+            </div>
+            <p>
+              School platforms, everyday utilities,
+              <br />
+              and a few things just for the fun of it.
+            </p>
+          </div>
+          <div className="work-controls">
+            <div className="filters" role="group" aria-label="Filter projects">
+              {filters.map((item) => (
+                <button
+                  key={item}
+                  aria-pressed={filter === item}
+                  onClick={() => setFilter(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            <label className="search">
+              <Search size={17} />
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Find a project or stack…"
+                aria-label="Search projects"
               />
-              <div className="absolute -bottom-1 -right-1 w-9 h-9 bg-green-400 rounded-full border-4 border-white flex items-center justify-center shadow-md">
-                <span className="text-white text-sm">✦</span>
+            </label>
+          </div>
+          <p className="results-count" role="status">
+            {visibleProjects.length} projects{" "}
+            {filter === "All work" && !query
+              ? "· Professional & personal work"
+              : "found"}
+          </p>
+          <div className="project-grid">
+            {visibleProjects.map((project) => (
+              <article className="project-card" key={project.title}>
+                <button
+                  className="project-cover"
+                  onClick={() => setSelectedProject(project)}
+                  aria-label={`Explore ${project.title}`}
+                >
+                  <ProjectVisual project={project} />
+                  <span className="cover-arrow">
+                    <ArrowUpRight size={20} />
+                  </span>
+                </button>
+                <div className="project-meta">
+                  <span>{project.group ?? "Personal project"}</span>
+                  <span>{project.devices}</span>
+                </div>
+                <h3>
+                  <button onClick={() => setSelectedProject(project)}>
+                    {project.title}
+                    <ArrowUpRight size={19} />
+                  </button>
+                </h3>
+                <p>{project.description}</p>
+                <div className="tags">
+                  {project.stack.map((stack) => (
+                    <span key={stack}>{stack}</span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+          {visibleProjects.length === 0 && (
+            <div className="empty-state">
+              <Search size={28} />
+              <h3>No projects found</h3>
+              <p>Try a different name, technology, or filter.</p>
+              <button
+                className="button secondary"
+                onClick={() => {
+                  setFilter("All work");
+                  setQuery("");
+                }}
+              >
+                Reset filters
+              </button>
+            </div>
+          )}
+        </section>
+        <section
+          className="background-section"
+          id="background"
+          aria-labelledby="background-title"
+        >
+          <div className="page-width section-space">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">The person behind the projects</p>
+                <h2 id="background-title">
+                  Built on curiosity<span>.</span>
+                </h2>
+              </div>
+              <span className="section-doodle" aria-hidden="true">
+                ✳
+              </span>
+            </div>
+            <div className="background-grid">
+              <div className="about-copy">
+                <h3>It started with “what if?”</h3>
+                <p>
+                  Modding GTA and building custom Android ROMs in high school
+                  turned curiosity into a love for making software. Today, that
+                  same instinct takes me from mobile interfaces to backend
+                  services and full-stack platforms.
+                </p>
+                <p>
+                  My work spans adaptive learning, library systems, school
+                  operations, payments, and real-time experiences. I care about
+                  clear interfaces, dependable data flows, and making complex
+                  workflows feel approachable.
+                </p>
+                <div className="skill-groups">
+                  <div>
+                    <span>Interfaces & mobile</span>
+                    <p>
+                      Flutter · Dart · Kotlin · Jetpack Compose · React · Expo ·
+                      Tailwind CSS
+                    </p>
+                  </div>
+                  <div>
+                    <span>Behind the scenes</span>
+                    <p>
+                      Laravel · Node.js · Next.js · Express · Fastify · MySQL ·
+                      PostgreSQL · AI integrations
+                    </p>
+                  </div>
+                </div>
+                <a
+                  className="text-link"
+                  href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Connect on LinkedIn <ArrowUpRight size={16} />
+                </a>
+              </div>
+              <div className="timeline">
+                <h3>Experience & education</h3>
+                <article className="timeline-item">
+                  <span className="timeline-dot" />
+                  <p className="timeline-label">AdaptiveHub · Project work</p>
+                  <h4>Full-stack & mobile development</h4>
+                  <p>
+                    Connected school and business products across web, mobile,
+                    and backend services. Work includes LMS and library
+                    experiences, Crest, AdaptivePay, attendance, scheduling,
+                    conferencing, and AI services.
+                  </p>
+                </article>
+                {[...experience].reverse().map((item) => (
+                  <article
+                    className="timeline-item"
+                    key={item.position + item.period}
+                  >
+                    <span className="timeline-dot" />
+                    <p className="timeline-label">{item.period}</p>
+                    <h4>{item.position}</h4>
+                    <p>{item.description}</p>
+                    <div className="tags">
+                      {item.skills.map((skill) => (
+                        <span key={skill}>{skill}</span>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+                {education.map((item) => (
+                  <article
+                    className="timeline-item education-item"
+                    key={item.school}
+                  >
+                    <span className="timeline-dot" />
+                    <p className="timeline-label">{item.date} · Education</p>
+                    <h4>{item.degree}</h4>
+                    <p>{item.school}</p>
+                  </article>
+                ))}
               </div>
             </div>
-
-            {/* Name & role */}
-            <div className="text-center flex flex-col items-center gap-1">
-              <h1 className="text-2xl font-bold text-rose-800">Jhon Lloyd Viernes</h1>
-              <p className="text-rose-400 text-sm tracking-wide">Software Developer</p>
+          </div>
+        </section>
+        <section
+          className="page-width section-space creative-section"
+          id="creative"
+          aria-labelledby="creative-title"
+        >
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">A different kind of making</p>
+              <h2 id="creative-title">
+                Off the clock<span>.</span>
+              </h2>
             </div>
-
-            {/* Divider */}
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-rose-300 to-transparent" />
-
-            {/* Bio */}
-            <p className="text-rose-600/70 text-sm text-center leading-relaxed max-w-[260px]">
-              Crafting mobile & web experiences with a passion for clean code and accessible design.
-            </p>
-
-            {/* Social links */}
-            <div className="flex flex-row gap-3">
-              <a target="_blank" href="mailto:viernes.jhonlloydd@gmail.com" className="p-3 rounded-2xl bg-white/60 backdrop-blur-sm text-rose-400 hover:bg-rose-100 hover:text-rose-600 hover:scale-110 transition-all duration-300 shadow-sm border border-rose-100/50">
-                <Mail size={20} />
-              </a>
-              <a target="_blank" href="https://www.linkedin.com/in/jhon-lloyd-viernes/" className="p-3 rounded-2xl bg-white/60 backdrop-blur-sm text-rose-400 hover:bg-rose-100 hover:text-rose-600 hover:scale-110 transition-all duration-300 shadow-sm border border-rose-100/50">
-                <Linkedin size={20} />
-              </a>
-              <a target="_blank" href="https://github.com/dlord213" className="p-3 rounded-2xl bg-white/60 backdrop-blur-sm text-rose-400 hover:bg-rose-100 hover:text-rose-600 hover:scale-110 transition-all duration-300 shadow-sm border border-rose-100/50">
-                <Github size={20} />
-              </a>
+            <div
+              className="filters"
+              role="group"
+              aria-label="Creative interests"
+            >
+              {["Art", "Music"].map((tab) => (
+                <button
+                  key={tab}
+                  aria-pressed={creativeTab === tab}
+                  onClick={() => setCreativeTab(tab)}
+                >
+                  {tab === "Music" && <Music2 size={15} />}
+                  {tab}
+                </button>
+              ))}
             </div>
           </div>
-
-          {/* Content */}
-          <div className="flex flex-col gap-6 pb-24 lg:pb-12">
-            {/* Tab Navigation - Desktop: top sticky, Mobile: bottom floating */}
-            <div className="hidden lg:flex flex-row px-3 py-2 bg-white/60 backdrop-blur-md rounded-full w-fit gap-2 items-center shadow-lg shadow-rose-200/20 border border-rose-100/50 sticky top-2 z-30">
-              {[
-                { icon: User2, label: "About" },
-                { icon: Briefcase, label: "Education" },
-                { icon: GalleryHorizontal, label: "Arts" },
-                { icon: Music, label: "Music" },
-              ].map((tab, i) => (
-                <div
-                  key={i}
-                  className={`tooltip ${tabClass(i)}`}
-                  data-tip={tab.label}
-                  onClick={() => setTabIndex(i)}
+          <p className="creative-intro">
+            Away from the editor, you’ll find me exploring art, getting lost in
+            music, or playing a game.
+          </p>
+          {creativeTab === "Art" ? (
+            <>
+              <div className="art-grid">
+                {images.slice(0, artCount).map((image, index) => (
+                  <button
+                    key={image.src}
+                    onClick={() => setLightbox(index)}
+                    aria-label={`View artwork ${index + 1}`}
+                  >
+                    <img
+                      src={image.src}
+                      alt={`Personal artwork ${index + 1}`}
+                      width={image.width}
+                      height={image.height}
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.style.visibility = "hidden";
+                      }}
+                    />
+                    <span>
+                      Artwork {String(index + 1).padStart(2, "0")}{" "}
+                      <ArrowUpRight size={17} />
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {artCount < images.length && (
+                <button
+                  className="button secondary gallery-more"
+                  onClick={() =>
+                    setArtCount((count) => Math.min(count + 8, images.length))
+                  }
                 >
-                  <tab.icon size={20} />
+                  More from the sketchbook <ArrowDown size={16} />
+                </button>
+              )}
+            </>
+          ) : (
+            <div className="music-grid">
+              {playlists.map((playlist) => (
+                <div className="playlist" key={playlist.id}>
+                  <h3>
+                    <Music2 size={17} /> {playlist.title}
+                  </h3>
+                  <iframe
+                    title={`SoundCloud playlist: ${playlist.title}`}
+                    width="100%"
+                    height="166"
+                    loading="lazy"
+                    allow="autoplay"
+                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%23b33e63&auto_play=false&hide_related=true&show_comments=false`}
+                  />
+                  <a
+                    className="text-link"
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://soundcloud.com/mirimomekiku/sets`}
+                  >
+                    Listen on SoundCloud <ArrowUpRight size={15} />
+                  </a>
                 </div>
               ))}
             </div>
-
-            {/* About Tab */}
-            {tabIndex === 0 && (
-              <>
-                <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <SparklesText>
-                    <h1 className="text-5xl sm:text-6xl lg:text-7xl text-center font-black leading-tight w-full">
-                      <span className="block lg:inline">SOFTWARE</span>{" "}
-                      <span className="block lg:inline">
-                        <Highlighter action="underline" animationDuration={1500}>
-                          <span className="text-rose-400">DEVELOPER</span>
-                        </Highlighter>
-                      </span>
-                    </h1>
-                  </SparklesText>
-                  <p className="text-rose-800/70 text-base sm:text-lg font-medium leading-relaxed text-center lg:text-left">
-                    From modding GTA and building custom Android ROMs in high
-                    school, my passion for tech runs deep. Nowadays, I focus
-                    primarily on mobile development and backend engineering, while
-                    maintaining a strong commitment to accessible design. Off the
-                    clock, I explore new tech, game, and enjoy music.
-                  </p>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="flex flex-col p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-rose-100/50 shadow-sm">
-                    <h1 className="text-3xl font-black text-rose-600">1+</h1>
-                    <p className="text-rose-900/50 text-xs font-medium tracking-wide">
-                      YEARS OF EXPERIENCE
-                    </p>
-                  </div>
-                  <div className="flex flex-col p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-rose-100/50 shadow-sm">
-                    <h1 className="text-3xl font-black text-rose-600">500K+</h1>
-                    <p className="text-rose-900/50 text-xs font-medium tracking-wide">
-                      LINES OF CODE
-                    </p>
-                  </div>
-                </div>
-
-                {/* Work */}
-                {/* <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <h1 className="text-xl font-bold text-rose-800 tracking-wide">
-                    CURRENTLY WORKING AT
-                  </h1>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="flex flex-col p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-rose-100/50 shadow-sm">
-                      <h1 className="text-lg font-bold text-rose-900">
-                        Antimony Technologies
-                      </h1>
-                      <p className="text-rose-500 text-sm">
-                        Mobile Developer (Flutter) / Backend Developer
-                      </p>
-                    </div>
-                    <div className="flex flex-col p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-rose-100/50 shadow-sm">
-                      <h1 className="text-lg font-bold text-rose-900">
-                        AdaptiveHub
-                      </h1>
-                      <p className="text-rose-500 text-sm">
-                        Full-stack Developer
-                      </p>
-                    </div>
-                  </div>
-                </div> */}
-
-                {/* Projects */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {projects.map((project, i) => (
-                    <a
-                      key={i}
-                      href={project.link}
-                      target="_blank"
-                      className="flex flex-col relative justify-center rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-rose-200/30 group"
-                    >
-                      <img
-                        src={project.imageSrc}
-                        className="w-full h-48 object-cover brightness-[0.4] group-hover:brightness-[0.5] transition-all duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h1 className="font-bold text-white text-xl">
-                          {project.title}
-                        </h1>
-                        <p className="text-white/60 text-xs">{project.devices}</p>
-                        <p className="text-white/50 text-xs mt-1 line-clamp-2">{project.description}</p>
-                        <div className="flex flex-row gap-1.5 items-center mt-2 flex-wrap">
-                          {project.stack.map((s, j) => (
-                            <p key={j} className="px-3 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs">
-                              {s}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-                    </a>
+          )}
+        </section>
+        <section className="contact-section page-width" id="contact">
+          <span className="contact-spark" aria-hidden="true">
+            ✳
+          </span>
+          <p className="eyebrow">Have something in mind?</p>
+          <h2>
+            Let’s make something
+            <br />
+            <em>worth using.</em>
+          </h2>
+          <p>
+            A project, a collaboration, or a simple hello.
+            <br />
+            I’d love to hear from you.
+          </p>
+          <div className="contact-actions">
+            <a
+              className="button primary"
+              href="mailto:viernes.jhonlloydd@gmail.com"
+            >
+              Get in touch <ArrowUpRight size={18} />
+            </a>
+            <button
+              className="text-link"
+              onClick={copyEmail}
+              aria-label={copied ? "Email copied!" : "Copy email address"}
+            >
+              {copied ? <Check size={16} /> : <Mail size={16} />}
+              <span role="status">
+                {copied ? "Email copied!" : "Copy email address"}
+              </span>
+            </button>
+          </div>
+        </section>
+      </main>
+      <footer className="site-footer page-width">
+        <p>
+          © {new Date().getFullYear()} Jhon Lloyd Viernes
+          <span>Crafted with curiosity & care.</span>
+        </p>
+        <div>
+          <a
+            href="https://github.com/dlord213"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub"
+          >
+            <Github size={19} />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LinkedIn"
+          >
+            <Linkedin size={19} />
+          </a>
+          <a href="mailto:viernes.jhonlloydd@gmail.com" aria-label="Email">
+            <Mail size={19} />
+          </a>
+          <a className="back-top" href="#home">
+            Back to top ↑
+          </a>
+        </div>
+      </footer>
+      <dialog
+        ref={projectDialog}
+        className="project-dialog"
+        aria-labelledby="project-dialog-title"
+        onCancel={() => setSelectedProject(null)}
+        onClose={() => setSelectedProject(null)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setSelectedProject(null);
+        }}
+      >
+        {selectedProject && (
+          <>
+            <button
+              className="dialog-close icon-button"
+              autoFocus
+              aria-label="Close project"
+              onClick={() => setSelectedProject(null)}
+            >
+              <X />
+            </button>
+            <ProjectVisual project={selectedProject} />
+            <div className="dialog-content">
+              <p className="eyebrow">
+                {selectedProject.group ?? "Personal project"} ·{" "}
+                {selectedProject.devices}
+              </p>
+              <h2 id="project-dialog-title">{selectedProject.title}</h2>
+              <p>{selectedProject.description}</p>
+              {selectedProject.highlights && (
+                <ul>
+                  {selectedProject.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
                   ))}
-                </div>
-              </>
-            )}
-
-            {/* Education Tab */}
-            {tabIndex === 1 && (
-              <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <h1 className="text-2xl font-bold text-rose-800">Education</h1>
-                <div className="flex flex-col gap-4">
-                  {education.map((e, i) => (
-                    <div key={i} className="flex flex-row gap-4 p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-rose-100/50 shadow-sm">
-                      <img
-                        src={e.imageSrc}
-                        className="w-12 h-12 lg:w-16 lg:h-16 object-contain shrink-0"
-                      />
-                      <div className="flex flex-col gap-1">
-                        <p className="font-bold text-base lg:text-lg text-rose-900">{e.degree}</p>
-                        <h1 className="font-medium text-sm text-rose-700">
-                          {e.school}
-                        </h1>
-                        <p className="text-xs text-rose-500 italic">
-                          {e.date}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Arts Tab */}
-            {tabIndex === 2 && (
-              <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {images.map((image, i) => (
-                    <img
-                      key={i}
-                      src={image.src}
-                      className="w-full h-full aspect-square object-cover rounded-2xl shadow-sm hover:shadow-lg hover:shadow-rose-200/30 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                      loading="lazy"
-                      onClick={() => setLightboxIndex(i)}
-                    />
-                  ))}
-                </div>
-
-                {/* Lightbox */}
-                {lightboxIndex !== null && (
-                  <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-                    onClick={() => setLightboxIndex(null)}
-                  >
-                    <button
-                      className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-light z-10"
-                      onClick={() => setLightboxIndex(null)}
-                    >
-                      ×
-                    </button>
-                    <button
-                      className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-3xl p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setLightboxIndex((lightboxIndex - 1 + images.length) % images.length);
-                      }}
-                    >
-                      ‹
-                    </button>
-                    <img
-                      src={images[lightboxIndex].src}
-                      className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <button
-                      className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-3xl p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setLightboxIndex((lightboxIndex + 1) % images.length);
-                      }}
-                    >
-                      ›
-                    </button>
-                    <div className="absolute bottom-4 text-white/50 text-sm">
-                      {lightboxIndex + 1} / {images.length}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Music Tab */}
-            {tabIndex === 3 && (
-              <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                {[
-                  { url: "https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A1852158159", title: ". untitled ." },
-                  { url: "https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A1653426820", title: "[ 1 ]" },
-                  { url: "https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A1447603840", title: "- self" },
-                  { url: "https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A1440835774", title: "MAY 18." },
-                ].map((playlist, i) => (
-                  <div key={i} className="rounded-2xl overflow-hidden bg-white/50 backdrop-blur-sm border border-rose-100/50 shadow-sm p-3">
-                    <iframe
-                      width="100%"
-                      height="160"
-                      scrolling="no"
-                      frameBorder="no"
-                      allow="autoplay"
-                      src={`https://w.soundcloud.com/player/?url=${playlist.url}&color=%23ffb6c1&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
-                    />
-                    <div className="px-2 py-1">
-                      <p className="text-rose-500 text-xs">
-                        mirimomekiku · {playlist.title}
-                      </p>
-                    </div>
-                  </div>
+                </ul>
+              )}
+              <div className="tags">
+                {selectedProject.stack.map((stack) => (
+                  <span key={stack}>{stack}</span>
                 ))}
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Bottom Nav */}
-        <nav className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-row px-3 py-2 bg-white/70 backdrop-blur-xl rounded-full gap-2 items-center shadow-xl shadow-rose-300/20 border border-rose-100/50">
-          {[
-            { icon: User2, label: "About" },
-            { icon: Briefcase, label: "Education" },
-            { icon: GalleryHorizontal, label: "Arts" },
-            { icon: Music, label: "Music" },
-          ].map((tab, i) => (
-            <div
-              key={i}
-              className={`tooltip ${tabClass(i)}`}
-              data-tip={tab.label}
-              onClick={() => setTabIndex(i)}
-            >
-              <tab.icon size={20} />
+              {selectedProject.link ? (
+                <a
+                  className="button primary"
+                  href={selectedProject.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Visit project <ArrowUpRight size={16} />
+                </a>
+              ) : (
+                <p className="project-access">
+                  Professional project · Public source and demo links aren’t
+                  listed.
+                </p>
+              )}
+              <button
+                className="button secondary"
+                onClick={() => setSelectedProject(null)}
+              >
+                Back to projects
+              </button>
             </div>
-          ))}
-        </nav>
-
-        {/* Profile Hero */}
-        {profileOpen && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-            onClick={() => setProfileOpen(false)}
-          >
+          </>
+        )}
+      </dialog>
+      <dialog
+        ref={artDialog}
+        className="art-dialog"
+        aria-label="Artwork viewer"
+        onCancel={() => setLightbox(null)}
+        onClose={() => setLightbox(null)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setLightbox(null);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowLeft")
+            setLightbox(
+              (index) => ((index ?? 0) - 1 + images.length) % images.length,
+            );
+          if (event.key === "ArrowRight")
+            setLightbox((index) => ((index ?? 0) + 1) % images.length);
+        }}
+      >
+        {lightbox !== null && (
+          <>
             <button
-              className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-light z-10"
-              onClick={() => setProfileOpen(false)}
+              className="dialog-close icon-button"
+              aria-label="Close artwork"
+              autoFocus
+              onClick={() => setLightbox(null)}
             >
-              ×
+              <X />
             </button>
             <img
-              src="./assets/images/profile.jpeg"
-              className="max-w-full max-h-[85vh] rounded-3xl shadow-2xl object-contain"
-              onClick={(e) => e.stopPropagation()}
-              alt="Profile"
+              src={images[lightbox].src}
+              alt={`Personal artwork ${lightbox + 1}`}
             />
-          </div>
+            <div className="art-dialog-controls">
+              <button
+                className="icon-button"
+                aria-label="Previous artwork"
+                onClick={() =>
+                  setLightbox((lightbox - 1 + images.length) % images.length)
+                }
+              >
+                <ChevronLeft />
+              </button>
+              <span aria-live="polite">
+                {lightbox + 1} / {images.length}
+              </span>
+              <button
+                className="icon-button"
+                aria-label="Next artwork"
+                onClick={() => setLightbox((lightbox + 1) % images.length)}
+              >
+                <ChevronRight />
+              </button>
+            </div>
+          </>
         )}
-      </main>
+      </dialog>
     </>
   );
 }
