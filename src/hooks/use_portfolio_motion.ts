@@ -1,138 +1,74 @@
-import { useRef, type RefObject } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "../lib/animation";
+﻿import { useRef, type RefObject } from "react";
+import { gsap, useGSAP } from "../lib/animation";
 
 export function usePortfolioMotion(
   scope: RefObject<HTMLDivElement | null>,
   enabled: boolean,
-  onStoryChange: (index: number) => void,
 ) {
   const introPlayed = useRef(false);
-
   useGSAP(
     () => {
       const root = scope.current;
-      if (!root) return;
-
-      // Story state stays accurate with motion disabled and during native scrolling.
-      root
-        .querySelectorAll<HTMLElement>("[data-story]")
-        .forEach((story, index) => {
-          ScrollTrigger.create({
-            trigger: story,
-            start: "top 65%",
-            end: "bottom 35%",
-            onEnter: () => onStoryChange(index),
-            onEnterBack: () => onStoryChange(index),
-          });
-        });
-
-      if (!enabled) return;
+      if (!root || !enabled) return;
       if (!introPlayed.current) {
         introPlayed.current = true;
         gsap
           .timeline({ defaults: { ease: "power3.out" } })
-          .from(".site-header", { y: -16, opacity: 0, duration: 0.65 })
+          .from(".site-header", { opacity: 0, y: -10, duration: 0.65 })
+          .from(".hero-copy", { opacity: 0, y: 18, duration: 1 }, 0.15)
+          .from(".hero-widgets", { opacity: 0, y: 12, duration: 0.75 }, 0.3)
           .from(
-            ".hero-line-inner",
-            { yPercent: 110, duration: 1.1, stagger: 0.12 },
-            0.1,
-          )
-          .from(
-            ".hero-character .avatar img",
-            { y: 60, scale: 0.94, opacity: 0, duration: 1.1 },
-            0.25,
-          )
-          .from(".hero-speech", { y: 22, opacity: 0, duration: 0.7 }, 0.65)
-          .from(
-            ".scroll-note, .hero-bottom",
-            { y: 14, opacity: 0, duration: 0.6, stagger: 0.1 },
-            0.8,
+            ".hero-scroll, .scene-controls",
+            { opacity: 0, y: 8, duration: 0.6 },
+            0.6,
           );
       }
-
       gsap.utils
         .toArray<HTMLElement>(
-          ".intro-copy, .section-heading, .background-heading h2, .background-lead, .skill-groups, .contact-section h2, .email-button",
+          ".intro-section > h2, .intro-text, .section-meta, .about-intro, .skill-groups, .contact-heading > h2, .contact-grid",
           root,
         )
-        .forEach((element) =>
+        .forEach((element) => {
           gsap.from(element, {
-            y: 36,
+            y: 24,
             opacity: 0.2,
-            duration: 0.9,
+            duration: 0.85,
             ease: "power3.out",
-            scrollTrigger: { trigger: element, start: "top 92%", once: true },
-          }),
-        );
-
-      root
-        .querySelectorAll<HTMLElement>(".featured-project")
-        .forEach((story) => {
-          gsap.from(
-            story.querySelectorAll(
-              ".featured-header, .product-scene, .game-scene, .featured-caption",
-            ),
-            {
-              y: 48,
-              opacity: 0,
-              duration: 0.95,
-              stagger: 0.12,
-              ease: "power3.out",
-              scrollTrigger: { trigger: story, start: "top 85%", once: true },
-            },
-          );
+            scrollTrigger: { trigger: element, start: "top 93%", once: true },
+          });
         });
-
+      root.querySelectorAll<HTMLElement>(".case-media").forEach((element) => {
+        gsap.from(element, {
+          y: 32,
+          opacity: 0.2,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: element, start: "top 92%", once: true },
+        });
+      });
       const desktop = gsap.matchMedia();
       desktop.add("(min-width: 901px)", () => {
-        gsap.to(".hero-character", {
-          yPercent: 10,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.8,
-          },
+        root.querySelectorAll<HTMLElement>(".case-study").forEach((study) => {
+          const artwork = study.querySelector(
+            ".interface-window, .book-stack, .phone-frame",
+          );
+          if (artwork)
+            gsap.fromTo(
+              artwork,
+              { yPercent: 3 },
+              {
+                yPercent: -3,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: study,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 0.8,
+                },
+              },
+            );
         });
-        root
-          .querySelectorAll<HTMLElement>(".featured-project")
-          .forEach((story) => {
-            const label = story.querySelector(".floating-label");
-            if (label)
-              gsap.fromTo(
-                label,
-                { y: 18 },
-                {
-                  y: -18,
-                  ease: "none",
-                  scrollTrigger: {
-                    trigger: story,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: 0.8,
-                  },
-                },
-              );
-            const phone = story.querySelector(".game-screen");
-            if (phone)
-              gsap.fromTo(
-                phone,
-                { yPercent: 6 },
-                {
-                  yPercent: -6,
-                  ease: "none",
-                  scrollTrigger: {
-                    trigger: story,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: 0.8,
-                  },
-                },
-              );
-          });
       });
-
       return () => desktop.revert();
     },
     { scope, dependencies: [enabled], revertOnUpdate: true },

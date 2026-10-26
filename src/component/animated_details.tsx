@@ -6,11 +6,13 @@ export function AnimatedDetails({
   summary,
   children,
   open = false,
+  className = "experience-entry",
 }: {
   enabled: boolean;
   summary: ReactNode;
   children: ReactNode;
   open?: boolean;
+  className?: string;
 }) {
   const ref = useRef<HTMLDetailsElement>(null);
   const content = useRef<HTMLDivElement>(null);
@@ -54,7 +56,7 @@ export function AnimatedDetails({
 
   return (
     <details
-      className="experience-entry"
+      className={className}
       ref={ref}
       open={open}
       onToggle={() => ScrollTrigger.refresh()}

@@ -19,6 +19,71 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(() => expect(errors).toEqual([]));
 
+test("moodboard collections and archive views expose the same project catalog", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const collection = page.getByRole("group", { name: "Moodboard collection" });
+  await collection.getByRole("button", { name: "Work", exact: true }).click();
+  await expect(
+    page.getByRole("button", {
+      name: "Explore Adaptive Library from the moodboard",
+    }),
+  ).toBeVisible();
+  await expect(page.locator(".mood-photo")).toHaveCount(0);
+  await collection.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.locator(".mood-type")).toBeVisible();
+  await expect(page.locator(".mood-library")).toHaveCount(0);
+  await collection.getByRole("button", { name: "Mix", exact: true }).click();
+  await expect(page.locator(".mood-photo")).toBeVisible();
+  await page
+    .getByRole("group", { name: "Project view" })
+    .getByRole("button", { name: "Grid", exact: true })
+    .click();
+  await expect(page.locator(".project-card")).toHaveCount(19);
+  await expect(
+    page.locator(".project-card").first().locator(".project-cover"),
+  ).toBeVisible();
+  await page
+    .getByRole("group", { name: "Project view" })
+    .getByRole("button", { name: "Index", exact: true })
+    .click();
+  await expect(page.locator(".project-card")).toHaveCount(19);
+  await expect(
+    page.locator(".project-card").first().locator(".project-cover"),
+  ).not.toBeVisible();
+});
+
+test("mobile menu navigates and returns to native scrolling with reduced motion", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Navigation", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("link", { name: "Work", exact: true })
+    .click();
+  await expect(page.locator("#work")).toBeFocused();
+  await expect(page.locator("html")).not.toHaveClass(/lenis-stopped/);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("link", { name: "Contact", exact: true })
+    .click();
+  await expect(page.locator("#contact")).toBeFocused();
+  await expect(page.locator("html")).not.toHaveClass(/lenis/);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth > innerWidth,
+    ),
+  ).toBe(false);
+});
+
 test("smooth wheel and anchor navigation preserve destination focus", async ({
   page,
 }) => {
