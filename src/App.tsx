@@ -16,6 +16,16 @@ const verbs = [
   { word: "Debugging", font: "'VT323', monospace" },
   { word: "Wiring", font: "'Audiowide', sans-serif" },
 ];
+const appIcons = [
+  { name: "Flutter", src: "/assets/icons/flutter.svg" },
+  { name: "Kotlin", src: "/assets/icons/kotlin.svg" },
+  { name: "React", src: "/assets/icons/react.svg" },
+  { name: "Figma", src: "/assets/icons/figma.svg" },
+  { name: "Godot", src: "/assets/icons/godotengine.svg" },
+  { name: "GitHub", src: "/assets/icons/github.svg" },
+  { name: "Fedora", src: "/assets/icons/fedora.svg" },
+  { name: "Spotify", src: "/assets/icons/spotify.svg" },
+];
 const navItems = [
   { id: "work", label: "Work" },
   { id: "experience", label: "Experience" },
@@ -128,43 +138,7 @@ function TypewriterVerb() {
   );
 }
 
-const SCRAMBLE = "!<>-_\\/[]{}=+*^?#01";
 const prefersReduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/** Text decodes from random glyphs into the final string. */
-function Scramble({ text, delay = 400 }: { text: string; delay?: number }) {
-  const [out, setOut] = useState(() => text.replace(/\S/g, "·"));
-  useEffect(() => {
-    if (prefersReduced()) {
-      setOut(text);
-      return;
-    }
-    let frame = 0;
-    let timer: ReturnType<typeof setInterval> | undefined;
-    const start = setTimeout(() => {
-      timer = setInterval(() => {
-        frame++;
-        const done = Math.floor(frame / 2);
-        setOut(
-          text
-            .split("")
-            .map((c, i) =>
-              c === " " || i < done
-                ? c
-                : SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)],
-            )
-            .join(""),
-        );
-        if (done >= text.length) clearInterval(timer);
-      }, 40);
-    }, delay);
-    return () => {
-      clearTimeout(start);
-      clearInterval(timer);
-    };
-  }, [text, delay]);
-  return <>{out}</>;
-}
 
 /** Per-letter rise + blur-in, then a travelling sheen and gentle wave. */
 function Letters({ text, start = 0.4 }: { text: string; start?: number }) {
@@ -209,7 +183,7 @@ function Roller({ words }: { words: string[] }) {
   );
 }
 
-/** Drifting orbs, a panning dot grid, orbiting rings and floating glass glyph tiles. */
+/** A panning dot grid and floating glass tiles for the apps and tools I use daily. */
 function HeroBackdrop() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -222,27 +196,13 @@ function HeroBackdrop() {
     addEventListener("pointermove", move, { passive: true });
     return () => removeEventListener("pointermove", move);
   }, []);
-  const glyphs = ["</>", "{ }", "✦", "( )=>", "01", "npm", "git", "</"];
   return (
     <div className="backdrop" ref={ref} aria-hidden="true">
-      <div className="layer l1">
-        <i className="orb o1" />
-        <i className="orb o2" />
-        <i className="orb o3" />
-      </div>
       <div className="dots" />
-      <svg className="rings" viewBox="-200 -200 400 400">
-        <circle r="90" />
-        <circle r="140" />
-        <circle r="190" />
-        <circle className="sat s1" r="5" cx="90" />
-        <circle className="sat s2" r="4" cx="-140" />
-        <circle className="sat s3" r="6" cx="0" cy="190" />
-      </svg>
       <div className="layer l2">
-        {glyphs.map((g, n) => (
-          <span key={g} className={`tile glass t${n + 1}`}>
-            {g}
+        {appIcons.map(({ name, src }, n) => (
+          <span key={name} className={`tile glass t${n + 1}`}>
+            <img src={src} alt="" width="34" height="34" />
           </span>
         ))}
       </div>
@@ -421,9 +381,6 @@ export default function App() {
         <section className="hero" aria-labelledby="hero-title">
           <HeroBackdrop />
           <div className="hero-inner">
-            <p className="eyebrow glass" aria-hidden="true">
-              <Scramble text="mirimomekiku · software developer" />
-            </p>
             <h1 id="hero-title">
               <span className="sr-only">Building apps people love.</span>
               <span className="verb-line" aria-hidden="true">
@@ -440,7 +397,7 @@ export default function App() {
         </section>
 
         <section id="work" className="work" aria-labelledby="work-title">
-          <Typed id="work-title" text="Projects" font="'Caveat', cursive" />
+          <Typed id="work-title" text="Projects" font="var(--head)" />
           <div className="filters" role="group" aria-label="Filter projects">
             {filters.map((f) => (
               <button
@@ -460,7 +417,7 @@ export default function App() {
         </section>
 
         <section id="experience" className="block about" aria-labelledby="exp-title">
-          <Typed id="exp-title" text="Experience" font="'Special Elite', monospace" />
+          <Typed id="exp-title" text="Experience" font="var(--head)" />
           <div className="about-grid" data-reveal>
             <div className="about-copy">
               <p>
@@ -530,7 +487,7 @@ export default function App() {
           </ul>
         </section>
         <section id="art" className="block" aria-labelledby="art-title">
-          <Typed id="art-title" text="Art" font="'Gochi Hand', cursive" />
+          <Typed id="art-title" text="Art" font="var(--head)" />
           <p className="lede" data-reveal>
             Sketches and playlists, for a different kind of flow.
           </p>
@@ -581,7 +538,7 @@ export default function App() {
 
       <footer className="footer" id="contact">
         <div className="footer-hello">
-          <Typed text="Say hello" font="'Pacifico', cursive" className="script hello" />
+          <Typed text="Say hello" font="var(--head)" className="script hello" />
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
         </div>
         <div className="footer-lists">
