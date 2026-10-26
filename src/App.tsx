@@ -1,21 +1,13 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import {
-  ArrowDown,
   ArrowUpRight,
-  ArrowUp,
   Check,
   ChevronLeft,
   ChevronRight,
-  Github,
-  Linkedin,
-  Mail,
-  Music2,
   Search,
   X,
   Pause,
   Play,
-  Plus,
-  Code2,
 } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
@@ -23,12 +15,14 @@ import experience from "./types/experience";
 import images from "./types/images";
 import { SmoothScroll } from "./component/smooth_scroll";
 import { AnimatedDetails } from "./component/animated_details";
+import { AsciiName, AsciiPortrait } from "./component/ascii_identity";
 import { useAnimatedLayout } from "./hooks/use_animated_layout";
 import { useAnimatedDialog } from "./hooks/use_animated_dialog";
 import { usePortfolioMotion } from "./hooks/use_portfolio_motion";
 import { gsap, ScrollTrigger, useGSAP } from "./lib/animation";
-import { useLenis } from "lenis/react";
 
+const themes = ["phosphor", "violet", "amber", "ice"] as const;
+type Theme = (typeof themes)[number];
 const filters = ["All work", "Web", "Mobile", "AI & systems"];
 const playlists = [
   { id: "1852158159", title: ". untitled ." },
@@ -36,204 +30,19 @@ const playlists = [
   { id: "1447603840", title: "- self" },
   { id: "1440835774", title: "MAY 18." },
 ];
-const selected = [
-  {
-    title: "AdaptiveHub LMS",
-    label: "Learning, with a little more possibility.",
-    summary:
-      "A connected learning experience for students, teachers, and the teams supporting them. Adaptive practice, classroom tools, and everyday progress — across web and mobile.",
-    type: "lms",
-  },
-  {
-    title: "Adaptive Library",
-    label: "A new chapter for the school library.",
-    summary:
-      "From finding the right book to running the circulation desk. A shared platform for catalogs, borrowing, digital collections, and the people who use them.",
-    type: "library",
-  },
-  {
-    title: "Crest",
-    label: "Making the moving parts work together.",
-    summary:
-      "Client relationships, delivery, finance, HR, and payroll in one connected workspace. A clearer view of the work behind school technology.",
-    type: "crest",
-  },
-  {
-    title: "Checkpoint",
-    label: "Good games. One very long backlog.",
-    summary:
-      "A personal Android app for keeping track of what you’re playing, what you’ve finished, and the games you’ll definitely get around to. Eventually.",
-    type: "checkpoint",
-  },
-];
-
-function Flower({ className = "" }: { className?: string }) {
-  return (
-    <span className={`flower ${className}`} aria-hidden="true">
-      {Array.from({ length: 8 }, (_, index) => (
-        <i key={index} style={{ rotate: `${index * 45}deg` }} />
-      ))}
-      <b>✳</b>
-    </span>
-  );
-}
-
-function ProjectArtwork({
-  project,
-  feature = false,
-}: {
-  project: ProjectInterface;
-  feature?: boolean;
-}) {
-  if (project.imageSrc && !feature)
-    return (
-      <img
-        className="project-image"
-        src={project.imageSrc}
-        alt={`${project.title} application preview`}
-        loading="lazy"
-      />
-    );
-  if (feature && project.title === "Checkpoint")
-    return (
-      <div className="case-art checkpoint-art">
-        <span className="case-art-label">A PERSONAL SIDE QUEST</span>
-        <div className="checkpoint-word">
-          PLAY.
-          <br />
-          <span>LOG.</span>
-          <br />
-          REPEAT.
-        </div>
-        <div className="phone-frame">
-          <span />
-          <img
-            src="/assets/projects/playlog/1.jpg"
-            alt="Checkpoint game backlog application"
-            loading="lazy"
-          />
-        </div>
-        <span className="case-art-footnote">
-          Kotlin / Jetpack Compose / Android
-        </span>
-      </div>
-    );
-  const library = project.title === "Adaptive Library";
-  const crest = project.title === "Crest";
-  return (
-    <div
-      className={`project-artwork ${project.color ?? "blue"} ${feature ? "feature-artwork" : ""} ${library ? "library-artwork" : ""} ${crest ? "crest-artwork" : ""}`}
-      aria-hidden="true"
-    >
-      <span className="artwork-caption">
-        {project.group ?? "Personal"} / {project.devices}
-      </span>
-      <div className="artwork-wordmark">
-        {feature ? (
-          library ? (
-            <>
-              A good
-              <br />
-              place to
-              <br />
-              <em>get lost.</em>
-            </>
-          ) : crest ? (
-            <>
-              Everything.
-              <br />
-              <em>Connected.</em>
-            </>
-          ) : (
-            <>
-              Room for
-              <br />
-              <em>curiosity.</em>
-            </>
-          )
-        ) : (
-          <>
-            {project.mark ?? project.title.slice(0, 2).toLowerCase()}
-            <sup>↗</sup>
-          </>
-        )}
-      </div>
-      {library ? (
-        <div className="book-stack">
-          <span>THE NEXT CHAPTER</span>
-          <span>A LITTLE CURIOSITY</span>
-          <span>ADAPTIVE LIBRARY ↗</span>
-        </div>
-      ) : (
-        <div className="interface-window">
-          <div className="interface-toolbar">
-            <span>
-              <i />
-              <i />
-              <i />
-            </span>
-            <span>{project.title}</span>
-            <ArrowUpRight size={10} />
-          </div>
-          <div className="interface-body">
-            <aside>
-              <b>{crest ? "crest." : "ah."}</b>
-              <span />
-              <span />
-              <span />
-              <span />
-            </aside>
-            <div className="interface-main">
-              <span className="interface-eyebrow">
-                {crest ? "YOUR WORKSPACE" : "YOUR NEXT DISCOVERY"}
-              </span>
-              <strong>
-                {crest
-                  ? "Good work starts here."
-                  : "Keep your curiosity going."}
-              </strong>
-              <div className="interface-banner">
-                <span>
-                  {crest ? "One shared view." : "Small steps. Big ideas."}
-                </span>
-                <Flower />
-              </div>
-              <div className="interface-tiles">
-                <div>
-                  ↗<span>{crest ? "Clients" : "Discover"}</span>
-                </div>
-                <div>
-                  ✳<span>{crest ? "Delivery" : "Practice"}</span>
-                </div>
-                <div>
-                  ◉<span>{crest ? "Revenue" : "Master"}</span>
-                </div>
-              </div>
-              <div className="interface-lines">
-                <i />
-                <i />
-                <i />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <span className="artwork-bottom">
-        {feature
-          ? "PRODUCT INTERFACE ILLUSTRATION"
-          : project.stack.slice(0, 3).join(" / ")}
-      </span>
-    </div>
-  );
-}
+const cat = "  /\\_/\\\n ( o.o )\n  > ^ <";
 
 export default function App() {
+  const [theme, setTheme] = useState<Theme>(() => {
+    try {
+      const stored = localStorage.getItem("portfolio-terminal-theme");
+      return themes.includes(stored as Theme) ? (stored as Theme) : "phosphor";
+    } catch {
+      return "phosphor";
+    }
+  });
   const [filter, setFilter] = useState("All work");
   const [query, setQuery] = useState("");
-  const [view, setView] = useState("Index");
-  const [scene, setScene] = useState("Mix");
-  const [infoInitiallyOpen] = useState(() => window.innerWidth > 700);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [creativeTab, setCreativeTab] = useState("Art");
   const [artCount, setArtCount] = useState(6);
   const [selectedProject, setSelectedProject] =
@@ -242,11 +51,16 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [motionEnabled, setMotion] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
+  const [section, setSection] = useState("intro");
   const motion = motionEnabled && !reducedMotion;
   const root = useRef<HTMLDivElement>(null);
-  const lenis = useLenis();
+  const progress = useRef<HTMLProgressElement>(null);
+  const progressLabel = useRef<HTMLSpanElement>(null);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const { ref: projectDialog, close: closeProject } = useAnimatedDialog(
     selectedProject !== null,
     motion,
@@ -257,22 +71,13 @@ export default function App() {
     motion,
     () => setLightbox(null),
   );
-  const { ref: menuDialog, close: closeMenu } = useAnimatedDialog(
-    menuOpen,
-    motion,
-    () => setMenuOpen(false),
-  );
-  const projectLayout = useAnimatedLayout(`${filter}:${query}:${view}`, motion);
+  const projectLayout = useAnimatedLayout(`${filter}:${query}`, motion);
   const creativeLayout = useAnimatedLayout(
     `${creativeTab}:${artCount}`,
     motion,
   );
-  usePortfolioMotion(root, motion);
-  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
-  const locked = selectedProject !== null || lightbox !== null || menuOpen;
-
+  usePortfolioMotion(root, motion, setSection, progress, progressLabel);
+  const locked = selectedProject !== null || lightbox !== null;
   useEffect(() => {
     if (!locked) return;
     const previous = document.body.style.overflow;
@@ -283,7 +88,7 @@ export default function App() {
   }, [locked]);
   useEffect(() => () => clearTimeout(copyTimer.current), []);
   useEffect(() => {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const preference = matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(preference.matches);
     preference.addEventListener("change", update);
     return () => preference.removeEventListener("change", update);
@@ -297,47 +102,24 @@ export default function App() {
       mounted = false;
     };
   }, []);
-  useGSAP(
-    () => {
-      if (!motion) return;
-      gsap.fromTo(
-        ".mood-item",
-        { opacity: 0, scale: 0.88, y: 18 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.7,
-          stagger: 0.055,
-          ease: "power3.out",
-        },
-      );
-      gsap.utils
-        .toArray<HTMLElement>(".mood-media", root.current!)
-        .forEach((element, index) => {
-          gsap.to(element, {
-            y: index % 2 ? 9 : -9,
-            duration: 3.5 + index * 0.3,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true,
-          });
-        });
-    },
-    { scope: root, dependencies: [scene, motion], revertOnUpdate: true },
-  );
+  useEffect(() => {
+    try {
+      localStorage.setItem("portfolio-terminal-theme", theme);
+    } catch {
+      /* Theme remains usable when storage is restricted. */
+    }
+  }, [theme]);
   useGSAP(
     () => {
       if (lightbox === null || !motion) return;
       gsap.fromTo(
         ".art-dialog > img",
-        { opacity: 0.2, scale: 0.98 },
-        { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" },
+        { opacity: 0.2 },
+        { opacity: 1, duration: 0.25, ease: "power2.out" },
       );
     },
     { scope: root, dependencies: [lightbox, motion], revertOnUpdate: true },
   );
-
   const visibleProjects = projects.filter((project) => {
     const categories =
       project.category ??
@@ -353,39 +135,6 @@ export default function App() {
         .includes(query.toLowerCase().trim())
     );
   });
-  function openProject(title: string) {
-    setSelectedProject(projects.find((project) => project.title === title)!);
-  }
-  function navigateFromMenu(href: string) {
-    menuDialog.current?.close();
-    setMenuOpen(false);
-    const target = document.getElementById(href.slice(1));
-    if (!target) return;
-    history.pushState(null, "", href);
-    const focus = () => {
-      target.setAttribute("tabindex", "-1");
-      target.focus({ preventScroll: true });
-      target.addEventListener(
-        "blur",
-        () => target.removeAttribute("tabindex"),
-        { once: true },
-      );
-    };
-    if (motion && lenis) {
-      lenis.start();
-      lenis.scrollTo(target, {
-        offset: -64,
-        duration: 1,
-        force: true,
-        onComplete: focus,
-      });
-    } else {
-      requestAnimationFrame(() => {
-        target.scrollIntoView({ behavior: "instant" });
-        focus();
-      });
-    }
-  }
   async function copyEmail() {
     try {
       await navigator.clipboard.writeText("viernes.jhonlloydd@gmail.com");
@@ -393,511 +142,293 @@ export default function App() {
       clearTimeout(copyTimer.current);
       copyTimer.current = setTimeout(() => setCopied(false), 2500);
     } catch {
-      window.location.href = "mailto:viernes.jhonlloydd@gmail.com";
+      location.href = "mailto:viernes.jhonlloydd@gmail.com";
     }
+  }
+  function cycleTheme() {
+    setTheme(
+      (current) => themes[(themes.indexOf(current) + 1) % themes.length],
+    );
   }
 
   return (
     <div
       ref={root}
+      id="home"
+      tabIndex={-1}
+      data-theme={theme}
       className={`portfolio ${motion ? "motion-on" : "motion-off"}`}
     >
       {motion && <SmoothScroll locked={locked} />}
+      <div className="scanlines" aria-hidden="true" />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
-        <div className="header-identity">
+      <div className="terminal-shell">
+        <header className="terminal-header" data-section="intro">
           <a
-            className="brand chip"
+            className="shell-prompt"
             href="#home"
             aria-label="Jhon Lloyd Viernes, home"
           >
-            jlv<span>↗</span>
-          </a>
-          <span className="header-caption chip">A personal portfolio</span>
-        </div>
-        <nav className="desktop-nav" aria-label="Main navigation">
-          <a className="chip" href="#work">
-            Work <sup>{projects.length}</sup>
-          </a>
-          <a className="chip" href="#background">
-            About
-          </a>
-          <a className="chip" href="#creative">
-            Playground
-          </a>
-          <a className="chip" href="#contact">
-            Get in touch <ArrowUpRight size={12} />
-          </a>
-        </nav>
-        <button
-          className="chip mobile-menu"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open navigation"
-        >
-          Menu <Plus size={13} />
-        </button>
-      </header>
-      <section
-        className={`hero scene-${scene.toLowerCase()}`}
-        id="home"
-        aria-labelledby="hero-title"
-      >
-        <div className="hero-widgets">
-          <AnimatedDetails
-            enabled={motion}
-            className="info-window"
-            open={infoInitiallyOpen}
-            summary={
-              <>
-                <span>README.TXT</span>
-                <Plus size={13} />
-              </>
-            }
-          >
-            <p>
-              <strong>Jhon Lloyd Viernes</strong> is a software developer who
-              likes useful things, thoughtful details, and a little room to
-              play.
-            </p>
-            <div className="widget-footer">
-              <span>
-                <i /> Mobile / Web / Systems
-              </span>
-              <a href="#background">A little more ↗</a>
-            </div>
-          </AnimatedDetails>
-          <button
-            className="latest-window"
-            onClick={() => openProject("AdaptiveHub LMS")}
-            aria-label="Explore latest project, AdaptiveHub LMS"
-          >
-            <span className="window-heading">
-              IN THE WORKS <ArrowUpRight size={13} />
+            <span>jhon@viernes</span>
+            <span className="dim"> ~ % ./portfolio</span>
+            <span className="terminal-cursor" aria-hidden="true">
+              _
             </span>
-            <span className="latest-copy">
-              A learning platform with a little more possibility.
-            </span>
-            <div className="latest-thumbnail">
-              <span>
-                adaptive<span>hub ↗</span>
-              </span>
-              <Flower />
-            </div>
-          </button>
-        </div>
-        <div
-          className="moodboard"
-          aria-label="A collection of projects and personal interests"
-        >
-          {scene !== "Work" && (
-            <a className="mood-item mood-photo" href="#background">
-              <div className="mood-media">
-                <img
-                  src="/assets/images/profile.jpeg"
-                  alt="Jhon, away from the code editor"
-                  fetchPriority="high"
-                />
-                <span>OUTSIDE.JPG ↗</span>
-              </div>
-            </a>
-          )}
+          </a>
           <button
-            className="mood-item mood-games"
-            onClick={() => openProject("Checkpoint")}
-            aria-label="Explore Checkpoint from the moodboard"
+            className="theme-control"
+            onClick={cycleTheme}
+            aria-label={`Change terminal theme. Current: ${theme}`}
           >
-            <div className="mood-media">
-              <img
-                src="/assets/projects/playlog/1.jpg"
-                alt="Checkpoint mobile app"
-              />
-              <span>A SIDE QUEST ↗</span>
-            </div>
+            [{theme}]
           </button>
-          {scene !== "Play" && (
-            <button
-              className="mood-item mood-music"
-              onClick={() => openProject("Wavvy")}
-              aria-label="Explore Wavvy from the moodboard"
-            >
-              <div className="mood-media">
-                <img
-                  src="/assets/projects/wavvy/1.jpg"
-                  alt="Wavvy music player"
-                />
-                <span>NOW PLAYING ↗</span>
-              </div>
-            </button>
-          )}
-          <div className="mood-item mood-note">
-            <div className="mood-media">
-              <span className="note-pin" />
-              <span>
-                Less noise.
-                <br />
-                More <em>meaning.</em>
-              </span>
-              <small>A NOTE TO SELF</small>
-            </div>
-          </div>
-          {scene !== "Work" && (
-            <a
-              className="mood-item mood-flower"
-              href="#creative"
-              aria-label="Explore the creative playground"
-            >
-              <div className="mood-media">
-                <Flower />
-                <span>STAY CURIOUS ↗</span>
-              </div>
-            </a>
-          )}
-          <button
-            className="mood-item mood-code"
-            onClick={() => openProject("Zync")}
-            aria-label="Explore Zync from the moodboard"
+        </header>
+        <main id="main" tabIndex={-1}>
+          <section
+            className="intro-section"
+            id="intro"
+            tabIndex={-1}
+            aria-labelledby="hero-title"
+            data-section="intro"
           >
-            <div className="mood-media">
-              <span>hello, world_</span>
-              <Code2 size={35} />
-              <small>MADE TO CONNECT</small>
-            </div>
-          </button>
-          {scene === "Work" && (
+            <h1 id="hero-title" className="sr-only">
+              Jhon Lloyd Viernes — Software Developer
+            </h1>
             <button
-              className="mood-item mood-library"
-              onClick={() => openProject("Adaptive Library")}
-              aria-label="Explore Adaptive Library from the moodboard"
+              className="name-button"
+              onClick={cycleTheme}
+              aria-label="Change the look of Jhon Lloyd’s ASCII name"
             >
-              <div className="mood-media">
-                <span>
-                  Find your
-                  <br />
-                  <em>next chapter.</em>
-                </span>
-                <small>ADAPTIVE LIBRARY ↗</small>
-              </div>
+              <AsciiName variant={themes.indexOf(theme)} />
             </button>
-          )}
-          {scene === "Play" && (
-            <div className="mood-item mood-type">
-              <div className="mood-media">
-                what
-                <br />
-                <i>if?</i>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="hero-copy">
-          <p className="hero-kicker">SOFTWARE DEVELOPER & CURIOUS HUMAN</p>
-          <h1 id="hero-title">
-            A curious mind building <br />
-            useful digital things.
-          </h1>
-          <p className="hero-subtitle">
-            Mobile experiences. Connected platforms.
-            <br />A little unexpected.
-          </p>
-        </div>
-        <a className="hero-scroll" href="#intro">
-          Scroll to explore <ArrowDown size={13} />
-        </a>
-        <div
-          className="scene-controls"
-          role="group"
-          aria-label="Moodboard collection"
-        >
-          {["Mix", "Work", "Play"].map((item) => (
-            <button
-              key={item}
-              aria-pressed={scene === item}
-              onClick={() => setScene(item)}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-        <span className="hero-edition">A WORK IN PROGRESS, ALWAYS.</span>
-      </section>
-      <main id="main">
-        <section className="intro-section page-width" id="intro">
-          <span className="section-label">
-            Hello, I’m Jhon. Nice to meet you.
-          </span>
-          <h2>
-            Good ideas deserve
-            <br />a good <em>way in.</em>
-          </h2>
-          <div className="intro-bottom">
-            <span className="intro-coordinate">A LITTLE CONTEXT ↘</span>
-            <div className="intro-text">
-              <p>
-                I build mobile apps, web experiences, and the systems connecting
-                them. My work spans learning platforms, library systems, school
-                operations, and the occasional side project that starts with
-                “what if?”
-              </p>
-              <p>
-                Thoughtful interfaces. Dependable data flows. Details that make
-                a complicated thing feel a little more natural.
-              </p>
-              <div className="capabilities">
-                <span>Mobile development</span>
-                <span>Full-stack engineering</span>
-                <span>Connected systems</span>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section
-          className="selected-work page-width"
-          id="work"
-          aria-labelledby="work-title"
-        >
-          <div className="section-meta">
-            <h2 id="work-title">A few things I’ve been making</h2>
-            <span>SELECTED WORK / 01—04</span>
-          </div>
-          {selected.map((item, index) => {
-            const project = projects.find(
-              (project) => project.title === item.title,
-            )!;
-            return (
-              <article
-                className={`case-study ${index === 0 ? "case-feature" : ""}`}
-                key={item.title}
-              >
-                <header className="case-heading">
-                  <span className="section-label">
-                    0{index + 1} / {project.title}
-                  </span>
-                  <h3>{item.label}</h3>
-                  <div className="case-tags">
-                    {project.stack.map((stack) => (
-                      <span key={stack}>{stack}</span>
-                    ))}
-                  </div>
-                </header>
-                <div className="case-main">
-                  <button
-                    className="case-media"
-                    aria-label={`View ${item.title} case study`}
-                    onClick={() => setSelectedProject(project)}
-                  >
-                    <ProjectArtwork project={project} feature />
-                    <span className="case-view">
-                      Explore project <ArrowUpRight size={14} />
-                    </span>
-                  </button>
-                  <div className="case-description">
-                    <p>{item.summary}</p>
-                    <button
-                      className="chip"
-                      onClick={() => setSelectedProject(project)}
-                    >
-                      View project notes <ArrowUpRight size={12} />
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </section>
-        <section
-          className="archive-section page-width"
-          id="all-work"
-          aria-labelledby="archive-title"
-        >
-          <div className="section-meta">
-            <h2 id="archive-title">
-              The full collection <span>({projects.length})</span>
-            </h2>
-            <div
-              className="view-controls"
-              role="group"
-              aria-label="Project view"
-            >
-              {["Index", "Grid"].map((item) => (
-                <button
-                  key={item}
-                  aria-pressed={view === item}
-                  onClick={() => {
-                    projectLayout.capture();
-                    setView(item);
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="work-controls">
-            <div className="filters" role="group" aria-label="Filter projects">
-              {filters.map((item) => (
-                <button
-                  key={item}
-                  aria-pressed={filter === item}
-                  onClick={() => {
-                    projectLayout.capture();
-                    setFilter(item);
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-            <label className="search">
-              <Search size={14} />
-              <input
-                type="search"
-                value={query}
-                onChange={(event) => {
-                  projectLayout.capture();
-                  setQuery(event.target.value);
-                }}
-                placeholder="Find a project or technology"
-                aria-label="Search projects"
-              />
-            </label>
-          </div>
-          <p className="results-count" role="status">
-            {visibleProjects.length} projects
-            {query ? ` matching “${query}”` : ""}
-          </p>
-          <div
-            className={`project-grid view-${view.toLowerCase()}`}
-            ref={projectLayout.ref}
-          >
-            {visibleProjects.map((project, index) => (
-              <article
-                className="project-card"
-                key={project.title}
-                data-layout-item
-                data-flip-id={`project-${project.title}`}
-              >
-                <button
-                  className="project-entry"
-                  onClick={() => setSelectedProject(project)}
-                  aria-label={`Explore ${project.title}`}
-                >
-                  <div className="project-cover">
-                    <ProjectArtwork project={project} />
-                    <span className="project-cover-arrow">
-                      <ArrowUpRight size={20} />
-                    </span>
-                  </div>
-                  <div className="entry-line">
-                    <span className="entry-number">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3>{project.title}</h3>
-                    <span className="entry-platform">{project.devices}</span>
-                    <ArrowUpRight size={17} />
-                  </div>
-                </button>
-                <p className="project-summary">{project.description}</p>
-              </article>
-            ))}
-          </div>
-          {visibleProjects.length === 0 && (
-            <div className="empty-state">
-              <h3>No projects found.</h3>
-              <p>Try a different name, technology, or filter.</p>
-              <button
-                className="chip"
-                onClick={() => {
-                  projectLayout.capture();
-                  setFilter("All work");
-                  setQuery("");
-                }}
-              >
-                Reset filters <ArrowUpRight size={13} />
-              </button>
-            </div>
-          )}
-        </section>
-        <section
-          className="background-section page-width"
-          id="background"
-          aria-labelledby="background-title"
-        >
-          <span className="section-label">The person behind the pixels</span>
-          <div className="about-intro">
-            <h2 id="background-title">
-              Always curious.
-              <br />
-              <em>Still making.</em>
-            </h2>
-            <p>
-              It started with modding GTA and building custom Android ROMs in
-              high school. Somewhere along the way, taking things apart became a
-              love for building things people can use.
+            <p className="role-line">
+              <mark>software developer</mark>
+              <span className="role-note">mobile / web / systems</span>
             </p>
-          </div>
-          <div className="background-grid">
-            <aside className="about-sidebar">
-              <div className="about-photo">
-                <img
-                  src="/assets/images/profile.jpeg"
-                  alt="Jhon Lloyd Viernes"
-                  loading="lazy"
-                />
-                <span>JHON LLOYD VIERNES / OFFLINE</span>
-              </div>
-              <p>
-                Software developer.
-                <br />
-                Occasional artist. Music person.
-                <br />
-                Always another idea open.
-              </p>
+            <p className="hero-lead">
+              I build mobile apps, web experiences, and the systems that make
+              them <mark>work together.</mark>
+            </p>
+            <p className="hero-detail">
+              From adaptive learning and school operations to a growing
+              collection of side projects. Thoughtful interfaces, dependable
+              backends, and a little <span className="accent">curiosity</span>{" "}
+              in everything.
+            </p>
+            <div className="hero-links">
+              <a href="mailto:viernes.jhonlloydd@gmail.com">email</a>
               <a
-                className="chip"
+                href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
                 target="_blank"
                 rel="noreferrer"
-                href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
               >
-                Connect on LinkedIn <ArrowUpRight size={12} />
+                linkedin
               </a>
-            </aside>
-            <div className="background-content">
-              <div className="skill-groups">
-                <div>
-                  <h3>On the screen</h3>
-                  <p>
-                    Flutter / Dart / Kotlin / Jetpack Compose / React / Expo /
-                    Tailwind CSS
-                  </p>
-                </div>
-                <div>
-                  <h3>Behind the scenes</h3>
-                  <p>
-                    Laravel / Node.js / Next.js / Express / Fastify / MySQL /
-                    PostgreSQL / AI integrations
-                  </p>
-                </div>
+              <a
+                href="https://github.com/dlord213"
+                target="_blank"
+                rel="noreferrer"
+              >
+                github
+              </a>
+            </div>
+            <nav className="command-nav" aria-label="Main navigation">
+              <span className="dim">cd</span>
+              <a href="#work">./work</a>
+              <a href="#background">./about</a>
+              <a href="#creative">./off-duty</a>
+              <a href="#contact" aria-label="Get in touch">
+                ./contact
+              </a>
+            </nav>
+            <pre className="ascii-sigil" aria-hidden="true">
+              {cat}
+            </pre>
+          </section>
+          <section
+            className="work-section"
+            id="work"
+            tabIndex={-1}
+            aria-labelledby="work-title"
+            data-section="work"
+          >
+            <div className="section-heading">
+              <h2 id="work-title">selected work</h2>
+              <span>{String(projects.length).padStart(2, "0")} entries</span>
+            </div>
+            <p className="section-intro">
+              School platforms, everyday utilities, and a few personal
+              experiments.
+            </p>
+            <div className="work-controls">
+              <div
+                className="filters"
+                role="group"
+                aria-label="Filter projects"
+              >
+                {filters.map((item) => (
+                  <button
+                    key={item}
+                    aria-label={item}
+                    aria-pressed={filter === item}
+                    onClick={() => {
+                      projectLayout.capture();
+                      setFilter(item);
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
-              <h3 className="background-subtitle">Experience</h3>
+              <label className="search">
+                <Search size={12} />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) => {
+                    projectLayout.capture();
+                    setQuery(event.target.value);
+                  }}
+                  placeholder="grep projects..."
+                  aria-label="Search projects"
+                />
+              </label>
+            </div>
+            <p className="results-count" role="status">
+              {query
+                ? `${visibleProjects.length} matches for “${query}”`
+                : `${visibleProjects.length} projects / ${filter.toLowerCase()}`}
+            </p>
+            <div className="project-grid" ref={projectLayout.ref}>
+              {visibleProjects.map((project, index) => (
+                <article
+                  className="project-card"
+                  key={project.title}
+                  data-layout-item
+                  data-flip-id={`project-${project.title}`}
+                >
+                  <div className="project-heading">
+                    <span className="project-number">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        aria-label={`Explore ${project.title}`}
+                      >
+                        {project.title}
+                      </button>
+                    </h3>
+                    <span className="project-source">
+                      {project.group ?? "Personal"} / {project.devices}
+                    </span>
+                  </div>
+                  <div className="project-content">
+                    <p>{project.description}</p>
+                    <p className="stack-line">
+                      <span aria-hidden="true">└─ </span>
+                      {project.stack.join(" · ")}
+                    </p>
+                    <button
+                      className="project-open"
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      read project notes <span aria-hidden="true">↗</span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+            {visibleProjects.length === 0 && (
+              <div className="empty-state">
+                <span aria-hidden="true">[ no matches ]</span>
+                <h3>No projects found.</h3>
+                <p>Try another project name or technology.</p>
+                <button
+                  className="terminal-button"
+                  onClick={() => {
+                    projectLayout.capture();
+                    setFilter("All work");
+                    setQuery("");
+                  }}
+                >
+                  Reset filters
+                </button>
+              </div>
+            )}
+          </section>
+          <section
+            className="about-section"
+            id="background"
+            tabIndex={-1}
+            aria-labelledby="about-title"
+            data-section="about"
+          >
+            <h2 className="section-heading" id="about-title">
+              about
+            </h2>
+            <div className="about-grid">
+              <div className="about-copy">
+                <p>
+                  I’m <mark>Jhon Lloyd Viernes</mark> — a software developer
+                  drawn to the space between a good idea and a useful product.
+                </p>
+                <p>
+                  It started with modding GTA and building custom Android ROMs
+                  in high school. Now I work across{" "}
+                  <span className="accent">
+                    mobile, web, and backend engineering
+                  </span>
+                  , connecting interfaces to the systems behind them.
+                </p>
+                <p>
+                  Off the clock: art, music, games, and usually another idea
+                  open in a tab.
+                </p>
+              </div>
+              <AsciiPortrait />
+            </div>
+            <div className="skill-groups">
+              <div>
+                <h3>interfaces & mobile</h3>
+                <p>
+                  Flutter · Dart · Kotlin · Jetpack Compose · React · Expo ·
+                  Tailwind CSS
+                </p>
+              </div>
+              <div>
+                <h3>systems & data</h3>
+                <p>
+                  Laravel · Node.js · Next.js · Express · Fastify · MySQL ·
+                  PostgreSQL · AI integrations
+                </p>
+              </div>
+            </div>
+            <div className="experience-section">
+              <h2 className="section-heading">experience</h2>
               <AnimatedDetails
                 enabled={motion}
                 open
                 summary={
                   <>
+                    <span className="experience-date">project work</span>
                     <span>
-                      AdaptiveHub<small>Full-stack & mobile development</small>
+                      AdaptiveHub<small>full-stack & mobile development</small>
                     </span>
-                    <span>Project work</span>
                   </>
                 }
               >
                 <p>
                   Connected school and business products across web, mobile, and
-                  backend services: LMS, Library, Crest, AdaptivePay,
-                  attendance, scheduling, conferencing, and AI services.
+                  backend services.
                 </p>
+                <ul className="tree-list">
+                  <li>LMS, Library, and AI-assisted learning</li>
+                  <li>Crest, AdaptivePay, and school operations</li>
+                  <li>Attendance, scheduling, and conferencing</li>
+                </ul>
               </AnimatedDetails>
               {[...experience].reverse().map((item) => (
                 <AnimatedDetails
@@ -905,14 +436,14 @@ export default function App() {
                   key={item.position + item.period}
                   summary={
                     <>
+                      <span className="experience-date">{item.period}</span>
                       <span>{item.position}</span>
-                      <span>{item.period}</span>
                     </>
                   }
                 >
                   <p>{item.description}</p>
                   {item.details && (
-                    <ul>
+                    <ul className="tree-list">
                       {item.details.map((detail) => (
                         <li key={detail}>{detail}</li>
                       ))}
@@ -925,254 +456,232 @@ export default function App() {
                   </div>
                 </AnimatedDetails>
               ))}
-              <h3 className="background-subtitle">Education</h3>
+            </div>
+            <div className="education-section">
+              <h2 className="section-heading">education</h2>
               {education.map((item) => (
                 <div className="education-entry" key={item.school}>
                   <span>{item.date}</span>
-                  <h4>{item.degree}</h4>
-                  <p>{item.school}</p>
+                  <div>
+                    <h3>{item.degree}</h3>
+                    <p>{item.school}</p>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-        <section
-          className="creative-section page-width"
-          id="creative"
-          aria-labelledby="creative-title"
-        >
-          <div className="section-meta">
-            <h2 id="creative-title">Other tabs I keep open.</h2>
-            <div
-              className="filters"
-              role="group"
-              aria-label="Creative interests"
-            >
-              {["Art", "Music"].map((tab) => (
-                <button
-                  key={tab}
-                  aria-pressed={creativeTab === tab}
-                  onClick={() => {
-                    creativeLayout.capture();
-                    setCreativeTab(tab);
-                  }}
-                >
-                  {tab === "Music" && <Music2 size={12} />} {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="creative-intro">
-            A sketchbook, a playlist, a different kind of flow.
-          </p>
-          <div className="creative-content" ref={creativeLayout.ref}>
-            {creativeTab === "Art" ? (
-              <>
-                <div className="art-grid">
-                  {images.slice(0, artCount).map((image, index) => (
-                    <button
-                      key={image.src}
-                      data-layout-item
-                      data-flip-id={`art-${index}`}
-                      onClick={() => setLightbox(index)}
-                      aria-label={`View artwork ${index + 1}`}
-                    >
-                      <img
-                        src={image.src}
-                        alt={`Personal artwork ${index + 1}`}
-                        width={image.width}
-                        height={image.height}
-                        loading="lazy"
-                      />
-                      <span>
-                        SKETCHBOOK / {String(index + 1).padStart(2, "0")}{" "}
-                        <ArrowUpRight size={14} />
-                      </span>
-                    </button>
-                  ))}
-                </div>
-                {artCount < images.length && (
+          </section>
+          <section
+            className="creative-section"
+            id="creative"
+            tabIndex={-1}
+            aria-labelledby="creative-title"
+            data-section="off-duty"
+          >
+            <div className="section-heading">
+              <h2 id="creative-title">outside the editor</h2>
+              <div
+                className="filters"
+                role="group"
+                aria-label="Creative interests"
+              >
+                {["Art", "Music"].map((tab) => (
                   <button
-                    className="chip gallery-more"
+                    key={tab}
+                    aria-label={tab}
+                    aria-pressed={creativeTab === tab}
                     onClick={() => {
                       creativeLayout.capture();
-                      setArtCount((count) =>
-                        Math.min(count + 6, images.length),
-                      );
+                      setCreativeTab(tab);
                     }}
                   >
-                    More from the sketchbook <Plus size={12} />
+                    {tab}
                   </button>
-                )}
-              </>
-            ) : (
-              <div className="music-grid">
-                {playlists.map((playlist) => (
-                  <div
-                    className="playlist"
-                    key={playlist.id}
-                    data-layout-item
-                    data-flip-id={`playlist-${playlist.id}`}
-                  >
-                    <h3>
-                      <Music2 size={14} />
-                      {playlist.title}
-                    </h3>
-                    <iframe
-                      title={`SoundCloud playlist: ${playlist.title}`}
-                      width="100%"
-                      height="166"
-                      loading="lazy"
-                      allow="autoplay"
-                      src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%2328b4d8&auto_play=false&hide_related=true&show_comments=false`}
-                    />
-                  </div>
                 ))}
               </div>
-            )}
-          </div>
-        </section>
-        <section className="contact-section page-width" id="contact">
-          <div className="contact-heading">
-            <span className="section-label">
-              A good conversation is a good start.
-            </span>
-            <h2>
-              Something in mind?
-              <br />
-              <em>Let’s make it real.</em>
+            </div>
+            <p className="section-intro">
+              A sketchbook, a playlist, a different kind of flow.
+            </p>
+            <div className="creative-content" ref={creativeLayout.ref}>
+              {creativeTab === "Art" ? (
+                <>
+                  <div className="art-grid">
+                    {images.slice(0, artCount).map((image, index) => (
+                      <button
+                        key={image.src}
+                        data-layout-item
+                        data-flip-id={`art-${index}`}
+                        onClick={() => setLightbox(index)}
+                        aria-label={`View artwork ${index + 1}`}
+                      >
+                        <img
+                          src={image.src}
+                          alt={`Personal artwork ${index + 1}`}
+                          width={image.width}
+                          height={image.height}
+                          loading="lazy"
+                        />
+                        <span>
+                          sketch_{String(index + 1).padStart(2, "0")}.jpg{" "}
+                          <ArrowUpRight size={12} />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  {artCount < images.length && (
+                    <button
+                      className="terminal-button gallery-more"
+                      onClick={() => {
+                        creativeLayout.capture();
+                        setArtCount((count) =>
+                          Math.min(count + 6, images.length),
+                        );
+                      }}
+                    >
+                      More from the sketchbook{" "}
+                      <span aria-hidden="true">[+]</span>
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div className="music-grid">
+                  {playlists.map((playlist) => (
+                    <div
+                      className="playlist"
+                      key={playlist.id}
+                      data-layout-item
+                      data-flip-id={`playlist-${playlist.id}`}
+                    >
+                      <h3>
+                        <span aria-hidden="true">▸ </span>
+                        {playlist.title}
+                      </h3>
+                      <iframe
+                        title={`SoundCloud playlist: ${playlist.title}`}
+                        width="100%"
+                        height="166"
+                        loading="lazy"
+                        allow="autoplay"
+                        src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${playlist.id}&color=%239cdb93&auto_play=false&hide_related=true&show_comments=false`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+          <section
+            className="contact-section"
+            id="contact"
+            tabIndex={-1}
+            aria-labelledby="contact-title"
+            data-section="contact"
+          >
+            <pre className="ascii-sigil contact-sigil" aria-hidden="true">
+              {"   .-._.-.\n  (  o o  )\n   |  ^  |\n    -----"}
+            </pre>
+            <h2 className="section-heading" id="contact-title">
+              contact
             </h2>
-            <Flower />
-          </div>
-          <div className="contact-grid">
-            <div>
-              <button
-                className="email-button"
-                onClick={copyEmail}
-                aria-label={copied ? "Email copied!" : "Copy email address"}
-              >
-                <span>viernes.jhonlloydd@gmail.com</span>
-                {copied ? <Check size={21} /> : <ArrowUpRight size={21} />}
-              </button>
-              <p className="copy-status" role="status">
-                {copied
-                  ? "Copied. Looking forward to it."
-                  : "Click to copy, or send a little hello."}
-              </p>
-              <a
-                className="chip email-link"
-                href="mailto:viernes.jhonlloydd@gmail.com"
-              >
-                Write an email <Mail size={12} />
-              </a>
-            </div>
-            <div className="contact-links">
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href="https://github.com/dlord213"
-              >
-                GitHub <ArrowUpRight size={13} />
-              </a>
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
-              >
-                LinkedIn <ArrowUpRight size={13} />
-              </a>
-              <a href="#home" aria-label="Back to top">
-                Back to top <ArrowUp size={13} />
-              </a>
-            </div>
-          </div>
-          <div className="footer-wordmark" aria-hidden="true">
-            jhon lloyd<span>↗</span>
-          </div>
-          <footer>
-            <span>© {new Date().getFullYear()} Jhon Lloyd Viernes</span>
-            <span>Made with curiosity. Always evolving.</span>
-          </footer>
-        </section>
-      </main>
-      <div className="utility-dock">
-        <span>CODE, WITH A LITTLE CHARACTER.</span>
-        <a
-          href="https://github.com/dlord213"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="GitHub profile"
-        >
-          <Github size={13} />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="LinkedIn profile"
-        >
-          <Linkedin size={13} />
-        </a>
-        <button
-          className="motion-toggle"
-          aria-label={
-            reducedMotion
-              ? "Animations disabled by system preference"
-              : motion
-                ? "Pause animations"
-                : "Enable animations"
-          }
-          disabled={reducedMotion}
-          aria-pressed={!motion}
-          onClick={() => setMotion(!motion)}
-        >
-          {motion ? <Pause size={13} /> : <Play size={13} />}
-        </button>
+            <p className="section-intro">
+              A project, a collaboration, or a simple hello.
+            </p>
+            <dl className="contact-list">
+              <div>
+                <dt>email</dt>
+                <dd>
+                  <button
+                    onClick={copyEmail}
+                    aria-label={copied ? "Email copied!" : "Copy email address"}
+                  >
+                    viernes.jhonlloydd@gmail.com {copied && <Check size={13} />}
+                  </button>
+                  <span className="copy-status" role="status">
+                    {copied ? "copied to clipboard" : "click to copy"}
+                  </span>
+                </dd>
+              </div>
+              <div>
+                <dt>write</dt>
+                <dd>
+                  <a href="mailto:viernes.jhonlloydd@gmail.com">
+                    open your email client <ArrowUpRight size={12} />
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>linkedin</dt>
+                <dd>
+                  <a
+                    href="https://www.linkedin.com/in/jhon-lloyd-viernes/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    jhon-lloyd-viernes <ArrowUpRight size={12} />
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>github</dt>
+                <dd>
+                  <a
+                    href="https://github.com/dlord213"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    github.com/dlord213 <ArrowUpRight size={12} />
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </section>
+        </main>
+        <footer className="site-footer">
+          <p>© {new Date().getFullYear()} jhon lloyd viernes</p>
+          <button onClick={cycleTheme}>
+            tap the name for a different signal{" "}
+            <span aria-hidden="true">↗</span>
+          </button>
+          <a href="#home" aria-label="Back to top">
+            ↑ back to top
+          </a>
+        </footer>
       </div>
-      <dialog
-        ref={menuDialog}
-        className="menu-dialog"
-        aria-label="Navigation"
-        data-lenis-prevent
-        onCancel={(event) => {
-          event.preventDefault();
-          closeMenu();
-        }}
-        onClose={() => setMenuOpen(false)}
-      >
-        <button
-          className="dialog-close icon-button"
-          aria-label="Close navigation"
-          onClick={closeMenu}
-          autoFocus
-        >
-          <X size={18} />
-        </button>
-        <span className="section-label">A few places to go</span>
-        <nav aria-label="Mobile navigation">
-          {[
-            ["Work", "#work"],
-            ["About", "#background"],
-            ["Playground", "#creative"],
-            ["Contact", "#contact"],
-          ].map(([label, href]) => (
-            <a
-              href={href}
-              key={href}
-              onClick={(event) => {
-                event.preventDefault();
-                navigateFromMenu(href);
-              }}
-            >
-              {label}
-              <ArrowUpRight size={25} />
-            </a>
-          ))}
-        </nav>
-        <span className="menu-signature">
-          Jhon Lloyd Viernes / Software developer
+      <div className="status-bar">
+        <a href="#home" className="status-owner" aria-label="Portfolio home">
+          [jlv]
+        </a>
+        <span className="status-section">
+          <span aria-hidden="true">▸</span> {section}
         </span>
-      </dialog>
+        <div className="status-right">
+          <button
+            className="motion-toggle"
+            aria-label={
+              reducedMotion
+                ? "Animations disabled by system preference"
+                : motion
+                  ? "Pause animations"
+                  : "Enable animations"
+            }
+            aria-pressed={!motion}
+            disabled={reducedMotion}
+            onClick={() => setMotion(!motion)}
+          >
+            {motion ? <Pause size={10} /> : <Play size={10} />}
+            <span>motion:{motion ? "on" : "off"}</span>
+          </button>
+          <progress
+            ref={progress}
+            max="100"
+            value="0"
+            aria-label="Reading progress"
+          />
+          <span ref={progressLabel} className="progress-label">
+            00%
+          </span>
+        </div>
+      </div>
       <dialog
         ref={projectDialog}
         className="project-dialog"
@@ -1189,38 +698,59 @@ export default function App() {
       >
         {selectedProject && (
           <>
-            <button
-              className="dialog-close icon-button"
-              autoFocus
-              aria-label="Close project"
-              onClick={closeProject}
-            >
-              <X size={18} />
-            </button>
-            <ProjectArtwork project={selectedProject} />
+            <div className="dialog-titlebar">
+              <span>
+                project://
+                {selectedProject.title.toLowerCase().replace(/ /g, "-")}
+              </span>
+              <button
+                className="icon-button"
+                autoFocus
+                aria-label="Close project"
+                onClick={closeProject}
+              >
+                <X size={17} />
+              </button>
+            </div>
             <div className="dialog-content">
-              <span className="section-label">
-                {selectedProject.group ?? "Personal project"} /{" "}
-                {selectedProject.devices}
+              <span className="dialog-kicker">
+                {selectedProject.group ?? "personal project"} / project notes
               </span>
               <h2 id="project-dialog-title">{selectedProject.title}</h2>
               <p>{selectedProject.description}</p>
+              <dl className="project-facts">
+                <div>
+                  <dt>surface</dt>
+                  <dd>{selectedProject.devices}</dd>
+                </div>
+                <div>
+                  <dt>stack</dt>
+                  <dd>{selectedProject.stack.join(" / ")}</dd>
+                </div>
+                <div>
+                  <dt>context</dt>
+                  <dd>{selectedProject.group ?? "Personal project"}</dd>
+                </div>
+              </dl>
               {selectedProject.highlights && (
-                <ul>
+                <ul className="tree-list">
                   {selectedProject.highlights.map((highlight) => (
                     <li key={highlight}>{highlight}</li>
                   ))}
                 </ul>
               )}
-              <div className="tags">
-                {selectedProject.stack.map((stack) => (
-                  <span key={stack}>{stack}</span>
-                ))}
-              </div>
+              {selectedProject.imageSrc && (
+                <img
+                  className="dialog-preview"
+                  src={selectedProject.imageSrc}
+                  alt={`${selectedProject.title} application preview`}
+                  loading="lazy"
+                />
+              )}
               <div className="dialog-actions">
                 {selectedProject.link && (
                   <a
-                    className="chip dark-chip"
+                    className="terminal-button"
                     href={selectedProject.link}
                     target="_blank"
                     rel="noreferrer"
@@ -1228,13 +758,13 @@ export default function App() {
                     Visit project <ArrowUpRight size={13} />
                   </a>
                 )}
-                <button className="chip" onClick={closeProject}>
-                  Back to projects <ArrowUpRight size={13} />
+                <button className="terminal-button" onClick={closeProject}>
+                  Back to projects <span aria-hidden="true">↩</span>
                 </button>
               </div>
               {!selectedProject.link && (
                 <p className="project-access">
-                  Professional project / Public source and demo links aren’t
+                  // professional project; public source and demo links aren’t
                   listed.
                 </p>
               )}
@@ -1266,14 +796,17 @@ export default function App() {
       >
         {lightbox !== null && (
           <>
-            <button
-              className="dialog-close icon-button"
-              aria-label="Close artwork"
-              autoFocus
-              onClick={closeArt}
-            >
-              <X size={18} />
-            </button>
+            <div className="dialog-titlebar">
+              <span>sketch_{String(lightbox + 1).padStart(2, "0")}.jpg</span>
+              <button
+                className="icon-button"
+                aria-label="Close artwork"
+                autoFocus
+                onClick={closeArt}
+              >
+                <X size={17} />
+              </button>
+            </div>
             <img
               src={images[lightbox].src}
               alt={`Personal artwork ${lightbox + 1}`}

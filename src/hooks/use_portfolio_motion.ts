@@ -1,75 +1,66 @@
 ﻿import { useRef, type RefObject } from "react";
-import { gsap, useGSAP } from "../lib/animation";
+import { gsap, ScrollTrigger, useGSAP } from "../lib/animation";
 
 export function usePortfolioMotion(
   scope: RefObject<HTMLDivElement | null>,
   enabled: boolean,
+  onSection: (section: string) => void,
+  progress: RefObject<HTMLProgressElement | null>,
+  label: RefObject<HTMLSpanElement | null>,
 ) {
   const introPlayed = useRef(false);
   useGSAP(
     () => {
       const root = scope.current;
-      if (!root || !enabled) return;
+      if (!root) return;
+      root
+        .querySelectorAll<HTMLElement>("[data-section]")
+        .forEach((element) => {
+          ScrollTrigger.create({
+            trigger: element,
+            start: "top 45%",
+            end: "bottom 45%",
+            onEnter: () => onSection(element.dataset.section!),
+            onEnterBack: () => onSection(element.dataset.section!),
+          });
+        });
+      ScrollTrigger.create({
+        start: 0,
+        end: "max",
+        onUpdate: (self) => {
+          const value = Math.round(self.progress * 100);
+          if (progress.current) progress.current.value = value;
+          if (label.current)
+            label.current.textContent = `${String(value).padStart(2, "0")}%`;
+        },
+      });
+      if (!enabled) return;
       if (!introPlayed.current) {
         introPlayed.current = true;
         gsap
-          .timeline({ defaults: { ease: "power3.out" } })
-          .from(".site-header", { opacity: 0, y: -10, duration: 0.65 })
-          .from(".hero-copy", { opacity: 0, y: 18, duration: 1 }, 0.15)
-          .from(".hero-widgets", { opacity: 0, y: 12, duration: 0.75 }, 0.3)
+          .timeline({ defaults: { ease: "power2.out" } })
+          .from(".terminal-header", { opacity: 0, duration: 0.4 })
+          .from(".name-button", { opacity: 0, y: 8, duration: 0.8 }, 0.1)
           .from(
-            ".hero-scroll, .scene-controls",
-            { opacity: 0, y: 8, duration: 0.6 },
-            0.6,
+            ".role-line, .hero-lead, .hero-detail, .hero-links, .command-nav",
+            { opacity: 0, y: 7, duration: 0.6, stagger: 0.08 },
+            0.3,
           );
       }
       gsap.utils
         .toArray<HTMLElement>(
-          ".intro-section > h2, .intro-text, .section-meta, .about-intro, .skill-groups, .contact-heading > h2, .contact-grid",
+          ".section-heading, .about-grid, .skill-groups",
           root,
         )
-        .forEach((element) => {
+        .forEach((element) =>
           gsap.from(element, {
-            y: 24,
-            opacity: 0.2,
-            duration: 0.85,
-            ease: "power3.out",
-            scrollTrigger: { trigger: element, start: "top 93%", once: true },
-          });
-        });
-      root.querySelectorAll<HTMLElement>(".case-media").forEach((element) => {
-        gsap.from(element, {
-          y: 32,
-          opacity: 0.2,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: element, start: "top 92%", once: true },
-        });
-      });
-      const desktop = gsap.matchMedia();
-      desktop.add("(min-width: 901px)", () => {
-        root.querySelectorAll<HTMLElement>(".case-study").forEach((study) => {
-          const artwork = study.querySelector(
-            ".interface-window, .book-stack, .phone-frame",
-          );
-          if (artwork)
-            gsap.fromTo(
-              artwork,
-              { yPercent: 3 },
-              {
-                yPercent: -3,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: study,
-                  start: "top bottom",
-                  end: "bottom top",
-                  scrub: 0.8,
-                },
-              },
-            );
-        });
-      });
-      return () => desktop.revert();
+            opacity: 0.35,
+            y: 10,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: { trigger: element, start: "top 95%", once: true },
+          }),
+        );
     },
     { scope, dependencies: [enabled], revertOnUpdate: true },
   );

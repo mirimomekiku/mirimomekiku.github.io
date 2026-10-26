@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+﻿import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 let errors: string[];
@@ -19,71 +19,73 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(() => expect(errors).toEqual([]));
 
-test("moodboard collections and archive views expose the same project catalog", async ({
+test("terminal themes change the ASCII identity and persist after reload", async ({
   page,
 }) => {
   await page.goto("/");
-  const collection = page.getByRole("group", { name: "Moodboard collection" });
-  await collection.getByRole("button", { name: "Work", exact: true }).click();
-  await expect(
-    page.getByRole("button", {
-      name: "Explore Adaptive Library from the moodboard",
-    }),
-  ).toBeVisible();
-  await expect(page.locator(".mood-photo")).toHaveCount(0);
-  await collection.getByRole("button", { name: "Play", exact: true }).click();
-  await expect(page.locator(".mood-type")).toBeVisible();
-  await expect(page.locator(".mood-library")).toHaveCount(0);
-  await collection.getByRole("button", { name: "Mix", exact: true }).click();
-  await expect(page.locator(".mood-photo")).toBeVisible();
+  await expect(page.locator(".portfolio")).toHaveAttribute(
+    "data-theme",
+    "phosphor",
+  );
+  const original = await page.locator(".ascii-name").innerText();
   await page
-    .getByRole("group", { name: "Project view" })
-    .getByRole("button", { name: "Grid", exact: true })
+    .getByRole("button", { name: "Change terminal theme. Current: phosphor" })
     .click();
-  await expect(page.locator(".project-card")).toHaveCount(19);
-  await expect(
-    page.locator(".project-card").first().locator(".project-cover"),
-  ).toBeVisible();
+  await expect(page.locator(".portfolio")).toHaveAttribute(
+    "data-theme",
+    "violet",
+  );
+  expect(await page.locator(".ascii-name").innerText()).not.toBe(original);
+  await page.reload();
+  await expect(page.locator(".portfolio")).toHaveAttribute(
+    "data-theme",
+    "violet",
+  );
   await page
-    .getByRole("group", { name: "Project view" })
-    .getByRole("button", { name: "Index", exact: true })
+    .getByRole("button", { name: "Change the look of Jhon Lloyd’s ASCII name" })
     .click();
+  await expect(page.locator(".portfolio")).toHaveAttribute(
+    "data-theme",
+    "amber",
+  );
   await expect(page.locator(".project-card")).toHaveCount(19);
-  await expect(
-    page.locator(".project-card").first().locator(".project-cover"),
-  ).not.toBeVisible();
 });
 
-test("mobile menu navigates and returns to native scrolling with reduced motion", async ({
+test("mobile command navigation preserves focus and updates reading progress", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Open navigation" }).click();
-  await expect(
-    page.getByRole("dialog", { name: "Navigation", exact: true }),
-  ).toBeVisible();
   await page
-    .getByRole("navigation", { name: "Mobile navigation" })
-    .getByRole("link", { name: "Work", exact: true })
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "./work", exact: true })
     .click();
   await expect(page.locator("#work")).toBeFocused();
-  await expect(page.locator("html")).not.toHaveClass(/lenis-stopped/);
+  await expect(page.locator(".status-section")).toContainText("work");
+  await expect
+    .poll(() =>
+      page
+        .getByRole("progressbar", { name: "Reading progress" })
+        .evaluate((element: HTMLProgressElement) => element.value),
+    )
+    .toBeGreaterThan(0);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.getByRole("button", { name: "Open navigation" }).click();
-  await page
-    .getByRole("navigation", { name: "Mobile navigation" })
-    .getByRole("link", { name: "Contact", exact: true })
-    .click();
+  await page.getByRole("link", { name: "Get in touch", exact: true }).click();
   await expect(page.locator("#contact")).toBeFocused();
   await expect(page.locator("html")).not.toHaveClass(/lenis/);
+  await expect
+    .poll(() =>
+      page
+        .getByRole("progressbar", { name: "Reading progress" })
+        .evaluate((element: HTMLProgressElement) => element.value),
+    )
+    .toBeGreaterThan(90);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
     ),
   ).toBe(false);
 });
-
 test("smooth wheel and anchor navigation preserve destination focus", async ({
   page,
 }) => {
