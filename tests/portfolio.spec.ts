@@ -21,3 +21,18 @@ test("portfolio renders the hero and curated projects", async ({
   await expect(page.getByRole("link", { name: /Google Play/ })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("chat dock answers from page content and slides away at contact", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const dock = page.getByRole("region", { name: "Ask mirimomekiku" });
+  await expect(dock).toBeVisible();
+  await page.getByLabel("Ask a question").fill("where are you based");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".msg.bot").last()).toContainText("Cagayan de Oro", {
+    timeout: 8000,
+  });
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+  await expect(page.locator(".chatdock")).toHaveClass(/is-hidden/);
+});

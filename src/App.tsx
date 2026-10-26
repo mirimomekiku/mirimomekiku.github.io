@@ -5,6 +5,7 @@ import education from "./types/education";
 import experience from "./types/experience";
 import images from "./types/images";
 import { HeroDesk } from "./component/hero_desk";
+import { ChatDock } from "./component/chat_dock";
 import { SmoothScroll } from "./component/smooth_scroll";
 import { usePageMotion } from "./hooks/page_motion";
 
@@ -18,12 +19,6 @@ const verbs = [
   { word: "Sketching", font: "'Gochi Hand', cursive" },
   { word: "Debugging", font: "'VT323', monospace" },
   { word: "Wiring", font: "'Audiowide', sans-serif" },
-];
-const navItems = [
-  { id: "work", label: "Work" },
-  { id: "experience", label: "Experience" },
-  { id: "art", label: "Art" },
-  { id: "contact", label: "Contact" },
 ];
 const filters = ["All", "Web", "Mobile", "AI & systems"];
 const playlists = [
@@ -234,73 +229,6 @@ function ThemeToggle() {
   );
 }
 
-function BottomNav() {
-  const [active, setActive] = useState("");
-  const [hidden, setHidden] = useState(false);
-  const bar = useRef<HTMLElement>(null);
-  const pill = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: "-45% 0px -50% 0px" },
-    );
-    ["hero", ...navItems.map((n) => n.id)].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) io.observe(el);
-    });
-    return () => io.disconnect();
-  }, []);
-
-  /* slide the bar away while the contact section is on screen */
-  useEffect(() => {
-    const contact = document.getElementById("contact");
-    if (!contact) return;
-    const io = new IntersectionObserver(
-      ([e]) => setHidden(e.isIntersecting),
-      { rootMargin: "0px 0px -35% 0px" },
-    );
-    io.observe(contact);
-    return () => io.disconnect();
-  }, []);
-
-  /* glide the highlight to the active item */
-  useEffect(() => {
-    const link = bar.current?.querySelector<HTMLElement>('[aria-current="true"]');
-    const el = pill.current;
-    if (!el) return;
-    if (!link) {
-      el.style.opacity = "0";
-      return;
-    }
-    el.style.opacity = "1";
-    el.style.width = `${link.offsetWidth}px`;
-    el.style.transform = `translateX(${link.offsetLeft}px)`;
-  }, [active]);
-
-  return (
-    <nav
-      ref={bar}
-      className={`bottom-nav${hidden ? " is-hidden" : ""}`}
-      aria-label="Main navigation"
-      aria-hidden={hidden}
-      inert={hidden}
-    >
-      <span className="nav-pill" ref={pill} aria-hidden="true" />
-      {navItems.map((n) => (
-        <a
-          key={n.id}
-          href={`#${n.id}`}
-          aria-current={active === n.id ? "true" : undefined}
-        >
-          {n.label}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
 function Cover({ project }: { project: ProjectInterface }) {
   const imgs = project.images ?? [];
   if (!imgs.length)
@@ -409,7 +337,7 @@ export default function App() {
         </div>
         <ThemeToggle />
       </header>
-      <BottomNav />
+      <ChatDock />
 
       <main id="main">
         <section id="hero" className="hero" aria-labelledby="hero-title">

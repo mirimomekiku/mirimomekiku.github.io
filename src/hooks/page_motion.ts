@@ -26,7 +26,7 @@ export function usePageMotion(scope: RefObject<HTMLElement | null>, filter: stri
             scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom 30%", scrub: true },
           });
           if (desk) {
-            gsap.utils.toArray<HTMLElement>(".widget").forEach((w, i) =>
+            gsap.utils.toArray<HTMLElement>(".widget-park").forEach((w, i) =>
               gsap.to(w, {
                 y: -70 - (i % 5) * 38,
                 ease: "none",
