@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowUpRight, Github, Linkedin, Mail, X } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
@@ -128,6 +128,128 @@ function TypewriterVerb() {
   );
 }
 
+const SCRAMBLE = "!<>-_\\/[]{}=+*^?#01";
+const prefersReduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Text decodes from random glyphs into the final string. */
+function Scramble({ text, delay = 400 }: { text: string; delay?: number }) {
+  const [out, setOut] = useState(() => text.replace(/\S/g, "·"));
+  useEffect(() => {
+    if (prefersReduced()) {
+      setOut(text);
+      return;
+    }
+    let frame = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const start = setTimeout(() => {
+      timer = setInterval(() => {
+        frame++;
+        const done = Math.floor(frame / 2);
+        setOut(
+          text
+            .split("")
+            .map((c, i) =>
+              c === " " || i < done
+                ? c
+                : SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)],
+            )
+            .join(""),
+        );
+        if (done >= text.length) clearInterval(timer);
+      }, 40);
+    }, delay);
+    return () => {
+      clearTimeout(start);
+      clearInterval(timer);
+    };
+  }, [text, delay]);
+  return <>{out}</>;
+}
+
+/** Per-letter rise + blur-in, then a travelling sheen and gentle wave. */
+function Letters({ text, start = 0.4 }: { text: string; start?: number }) {
+  let n = 0;
+  return (
+    <>
+      {text.split(" ").map((word, w) => (
+        <span className="word" key={w}>
+          {word.split("").map((c) => {
+            const i = n++;
+            return (
+              <span
+                className="ch"
+                key={i}
+                style={{ "--i": i, "--d": `${start + i * 0.05}s` } as CSSProperties}
+              >
+                {c}
+              </span>
+            );
+          })}
+        </span>
+      ))}
+    </>
+  );
+}
+
+/** Slot-machine style word swap: the old word rolls up as the new one arrives. */
+function Roller({ words }: { words: string[] }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (prefersReduced()) return;
+    const t = setInterval(() => setI((n) => (n + 1) % words.length), 2400);
+    return () => clearInterval(t);
+  }, [words.length]);
+  const prev = (i - 1 + words.length) % words.length;
+  return (
+    <span className="roller" aria-hidden="true">
+      <span className="roll-out" key={`o${i}`}>{words[prev]}</span>
+      <span className="roll-in" key={`i${i}`}>{words[i]}</span>
+      <span className="roll-size">{words.reduce((a, b) => (b.length > a.length ? b : a))}</span>
+    </span>
+  );
+}
+
+/** Drifting orbs, a panning dot grid, orbiting rings and floating glass glyph tiles. */
+function HeroBackdrop() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReduced()) return;
+    const move = (e: PointerEvent) => {
+      el.style.setProperty("--mx", String((e.clientX / innerWidth - 0.5) * 2));
+      el.style.setProperty("--my", String((e.clientY / innerHeight - 0.5) * 2));
+    };
+    addEventListener("pointermove", move, { passive: true });
+    return () => removeEventListener("pointermove", move);
+  }, []);
+  const glyphs = ["</>", "{ }", "✦", "( )=>", "01", "npm", "git", "</"];
+  return (
+    <div className="backdrop" ref={ref} aria-hidden="true">
+      <div className="layer l1">
+        <i className="orb o1" />
+        <i className="orb o2" />
+        <i className="orb o3" />
+      </div>
+      <div className="dots" />
+      <svg className="rings" viewBox="-200 -200 400 400">
+        <circle r="90" />
+        <circle r="140" />
+        <circle r="190" />
+        <circle className="sat s1" r="5" cx="90" />
+        <circle className="sat s2" r="4" cx="-140" />
+        <circle className="sat s3" r="6" cx="0" cy="190" />
+      </svg>
+      <div className="layer l2">
+        {glyphs.map((g, n) => (
+          <span key={g} className={`tile glass t${n + 1}`}>
+            {g}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Typed({
   id,
   text,
@@ -148,7 +270,7 @@ function Typed({
             fontFamily: font,
             "--n": text.length,
             "--dur": `${Math.max(0.8, text.length * 0.07)}s`,
-          } as React.CSSProperties
+          } as CSSProperties
         }
       >
         {text}
@@ -278,7 +400,7 @@ export default function App() {
         Skip to content
       </a>
       <header className="nav">
-        <div className="nav-icons">
+        <div className="nav-icons glass">
           <a href={LINKEDIN} target="_blank" rel="noreferrer" aria-label="LinkedIn">
             <Linkedin size={20} />
           </a>
@@ -289,7 +411,7 @@ export default function App() {
             <Mail size={20} />
           </a>
         </div>
-        <a className="brand" href="#home">
+        <a className="brand glass" href="#home">
           mirimomekiku
         </a>
       </header>
@@ -297,23 +419,28 @@ export default function App() {
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
-          <h1 id="hero-title">
-            <span className="sr-only">Building apps people love.</span>
-            <span className="verb-line" aria-hidden="true">
-              <TypewriterVerb />
-            </span>
-            <span className="hero-rest" aria-hidden="true">
-              {["apps", "people", "love."].map((w, i) => (
-                <span key={w} style={{ animationDelay: `${0.3 + i * 0.18}s` }}>
-                  {w}
-                </span>
-              ))}
-            </span>
-          </h1>
+          <HeroBackdrop />
+          <div className="hero-inner">
+            <p className="eyebrow glass" aria-hidden="true">
+              <Scramble text="mirimomekiku · software developer" />
+            </p>
+            <h1 id="hero-title">
+              <span className="sr-only">Building apps people love.</span>
+              <span className="verb-line" aria-hidden="true">
+                <TypewriterVerb />
+              </span>
+              <span className="hero-rest" aria-hidden="true">
+                <Letters text="apps people love." />
+              </span>
+            </h1>
+            <p className="hero-sub">
+              I work across <Roller words={["mobile", "web", "backend", "AI"]} />
+            </p>
+          </div>
         </section>
 
         <section id="work" className="work" aria-labelledby="work-title">
-          <Typed id="work-title" text="Selected projects" font="'Caveat', cursive" />
+          <Typed id="work-title" text="Projects" font="'Caveat', cursive" />
           <div className="filters" role="group" aria-label="Filter projects">
             {filters.map((f) => (
               <button
