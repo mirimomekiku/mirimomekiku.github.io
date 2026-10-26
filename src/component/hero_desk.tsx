@@ -90,23 +90,27 @@ function Widget({
     }
   }
 
+  /* The outer "park" owns position and the scroll parallax (GSAP); the inner card owns
+     rotation, scale, drag and its entrance, so GSAP never absorbs those CSS transforms. */
   return (
-    <div
-      ref={ref}
-      className={`widget ${className}`}
-      style={{ "--r": `${rotate}deg`, "--delay": `${delay}s` } as CSSProperties}
-      onPointerDown={down}
-      onPointerMove={move}
-      onPointerUp={up}
-      onPointerCancel={up}
-      onClickCapture={(e) => {
-        if (suppress.current) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      }}
-    >
-      {children}
+    <div className={`widget-park ${className.split(" ").find((c) => c.startsWith("p-")) ?? ""}`}>
+      <div
+        ref={ref}
+        className={`widget ${className}`}
+        style={{ "--r": `${rotate}deg`, "--delay": `${delay}s` } as CSSProperties}
+        onPointerDown={down}
+        onPointerMove={move}
+        onPointerUp={up}
+        onPointerCancel={up}
+        onClickCapture={(e) => {
+          if (suppress.current) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
