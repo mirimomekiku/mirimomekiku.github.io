@@ -1,21 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Bookmark, Github, Linkedin, Mail, X } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin, Mail, X } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
 import experience from "./types/experience";
 import images from "./types/images";
-import { Mascot } from "./component/mascot";
 
 const EMAIL = "viernes.jhonlloydd@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/jhon-lloyd-viernes/";
 const GITHUB = "https://github.com/dlord213";
 const verbs = [
-  "Building",
-  "Shipping",
-  "Tinkering",
-  "Sketching",
-  "Debugging",
-  "Wiring",
+  { word: "Building", font: "'Pixelify Sans', monospace" },
+  { word: "Shipping", font: "'Permanent Marker', cursive" },
+  { word: "Tinkering", font: "'Special Elite', monospace" },
+  { word: "Sketching", font: "'Gochi Hand', cursive" },
+  { word: "Debugging", font: "'VT323', monospace" },
+  { word: "Wiring", font: "'Rubik Mono One', sans-serif" },
+];
+const navItems = [
+  { id: "work", label: "Work" },
+  { id: "experience", label: "Experience" },
+  { id: "art", label: "Art" },
+  { id: "contact", label: "Contact" },
 ];
 const filters = ["All", "Web", "Mobile", "AI & systems"];
 const playlists = [
@@ -44,7 +49,7 @@ const footerLists = [
   },
   {
     title: "listening",
-    items: playlists.map((p) => ({ label: p.title, href: "#playground" })),
+    items: playlists.map((p) => ({ label: p.title, href: "#art" })),
   },
   {
     title: "elsewhere",
@@ -90,45 +95,94 @@ function useReveal(...deps: unknown[]) {
   }, deps);
 }
 
-function RotatingVerb() {
-  const [i, setI] = useState(0);
+/** Types each verb in its own typeface, holds, erases, then moves on. */
+function TypewriterVerb() {
+  const [index, setIndex] = useState(0);
+  const [length, setLength] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+  const [reduced] = useState(
+    () => matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const { word, font } = verbs[index];
+
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => setI((n) => (n + 1) % verbs.length), 2600);
-    return () => clearInterval(t);
-  }, []);
+    if (reduced) return;
+    let delay = deleting ? 45 : 90;
+    if (!deleting && length === word.length) delay = 1700;
+    if (deleting && length === 0) delay = 300;
+    const t = setTimeout(() => {
+      if (!deleting && length === word.length) setDeleting(true);
+      else if (deleting && length === 0) {
+        setDeleting(false);
+        setIndex((i) => (i + 1) % verbs.length);
+      } else setLength(length + (deleting ? -1 : 1));
+    }, delay);
+    return () => clearTimeout(t);
+  }, [length, deleting, word, reduced]);
+
   return (
-    <span className="verb" key={i} aria-hidden="true">
-      {verbs[i]}
+    <span className="verb" style={{ fontFamily: font }} aria-hidden="true">
+      {reduced ? word : word.slice(0, length)}
+      <span className="verb-caret" />
     </span>
   );
 }
 
-function Paws() {
-  const steps = [
-    [0, 0, -22], [80, -44, -8], [168, -22, -30], [250, -70, -14], [338, -48, -34], [420, -96, -18],
-  ];
+function Typed({
+  id,
+  text,
+  font,
+  className = "script",
+}: {
+  id?: string;
+  text: string;
+  font: string;
+  className?: string;
+}) {
   return (
-    <svg className="paws" viewBox="0 -40 560 260" aria-hidden="true">
-      <defs>
-        <filter id="soft"><feGaussianBlur stdDeviation="1.6" /></filter>
-      </defs>
-      {steps.map(([x, y, r], n) => (
-        <g
-          key={n}
-          className="paw"
-          style={{ animationDelay: `${0.4 + n * 0.45}s` }}
-          transform={`translate(${x + 40} ${y + 120}) rotate(${r})`}
-          filter="url(#soft)"
+    <h2 id={id} className={className} data-reveal>
+      <span
+        className="typed"
+        style={
+          {
+            fontFamily: font,
+            "--n": text.length,
+            "--dur": `${Math.max(0.8, text.length * 0.07)}s`,
+          } as React.CSSProperties
+        }
+      >
+        {text}
+      </span>
+    </h2>
+  );
+}
+
+function BottomNav() {
+  const [active, setActive] = useState("");
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    navItems.forEach((n) => {
+      const el = document.getElementById(n.id);
+      if (el) io.observe(el);
+    });
+    return () => io.disconnect();
+  }, []);
+  return (
+    <nav className="bottom-nav" aria-label="Main navigation">
+      {navItems.map((n) => (
+        <a
+          key={n.id}
+          href={`#${n.id}`}
+          aria-current={active === n.id ? "true" : undefined}
         >
-          <ellipse cx="0" cy="8" rx="22" ry="17" />
-          <ellipse cx="-24" cy="-14" rx="8" ry="11" transform="rotate(-24 -24 -14)" />
-          <ellipse cx="-8" cy="-26" rx="8" ry="11" transform="rotate(-6 -8 -26)" />
-          <ellipse cx="9" cy="-26" rx="8" ry="11" transform="rotate(6 9 -26)" />
-          <ellipse cx="25" cy="-14" rx="8" ry="11" transform="rotate(24 25 -14)" />
-        </g>
+          {n.label}
+        </a>
       ))}
-    </svg>
+    </nav>
   );
 }
 
@@ -234,34 +288,32 @@ export default function App() {
           <a href={`mailto:${EMAIL}`} aria-label="Email">
             <Mail size={20} />
           </a>
-          <a href="#work" aria-label="Selected work">
-            <Bookmark size={20} />
-          </a>
         </div>
         <a className="brand" href="#home">
           mirimomekiku
         </a>
-        <nav aria-label="Main navigation">
-          <a href="#work">Work</a>
-          <a href="#playground">Playground</a>
-          <a href="#about">About</a>
-        </nav>
       </header>
+      <BottomNav />
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
           <h1 id="hero-title">
-            <RotatingVerb />
-            <span className="sr-only">Building</span>
-            <span className="hero-rest"> apps people love.</span>
+            <span className="sr-only">Building apps people love.</span>
+            <span className="verb-line" aria-hidden="true">
+              <TypewriterVerb />
+            </span>
+            <span className="hero-rest" aria-hidden="true">
+              {["apps", "people", "love."].map((w, i) => (
+                <span key={w} style={{ animationDelay: `${0.3 + i * 0.18}s` }}>
+                  {w}
+                </span>
+              ))}
+            </span>
           </h1>
-          <Paws />
         </section>
 
         <section id="work" className="work" aria-labelledby="work-title">
-          <h2 id="work-title" className="script" data-reveal>
-            Selected projects
-          </h2>
+          <Typed id="work-title" text="Selected projects" font="'Caveat', cursive" />
           <div className="filters" role="group" aria-label="Filter projects">
             {filters.map((f) => (
               <button
@@ -280,12 +332,80 @@ export default function App() {
           </div>
         </section>
 
-        <section id="playground" className="block" aria-labelledby="play-title">
-          <h2 id="play-title" className="script" data-reveal>
-            Playground
-          </h2>
+        <section id="experience" className="block about" aria-labelledby="exp-title">
+          <Typed id="exp-title" text="Experience" font="'Special Elite', monospace" />
+          <div className="about-grid" data-reveal>
+            <div className="about-copy">
+              <p>
+                It started with modding GTA and building custom Android ROMs in
+                high school. Now I work across <em>mobile, web, and backend</em>{" "}
+                engineering, connecting interfaces to the systems behind them.
+              </p>
+              <p>
+                Off the clock: art, music, games, and usually another idea open
+                in a tab.
+              </p>
+            </div>
+            <dl className="skills">
+              <div>
+                <dt>Interfaces &amp; mobile</dt>
+                <dd>
+                  Flutter · Dart · Kotlin · Jetpack Compose · React · Expo ·
+                  Tailwind CSS
+                </dd>
+              </div>
+              <div>
+                <dt>Systems &amp; data</dt>
+                <dd>
+                  Laravel · Node.js · Next.js · Express · Fastify · MySQL ·
+                  PostgreSQL · AI integrations
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <h3 className="sub" data-reveal>Work history</h3>
+          <ul className="timeline">
+            <li data-reveal>
+              <span className="when">Project work</span>
+              <div>
+                <h4>AdaptiveHub</h4>
+                <p>
+                  Connected school and business products across web, mobile, and
+                  backend services: LMS, Library, payments, conferencing, and
+                  support.
+                </p>
+              </div>
+            </li>
+            {[...experience].reverse().map((item) => (
+              <li key={item.position + item.period} data-reveal>
+                <span className="when">{item.period}</span>
+                <div>
+                  <h4>{item.position}</h4>
+                  <p>{item.description}</p>
+                  <p className="tags">{item.skills.join(" · ")}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <h3 className="sub" data-reveal>Education</h3>
+          <ul className="timeline">
+            {education.map((e) => (
+              <li key={e.school} data-reveal>
+                <span className="when">{e.date}</span>
+                <div>
+                  <h4>{e.degree}</h4>
+                  <p>{e.school}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section id="art" className="block" aria-labelledby="art-title">
+          <Typed id="art-title" text="Art" font="'Gochi Hand', cursive" />
           <p className="lede" data-reveal>
-            A sketchbook and a few playlists, for a different kind of flow.
+            Sketches and playlists, for a different kind of flow.
           </p>
           <div className="art-grid">
             {images.slice(0, artCount).map((image, i) => (
@@ -330,86 +450,17 @@ export default function App() {
           </div>
         </section>
 
-        <section id="about" className="block about" aria-labelledby="about-title">
-          <h2 id="about-title" className="script" data-reveal>
-            About
-          </h2>
-          <div className="about-grid" data-reveal>
-            <div className="about-copy">
-              <p>
-                It started with modding GTA and building custom Android ROMs in
-                high school. Now I work across <em>mobile, web, and backend</em>{" "}
-                engineering, connecting interfaces to the systems behind them.
-              </p>
-              <p>
-                Off the clock: art, music, games, and usually another idea open
-                in a tab.
-              </p>
-            </div>
-            <dl className="skills">
-              <div>
-                <dt>Interfaces &amp; mobile</dt>
-                <dd>
-                  Flutter · Dart · Kotlin · Jetpack Compose · React · Expo ·
-                  Tailwind CSS
-                </dd>
-              </div>
-              <div>
-                <dt>Systems &amp; data</dt>
-                <dd>
-                  Laravel · Node.js · Next.js · Express · Fastify · MySQL ·
-                  PostgreSQL · AI integrations
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          <h3 className="sub" data-reveal>Experience</h3>
-          <ul className="timeline">
-            <li data-reveal>
-              <span className="when">Project work</span>
-              <div>
-                <h4>AdaptiveHub</h4>
-                <p>
-                  Connected school and business products across web, mobile, and
-                  backend services: LMS, Library, payments, conferencing, and
-                  support.
-                </p>
-              </div>
-            </li>
-            {[...experience].reverse().map((item) => (
-              <li key={item.position + item.period} data-reveal>
-                <span className="when">{item.period}</span>
-                <div>
-                  <h4>{item.position}</h4>
-                  <p>{item.description}</p>
-                  <p className="tags">{item.skills.join(" · ")}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <h3 className="sub" data-reveal>Education</h3>
-          <ul className="timeline">
-            {education.map((e) => (
-              <li key={e.school} data-reveal>
-                <span className="when">{e.date}</span>
-                <div>
-                  <h4>{e.degree}</h4>
-                  <p>{e.school}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
       </main>
 
-      <footer className="footer">
-        <Mascot className="footer-mascot" />
+      <footer className="footer" id="contact">
+        <div className="footer-hello">
+          <Typed text="Say hello" font="'Pacifico', cursive" className="script hello" />
+          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+        </div>
         <div className="footer-lists">
           {footerLists.map((list) => (
             <div key={list.title}>
-              <h2 className="script">{list.title}</h2>
+              <h3 className="script">{list.title}</h3>
               <ul>
                 {list.items.map((item) => (
                   <li key={item.label}>
@@ -435,14 +486,8 @@ export default function App() {
           <p>Copyright @ mirimomekiku</p>
           <p>Lives in the Philippines</p>
           <p>Last updated on Oct 27 2026</p>
-          <a className="paw-btn" href="#home" aria-label="Back to top">
-            <svg viewBox="-30 -36 60 60" aria-hidden="true">
-              <ellipse cx="0" cy="8" rx="14" ry="11" />
-              <ellipse cx="-16" cy="-8" rx="5" ry="7" transform="rotate(-24 -16 -8)" />
-              <ellipse cx="-5" cy="-17" rx="5" ry="7" />
-              <ellipse cx="6" cy="-17" rx="5" ry="7" />
-              <ellipse cx="17" cy="-8" rx="5" ry="7" transform="rotate(24 17 -8)" />
-            </svg>
+          <a className="top-btn" href="#home" aria-label="Back to top">
+            ↑
           </a>
         </div>
       </footer>
