@@ -401,9 +401,6 @@ export default function App() {
             <Mail size={20} />
           </a>
         </div>
-        <a className="brand glass" href="#home">
-          mirimomekiku
-        </a>
         <ThemeToggle />
       </header>
       <BottomNav />
