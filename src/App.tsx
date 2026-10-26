@@ -5,6 +5,8 @@ import education from "./types/education";
 import experience from "./types/experience";
 import images from "./types/images";
 import { HeroDesk } from "./component/hero_desk";
+import { SmoothScroll } from "./component/smooth_scroll";
+import { usePageMotion } from "./hooks/page_motion";
 
 const EMAIL = "viernes.jhonlloydd@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/jhon-lloyd-viernes/";
@@ -73,7 +75,7 @@ function categoriesOf(project: ProjectInterface) {
   );
 }
 
-function useReveal(...deps: unknown[]) {
+function useReveal() {
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>("[data-reveal]");
     if (!("IntersectionObserver" in window)) {
@@ -92,8 +94,7 @@ function useReveal(...deps: unknown[]) {
     );
     nodes.forEach((n) => io.observe(n));
     return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, []);
 }
 
 /** Types each verb in its own typeface, holds, erases, then moves on. */
@@ -235,20 +236,58 @@ function ThemeToggle() {
 
 function BottomNav() {
   const [active, setActive] = useState("");
+  const [hidden, setHidden] = useState(false);
+  const bar = useRef<HTMLElement>(null);
+  const pill = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
       { rootMargin: "-45% 0px -50% 0px" },
     );
-    navItems.forEach((n) => {
-      const el = document.getElementById(n.id);
+    ["hero", ...navItems.map((n) => n.id)].forEach((id) => {
+      const el = document.getElementById(id);
       if (el) io.observe(el);
     });
     return () => io.disconnect();
   }, []);
+
+  /* slide the bar away while the contact section is on screen */
+  useEffect(() => {
+    const contact = document.getElementById("contact");
+    if (!contact) return;
+    const io = new IntersectionObserver(
+      ([e]) => setHidden(e.isIntersecting),
+      { rootMargin: "0px 0px -35% 0px" },
+    );
+    io.observe(contact);
+    return () => io.disconnect();
+  }, []);
+
+  /* glide the highlight to the active item */
+  useEffect(() => {
+    const link = bar.current?.querySelector<HTMLElement>('[aria-current="true"]');
+    const el = pill.current;
+    if (!el) return;
+    if (!link) {
+      el.style.opacity = "0";
+      return;
+    }
+    el.style.opacity = "1";
+    el.style.width = `${link.offsetWidth}px`;
+    el.style.transform = `translateX(${link.offsetLeft}px)`;
+  }, [active]);
+
   return (
-    <nav className="bottom-nav" aria-label="Main navigation">
+    <nav
+      ref={bar}
+      className={`bottom-nav${hidden ? " is-hidden" : ""}`}
+      aria-label="Main navigation"
+      aria-hidden={hidden}
+      inert={hidden}
+    >
+      <span className="nav-pill" ref={pill} aria-hidden="true" />
       {navItems.map((n) => (
         <a
           key={n.id}
@@ -297,7 +336,7 @@ function ProjectCard({
 }) {
   const tags = [project.group ?? "Personal", ...categoriesOf(project).slice(0, 2)];
   return (
-    <article className="card" data-reveal>
+    <article className="card">
       <button
         className="card-hit"
         onClick={onOpen}
@@ -329,7 +368,9 @@ export default function App() {
   const [artCount, setArtCount] = useState(6);
   const projectDialog = useRef<HTMLDialogElement>(null);
   const artDialog = useRef<HTMLDialogElement>(null);
-  useReveal(filter, artCount);
+  const root = useRef<HTMLDivElement>(null);
+  useReveal();
+  usePageMotion(root, filter);
 
   useEffect(() => {
     const d = projectDialog.current;
@@ -349,7 +390,8 @@ export default function App() {
   );
 
   return (
-    <div id="home">
+    <SmoothScroll>
+    <div id="home" ref={root}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -370,7 +412,7 @@ export default function App() {
       <BottomNav />
 
       <main id="main">
-        <section className="hero" aria-labelledby="hero-title">
+        <section id="hero" className="hero" aria-labelledby="hero-title">
           <HeroDesk />
           <div className="hero-inner">
             <h1 id="hero-title">
@@ -410,7 +452,7 @@ export default function App() {
 
         <section id="experience" className="block about" aria-labelledby="exp-title">
           <Typed id="exp-title" text="Experience" font="var(--head)" />
-          <div className="about-grid" data-reveal>
+          <div className="about-grid">
             <div className="about-copy">
               <p>
                 It started with modding GTA and building custom Android ROMs in
@@ -440,9 +482,9 @@ export default function App() {
             </dl>
           </div>
 
-          <h3 className="sub" data-reveal>Work history</h3>
+          <h3 className="sub">Work history</h3>
           <ul className="timeline">
-            <li data-reveal>
+            <li>
               <span className="when">Project work</span>
               <div>
                 <h4>AdaptiveHub</h4>
@@ -454,7 +496,7 @@ export default function App() {
               </div>
             </li>
             {[...experience].reverse().map((item) => (
-              <li key={item.position + item.period} data-reveal>
+              <li key={item.position + item.period}>
                 <span className="when">{item.period}</span>
                 <div>
                   <h4>{item.position}</h4>
@@ -465,10 +507,10 @@ export default function App() {
             ))}
           </ul>
 
-          <h3 className="sub" data-reveal>Education</h3>
+          <h3 className="sub">Education</h3>
           <ul className="timeline">
             {education.map((e) => (
-              <li key={e.school} data-reveal>
+              <li key={e.school}>
                 <span className="when">{e.date}</span>
                 <div>
                   <h4>{e.degree}</h4>
@@ -480,7 +522,7 @@ export default function App() {
         </section>
         <section id="art" className="block" aria-labelledby="art-title">
           <Typed id="art-title" text="Art" font="var(--head)" />
-          <p className="lede" data-reveal>
+          <p className="lede">
             Sketches and playlists, for a different kind of flow.
           </p>
           <div className="art-grid">
@@ -489,7 +531,6 @@ export default function App() {
                 key={image.src}
                 onClick={() => setLightbox(i)}
                 aria-label={`View artwork ${i + 1}`}
-                data-reveal
               >
                 <img
                   src={image.src}
@@ -511,7 +552,7 @@ export default function App() {
           )}
           <div className="playlists">
             {playlists.map((pl) => (
-              <div key={pl.id} data-reveal>
+              <div key={pl.id}>
                 <h3>{pl.title}</h3>
                 <iframe
                   title={`SoundCloud playlist: ${pl.title}`}
@@ -571,6 +612,7 @@ export default function App() {
       <dialog
         ref={projectDialog}
         className="sheet"
+        data-lenis-prevent
         aria-labelledby="sheet-title"
         onClose={() => setSelected(null)}
         onClick={(e) => e.target === e.currentTarget && setSelected(null)}
@@ -644,6 +686,7 @@ export default function App() {
       <dialog
         ref={artDialog}
         className="sheet art"
+        data-lenis-prevent
         aria-label="Artwork viewer"
         onClose={() => setLightbox(null)}
         onClick={(e) => e.target === e.currentTarget && setLightbox(null)}
@@ -675,5 +718,6 @@ export default function App() {
         )}
       </dialog>
     </div>
+    </SmoothScroll>
   );
 }
