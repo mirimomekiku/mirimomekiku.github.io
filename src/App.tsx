@@ -10,11 +10,11 @@ const LINKEDIN = "https://www.linkedin.com/in/jhon-lloyd-viernes/";
 const GITHUB = "https://github.com/dlord213";
 const verbs = [
   { word: "Building", font: "'Pixelify Sans', monospace" },
-  { word: "Shipping", font: "'Permanent Marker', cursive" },
-  { word: "Tinkering", font: "'Special Elite', monospace" },
+  { word: "Shipping", font: "'Fredoka', sans-serif" },
+  { word: "Tinkering", font: "'Space Mono', monospace" },
   { word: "Sketching", font: "'Gochi Hand', cursive" },
   { word: "Debugging", font: "'VT323', monospace" },
-  { word: "Wiring", font: "'Rubik Mono One', sans-serif" },
+  { word: "Wiring", font: "'Audiowide', sans-serif" },
 ];
 const navItems = [
   { id: "work", label: "Work" },
