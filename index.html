@@ -53,6 +53,13 @@
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#fafaf8" />
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- Structured Data -->

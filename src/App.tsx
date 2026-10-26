@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { ArrowUpRight, Github, Linkedin, Mail, X } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin, Mail, Moon, Sun, X } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
 import experience from "./types/experience";
@@ -239,6 +239,36 @@ function Typed({
   );
 }
 
+function ThemeToggle() {
+  const [dark, setDark] = useState(
+    () => document.documentElement.dataset.theme === "dark",
+  );
+  function toggle() {
+    const next = dark ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", next === "dark" ? "#0c100e" : "#fafaf8");
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* the choice still applies for this visit */
+    }
+    setDark(!dark);
+  }
+  return (
+    <button
+      className="theme-toggle glass"
+      onClick={toggle}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-pressed={dark}
+    >
+      <Sun className="sun" size={20} aria-hidden="true" />
+      <Moon className="moon" size={20} aria-hidden="true" />
+    </button>
+  );
+}
+
 function BottomNav() {
   const [active, setActive] = useState("");
   useEffect(() => {
@@ -374,6 +404,7 @@ export default function App() {
         <a className="brand glass" href="#home">
           mirimomekiku
         </a>
+        <ThemeToggle />
       </header>
       <BottomNav />
 
