@@ -1,12 +1,10 @@
-﻿# Jhon Lloyd Viernes — Portfolio
+# mirimomekiku — Portfolio
 
-A responsive React + TypeScript portfolio with searchable project work, professional background, artwork, and music.
+A React + TypeScript portfolio in a light editorial style: serif headline, animated SVG cat mascot, verb ticker, stacked project cards, a playground (art and music), and about/experience.
 
-The visual direction takes inspiration from [sergzorin.com](https://sergzorin.com/): a narrow terminal-style layout, monospace typography, an ASCII identity, numbered project notes, tree-style experience entries, and a reading-status bar. The reference site's assets and source code are not used.
-
-The four terminal themes (phosphor, violet, amber, and ice) change the accent and ASCII character treatment. Click the name or theme control to cycle them; the selection persists locally. `src/component/ascii_identity.tsx` builds the name from original letter patterns and lazily converts the existing avatar into a text portrait in the browser.
-
-All 19 projects remain searchable and filterable, with accessible project-note dialogs. Professional experience, education, artwork, and music are preserved. The same command navigation works on desktop and mobile. Animation can be paused and respects the operating system's reduced-motion preference.
+- Brand: **mirimomekiku**. The mascot, favicon, and OG image are original SVG drawings (`src/component/mascot.tsx`, `public/favicon.svg`).
+- Project screenshots come from the Google Play listings (AdaptiveHub, Adaptive Library) and live captures of the public sites. AdaptiveHub Meet uses an illustration while its site is offline.
+- Animation respects `prefers-reduced-motion`.
 
 ## Development
 
@@ -18,49 +16,3 @@ npm run lint
 npx playwright install chromium
 npm run test:e2e
 ```
-
-The production output is `dist/`. GitHub Pages publishes from the workflow in `.github/workflows` when `main` is pushed.
-
-## Motion
-
-- `src/component/smooth_scroll.tsx` mounts the modern `ReactLenis` adapter from `lenis/react`. GSAP's ticker drives its animation frames, and Lenis notifies ScrollTrigger on scroll. Wheel scrolling is smoothed; touch scrolling stays native.
-- `src/hooks/use_portfolio_motion.ts` owns restrained text entrances, section tracking, and the reading-progress indicator. `useGSAP` scopes and cleans up animations and ScrollTriggers. Section and progress tracking remain active with motion disabled.
-- `src/hooks/use_animated_layout.ts` captures the layout before filtering, search, gallery expansion, or tab changes. GSAP Flip animates the new positions and container height after React commits.
-- `src/hooks/use_animated_dialog.ts` coordinates dialog entrances/exits with native focus restoration. The page stays locked until the exit finishes, while the dialog keeps native scrolling.
-- `src/component/animated_details.tsx` animates experience accordions and supports reversing an in-progress transition.
-
-The motion control disables smooth scrolling and GSAP animation. Changes to the operating system's reduced-motion preference are respected immediately. Anchor navigation updates the URL and moves focus to the destination after scrolling; the skip link remains immediate.
-
-`npm run test:e2e` builds and serves the production site, then runs Chromium checks for theme persistence, desktop/mobile navigation, reading progress, rapid filtering, modal scroll/focus, interrupted transitions, responsive widths, and accessibility. External artwork and music are stubbed in tests so availability does not affect these interaction checks.
-
-## Content
-
-- `src/types/projects.ts`: project descriptions, technology tags, filters, and optional external links.
-- `src/types/experience.ts`: professional and freelance background.
-- `src/types/education.ts`: education history.
-- `src/types/images.ts`: existing artwork collection.
-- `src/App.tsx`: layout, project search, native accessible dialogs, gallery, and music.
-- `globals.css`: responsive styling, focus states, and reduced-motion support.
-
-Personal projects include their existing application previews in the notes dialog. External source/demo links are optional; professional projects without a verified public link display their scope and documented capabilities.
-
-## AdaptiveHub content review
-
-The October 2026 update draws on README, PRODUCT, package manifests, and relevant routes in the sibling `../adaptivehub` workspace. No private source, operational configuration, credentials, or customer records are copied into this portfolio.
-
-| Portfolio project       | Source folders                                                    |
-| ----------------------- | ----------------------------------------------------------------- |
-| AdaptiveHub LMS         | `main-hub-web`, `hub-web`, `hub-mobile`                           |
-| Adaptive Library        | `library-web`, `library-mobile`                                   |
-| Crest                   | `Crest` (web and mobile)                                          |
-| AdaptivePay             | `adaptive-pay`                                                    |
-| Adaptive Station        | `adaptive-station`, `adaptive-station-mobile`                     |
-| EDUCENTRA               | `educentra.ai`, with `educentra` as its earlier Laravel reference |
-| Adaptive Human Resource | `calendar`                                                        |
-| AdaptiveHub Meet        | `adaptivehub-meet`, with `livekit` as supporting infrastructure   |
-| AdaptiveHub AI          | `hub-ai`                                                          |
-| KAWAY Mobile            | `kaway-mobile`                                                    |
-| Oronikola               | `oronikola-web`                                                   |
-| Help Center             | `help-center` (application foundation only)                       |
-
-Duplicate working copies, datasets, documentation, build-only folders, scripts, and infrastructure are represented under their parent products rather than listed as separate completed products. Background text does not invent employment dates or measured outcomes. Existing education and employment dates are retained from the original data.
