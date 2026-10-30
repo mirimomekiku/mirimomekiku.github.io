@@ -418,8 +418,8 @@ export default function App() {
                 <h4>AdaptiveHub</h4>
                 <p>
                   Connected school and business products across web, mobile, and
-                  backend services: LMS, Library, payments, conferencing, and
-                  support.
+                  backend services: LMS, Library, payments, attendance,
+                  conferencing, and support.
                 </p>
               </div>
             </li>

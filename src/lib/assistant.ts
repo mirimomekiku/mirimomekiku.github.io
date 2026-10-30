@@ -48,7 +48,7 @@ const rules: { test: RegExp; reply: () => Reply }[] = [
   {
     test: /work|project|portfolio|app\b|apps|made|made/,
     reply: () => ({
-      text: `There are ${projects.length} projects on this page, from the AdaptiveHub platform (LMS, Library, payments, conferencing, help center) to personal apps like Checkpoint, Wavvy and Zync. Tap any card for its notes and screenshots.`,
+      text: `There are ${projects.length} projects on this page, from the AdaptiveHub platform (LMS, Library, payments, attendance, conferencing, help center), EDUCENTRA and Crest to personal apps like Checkpoint, Wavvy and Zync. Tap any card for its notes and screenshots.`,
       actions: [{ label: "See my work ↓", href: "#work" }],
     }),
   },
