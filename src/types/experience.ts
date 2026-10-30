@@ -117,9 +117,9 @@ const experience: Experience[] = [
       "Shipped offline learning packs and practice on the Flutter app, with keystore-backed sign-in and background book uploads.",
       "Built the Expo/React Native library app for members and librarians, with push notifications, offline reading, and camera scanning.",
       "Added publisher accounts, an ebook downloader, readers, and a mobile API to the Laravel library backend.",
-      "Rebuilt EDUCENTRA as a Node/TypeScript monorepo in three weeks, with dual MySQL/PostgreSQL support and Filipino and Cebuano localization.",
+      "Rebuilt educentra.ai as a Node/TypeScript monorepo in three weeks, with dual MySQL/PostgreSQL support and Filipino and Cebuano localization.",
       "Hardened face check-in for an offline-first RFID attendance system, and redesigned its portal and Flutter apps.",
-      "Delivered document control and mobile visit reports for Crest, and redesigned the AdaptivePay front end.",
+      "Redesigned the AdaptivePay front end with a shared design system and animated landing page.",
     ],
     skills: [
       "Flutter",

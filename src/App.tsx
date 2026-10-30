@@ -41,8 +41,6 @@ const footerLists = [
     items: [
       { label: "Checkpoint", href: "https://play.google.com/store/apps/details?id=com.mirimomekiku.checkpoint" },
       { label: "Wavvy", href: "https://github.com/dlord213/wavvy-flutter" },
-      { label: "Zync", href: "https://github.com/dlord213/zync" },
-      { label: "TheoryPocket", href: "https://github.com/dlord213/theorypocket" },
     ],
   },
   {

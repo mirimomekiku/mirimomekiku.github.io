@@ -12,6 +12,7 @@ export interface ProjectInterface {
   group?: "AdaptiveHub" | "Work";
   category?: string[];
   highlights?: string[];
+  hidden?: boolean;
 }
 
 const A = "/assets/projects";
@@ -37,6 +38,25 @@ const projects: ProjectInterface[] = [
       "Offline learning packs and practice on mobile, with native LaTeX quizzes and keystore-backed sign-in.",
       "Book repository with PDF/DOCX ingestion, resumable chunked uploads, and AI tutor retrieval.",
       "XP, streaks, badges, messaging, and real-time classroom updates.",
+    ],
+  },
+  {
+    title: "Whipo",
+    devices: "Web & Mobile",
+    group: "Work",
+    year: "2026",
+    description:
+      "An all-in-one service marketplace connecting seekers with trusted local providers, built at Antimony Technologies.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#d6ecff,#a9d4ff)",
+    stack: ["Flutter", "GetX"],
+    category: ["Web", "Mobile"],
+    images: [1, 2].map((n) => `${A}/whipo/${n}.jpg`),
+    link: "https://whipo.ph/",
+    highlights: [
+      "Marketplace for home, auto, wellness, events, pet care, and business services, with Seeker and Provider apps on Google Play.",
+      "Stabilized core mobile modules with structured error handling and GetX dependency injection.",
+      "Reduced memory overhead in heavy list rendering by streamlining MVC data flow.",
     ],
   },
   {
@@ -85,9 +105,11 @@ const projects: ProjectInterface[] = [
     description:
       "Offline-first RFID attendance for schools, with a portal, kiosks, and a family app.",
     shot: "web",
-    tint: "linear-gradient(135deg,#e2e8f0,#cbd5e1)",
+    tint: "linear-gradient(135deg,#dbe4ff,#b8c9ff)",
     stack: ["Laravel", "Inertia", "React", "Flutter"],
     category: ["Web", "Mobile", "AI & systems"],
+    images: [1, 2].map((n) => `${A}/adaptivestation/${n}.jpg`),
+    link: "https://station.adaptivehub.app/",
     highlights: [
       "Taps are saved on the device first and synced later, so outages never lose attendance.",
       "Hardened face check-in with enrollment management, stale-enrollment purging, and policies.",
@@ -148,7 +170,7 @@ const projects: ProjectInterface[] = [
     ],
   },
   {
-    title: "EDUCENTRA",
+    title: "educentra.ai",
     devices: "Web",
     group: "Work",
     year: "2026",
@@ -158,6 +180,8 @@ const projects: ProjectInterface[] = [
     tint: "linear-gradient(135deg,#dff3ee,#bfe3da)",
     stack: ["Node.js", "Express", "React", "Sequelize"],
     category: ["Web", "AI & systems"],
+    images: [1, 2].map((n) => `${A}/educentra/${n}.jpg`),
+    link: "https://educentra.adaptivehub.app/",
     highlights: [
       "Rebuilt a Laravel app as a Node/TypeScript monorepo, with 17 architecture decision records.",
       "i-hub incubation pipeline: cohorts, mentors, readiness scoring, and graduation decisions.",
@@ -167,6 +191,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "Crest Document Control",
+    hidden: true,
     devices: "Web & Mobile",
     group: "Work",
     year: "2026",
@@ -183,26 +208,8 @@ const projects: ProjectInterface[] = [
     ],
   },
   {
-    title: "Whipo",
-    devices: "Web & Mobile",
-    group: "Work",
-    year: "2026",
-    description:
-      "An all-in-one service marketplace connecting seekers with trusted local providers, built at Antimony Technologies.",
-    shot: "web",
-    tint: "linear-gradient(135deg,#d6ecff,#a9d4ff)",
-    stack: ["Flutter", "GetX"],
-    category: ["Web", "Mobile"],
-    images: [1, 2].map((n) => `${A}/whipo/${n}.jpg`),
-    link: "https://whipo.ph/",
-    highlights: [
-      "Marketplace for home, auto, wellness, events, pet care, and business services, with Seeker and Provider apps on Google Play.",
-      "Stabilized core mobile modules with structured error handling and GetX dependency injection.",
-      "Reduced memory overhead in heavy list rendering by streamlining MVC data flow.",
-    ],
-  },
-  {
     title: "SwitchDeals",
+    hidden: true,
     devices: "Web & Android",
     description: "Find the best deals here on Nintendo eShop store!",
     images: [`${A}/switchdeals/1.jpg`],
@@ -213,6 +220,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "PSDrops",
+    hidden: true,
     devices: "Web",
     description: "Find deals on PlayStation store.",
     images: [`${A}/psdrops/1.png`],
@@ -256,6 +264,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "TheoryPocket",
+    hidden: true,
     devices: "Android",
     description:
       "A comprehensive, interactive music theory and utility toolset built with Flutter",
@@ -267,6 +276,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "Zync",
+    hidden: true,
     devices: "Android/Windows/Linux",
     description:
       "A cross-platform peer-to-peer (P2P) file-sharing application designed for fast, local transfers between Android, Windows, and Linux devices.",
@@ -278,4 +288,4 @@ const projects: ProjectInterface[] = [
   },
 ];
 
-export default projects;
+export default projects.filter((project) => !project.hidden);
