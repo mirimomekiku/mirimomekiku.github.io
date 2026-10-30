@@ -187,13 +187,16 @@ const projects: ProjectInterface[] = [
     devices: "Web & Mobile",
     group: "Work",
     year: "2026",
-    description: "A product I worked on at Antimony Technologies.",
+    description:
+      "An all-in-one service marketplace connecting seekers with trusted local providers, built at Antimony Technologies.",
     shot: "web",
-    tint: "linear-gradient(135deg,#fde7ee,#f7c9d6)",
+    tint: "linear-gradient(135deg,#d6ecff,#a9d4ff)",
     stack: ["Flutter", "GetX"],
     category: ["Web", "Mobile"],
+    images: [1, 2].map((n) => `${A}/whipo/${n}.jpg`),
     link: "https://whipo.ph/",
     highlights: [
+      "Marketplace for home, auto, wellness, events, pet care, and business services, with Seeker and Provider apps on Google Play.",
       "Stabilized core mobile modules with structured error handling and GetX dependency injection.",
       "Reduced memory overhead in heavy list rendering by streamlining MVC data flow.",
     ],
