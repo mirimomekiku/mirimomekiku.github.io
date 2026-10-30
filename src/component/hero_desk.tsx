@@ -195,7 +195,7 @@ export function HeroDesk() {
           </span>
           <strong>Software developer</strong>
           <ul>
-            <li>AdaptiveHub</li>
+            <li>Oronikola</li>
             <li>Antimony Technologies</li>
             <li>Cagayan de Oro, PH</li>
           </ul>

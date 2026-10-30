@@ -32,7 +32,7 @@ const footerLists = [
     title: "working",
     items: [
       { label: "AdaptiveHub", href: "https://adaptivehub.app" },
-      { label: "Antimony Technologies" },
+      { label: "Antimony Technologies", href: "https://whipo.ph/" },
       { label: "Oronikola", href: "https://oronikola.org" },
     ],
   },
@@ -412,17 +412,6 @@ export default function App() {
 
           <h3 className="sub">Work history</h3>
           <ul className="timeline">
-            <li>
-              <span className="when">Project work</span>
-              <div>
-                <h4>AdaptiveHub</h4>
-                <p>
-                  Connected school and business products across web, mobile, and
-                  backend services: LMS, Library, payments, attendance,
-                  conferencing, and support.
-                </p>
-              </div>
-            </li>
             {[...experience].reverse().map((item) => (
               <li key={item.position + item.period}>
                 <span className="when">{item.period}</span>

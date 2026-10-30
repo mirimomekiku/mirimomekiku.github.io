@@ -55,7 +55,7 @@ const rules: { test: RegExp; reply: () => Reply }[] = [
   {
     test: /experience|job|career|resume|cv|company|employ|history|currently|now\b/,
     reply: () => ({
-      text: `Right now: ${current.position} (${current.period}), plus project work on AdaptiveHub. Before that, a run of freelance work: frontend, full-stack with AI features, and automation.`,
+      text: `Right now: ${current.position} (${current.period}), alongside my job at Antimony Technologies (Whipo). At Oronikola I build the Adaptive products: AdaptiveHub, Library, Pay and Station. Before that, a run of freelance work: frontend, full-stack with AI features, and automation.`,
       actions: [{ label: "Experience ↓", href: "#experience" }],
     }),
   },
