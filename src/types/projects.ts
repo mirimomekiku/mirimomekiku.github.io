@@ -183,6 +183,22 @@ const projects: ProjectInterface[] = [
     ],
   },
   {
+    title: "Whipo",
+    devices: "Web & Mobile",
+    group: "Work",
+    year: "2026",
+    description: "A product I worked on at Antimony Technologies.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#fde7ee,#f7c9d6)",
+    stack: ["Flutter", "GetX"],
+    category: ["Web", "Mobile"],
+    link: "https://whipo.ph/",
+    highlights: [
+      "Stabilized core mobile modules with structured error handling and GetX dependency injection.",
+      "Reduced memory overhead in heavy list rendering by streamlining MVC data flow.",
+    ],
+  },
+  {
     title: "SwitchDeals",
     devices: "Web & Android",
     description: "Find the best deals here on Nintendo eShop store!",
