@@ -9,9 +9,10 @@ export interface ProjectInterface {
   store?: string;
   year?: string;
   stack: string[];
-  group?: "AdaptiveHub";
+  group?: "AdaptiveHub" | "Work";
   category?: string[];
   highlights?: string[];
+  hidden?: boolean;
 }
 
 const A = "/assets/projects";
@@ -33,8 +34,29 @@ const projects: ProjectInterface[] = [
     link: "https://adaptivehub.app",
     highlights: [
       "School-isolated academic workflows across web and Flutter mobile apps.",
-      "Assessments, mastery practice, AI-assisted grading, and learning materials.",
+      "Adaptive mastery engine: AI question generation, BKT/CAT ranking, smart retrieval, and question-quality audits.",
+      "Offline learning packs and practice on mobile, with native LaTeX quizzes and keystore-backed sign-in.",
+      "Book repository with PDF/DOCX ingestion, resumable chunked uploads, and AI tutor retrieval.",
       "XP, streaks, badges, messaging, and real-time classroom updates.",
+    ],
+  },
+  {
+    title: "Whipo",
+    devices: "Web & Mobile",
+    group: "Work",
+    year: "2026",
+    description:
+      "An all-in-one service marketplace connecting seekers with trusted local providers, built at Antimony Technologies.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#d6ecff,#a9d4ff)",
+    stack: ["Flutter", "GetX"],
+    category: ["Web", "Mobile"],
+    images: [1, 2].map((n) => `${A}/whipo/${n}.jpg`),
+    link: "https://whipo.ph/",
+    highlights: [
+      "Marketplace for home, auto, wellness, events, pet care, and business services, with Seeker and Provider apps on Google Play.",
+      "Stabilized core mobile modules with structured error handling and GetX dependency injection.",
+      "Reduced memory overhead in heavy list rendering by streamlining MVC data flow.",
     ],
   },
   {
@@ -55,6 +77,7 @@ const projects: ProjectInterface[] = [
       "Multi-tenant catalogs, reservations, circulation, fines, and member support.",
       "EPUB/PDF access, bibliographic metadata, and AI-assisted cataloging.",
       "Mobile workflows for members and librarians, including camera-based scanning.",
+      "Publisher accounts, payouts, catalog visibility controls, and push notifications.",
     ],
   },
   {
@@ -73,6 +96,25 @@ const projects: ProjectInterface[] = [
       "Laravel-to-Next.js migration organized as a shared-package monorepo.",
       "Exact-decimal money handling and shared contracts.",
       "Client and personnel workflows with background workers and queued email.",
+    ],
+  },
+  {
+    title: "Adaptive Station",
+    devices: "Web & Mobile",
+    group: "AdaptiveHub",
+    description:
+      "Offline-first RFID attendance for schools, with a portal, kiosks, and a family app.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#dbe4ff,#b8c9ff)",
+    stack: ["Laravel", "Inertia", "React", "Flutter"],
+    category: ["Web", "Mobile", "AI & systems"],
+    images: [1, 2].map((n) => `${A}/adaptivestation/${n}.jpg`),
+    link: "https://station.adaptivehub.app/",
+    highlights: [
+      "Taps are saved on the device first and synced later, so outages never lose attendance.",
+      "Hardened face check-in with enrollment management, stale-enrollment purging, and policies.",
+      "School portal redesign with stepper forms, CSV import, and audit filters.",
+      "Flutter parent and student portals with live arrival and departure updates.",
     ],
   },
   {
@@ -128,7 +170,46 @@ const projects: ProjectInterface[] = [
     ],
   },
   {
+    title: "educentra.ai",
+    devices: "Web",
+    group: "Work",
+    year: "2026",
+    description:
+      "An academic and innovation platform for research, IP, extension programs, partnerships, and incubation.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#dff3ee,#bfe3da)",
+    stack: ["Node.js", "Express", "React", "Sequelize"],
+    category: ["Web", "AI & systems"],
+    images: [1, 2].map((n) => `${A}/educentra/${n}.jpg`),
+    link: "https://educentra.adaptivehub.app/",
+    highlights: [
+      "Rebuilt a Laravel app as a Node/TypeScript monorepo, with 17 architecture decision records.",
+      "i-hub incubation pipeline: cohorts, mentors, readiness scoring, and graduation decisions.",
+      "IP office royalty ledgers, calls and proposals, and DOST-GIA project reports as Word and Excel files.",
+      "One migration set for MySQL and PostgreSQL, a database job queue, realtime events, and Filipino and Cebuano translations.",
+    ],
+  },
+  {
+    title: "Crest Document Control",
+    hidden: true,
+    devices: "Web & Mobile",
+    group: "Work",
+    year: "2026",
+    description:
+      "Company document control and field visit reports on the Crest platform.",
+    shot: "web",
+    tint: "linear-gradient(135deg,#e8e4f7,#d3cbee)",
+    stack: ["Next.js", "TypeScript", "Turborepo"],
+    category: ["Web", "Mobile"],
+    highlights: [
+      "Document register with numbering, letterheads, signatories, and a public QR verification page.",
+      "MoA numbering, amendments, and notarial details, with forms that follow the paper templates.",
+      "Mobile visit reports with photos, receiving copies, and a company switcher.",
+    ],
+  },
+  {
     title: "SwitchDeals",
+    hidden: true,
     devices: "Web & Android",
     description: "Find the best deals here on Nintendo eShop store!",
     images: [`${A}/switchdeals/1.jpg`],
@@ -139,6 +220,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "PSDrops",
+    hidden: true,
     devices: "Web",
     description: "Find deals on PlayStation store.",
     images: [`${A}/psdrops/1.png`],
@@ -182,6 +264,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "TheoryPocket",
+    hidden: true,
     devices: "Android",
     description:
       "A comprehensive, interactive music theory and utility toolset built with Flutter",
@@ -193,6 +276,7 @@ const projects: ProjectInterface[] = [
   },
   {
     title: "Zync",
+    hidden: true,
     devices: "Android/Windows/Linux",
     description:
       "A cross-platform peer-to-peer (P2P) file-sharing application designed for fast, local transfers between Android, Windows, and Linux devices.",
@@ -204,4 +288,4 @@ const projects: ProjectInterface[] = [
   },
 ];
 
-export default projects;
+export default projects.filter((project) => !project.hidden);

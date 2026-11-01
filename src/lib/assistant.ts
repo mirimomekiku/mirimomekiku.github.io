@@ -48,14 +48,14 @@ const rules: { test: RegExp; reply: () => Reply }[] = [
   {
     test: /work|project|portfolio|app\b|apps|made|made/,
     reply: () => ({
-      text: `There are ${projects.length} projects on this page, from the AdaptiveHub platform (LMS, Library, payments, conferencing, help center) to personal apps like Checkpoint, Wavvy and Zync. Tap any card for its notes and screenshots.`,
+      text: `There are ${projects.length} projects on this page, from the AdaptiveHub platform (LMS, Library, payments, attendance, conferencing, help center) and educentra.ai to personal apps like Checkpoint and Wavvy. Tap any card for its notes and screenshots.`,
       actions: [{ label: "See my work ↓", href: "#work" }],
     }),
   },
   {
     test: /experience|job|career|resume|cv|company|employ|history|currently|now\b/,
     reply: () => ({
-      text: `Right now: ${current.position} (${current.period}), plus project work on AdaptiveHub. Before that, a run of freelance work: frontend, full-stack with AI features, and automation.`,
+      text: `Right now: ${current.position} (${current.period}), alongside my job at Antimony Technologies (Whipo). At Oronikola I build the Adaptive products: AdaptiveHub, Library, Pay and Station. Before that, a run of freelance work: frontend, full-stack with AI features, and automation.`,
       actions: [{ label: "Experience ↓", href: "#experience" }],
     }),
   },

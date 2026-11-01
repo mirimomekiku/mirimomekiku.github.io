@@ -56,7 +56,7 @@ function Widget({
   const suppress = useRef(false);
 
   function down(e: PointerEvent<HTMLDivElement>) {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || !matchMedia("(min-width: 861px) and (pointer: fine)").matches) return;
     drag.current = {
       sx: e.clientX,
       sy: e.clientY,
@@ -195,7 +195,7 @@ export function HeroDesk() {
           </span>
           <strong>Software developer</strong>
           <ul>
-            <li>AdaptiveHub</li>
+            <li>Oronikola</li>
             <li>Antimony Technologies</li>
             <li>Cagayan de Oro, PH</li>
           </ul>

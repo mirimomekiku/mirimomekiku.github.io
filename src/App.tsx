@@ -32,7 +32,7 @@ const footerLists = [
     title: "working",
     items: [
       { label: "AdaptiveHub", href: "https://adaptivehub.app" },
-      { label: "Antimony Technologies" },
+      { label: "Antimony Technologies", href: "https://whipo.ph/" },
       { label: "Oronikola", href: "https://oronikola.org" },
     ],
   },
@@ -41,8 +41,6 @@ const footerLists = [
     items: [
       { label: "Checkpoint", href: "https://play.google.com/store/apps/details?id=com.mirimomekiku.checkpoint" },
       { label: "Wavvy", href: "https://github.com/dlord213/wavvy-flutter" },
-      { label: "Zync", href: "https://github.com/dlord213/zync" },
-      { label: "TheoryPocket", href: "https://github.com/dlord213/theorypocket" },
     ],
   },
   {
@@ -358,26 +356,6 @@ export default function App() {
           </div>
         </section>
 
-        <section id="work" className="work" aria-labelledby="work-title">
-          <Typed id="work-title" text="Projects" font="var(--head)" />
-          <div className="filters" role="group" aria-label="Filter projects">
-            {filters.map((f) => (
-              <button
-                key={f}
-                aria-pressed={filter === f}
-                onClick={() => setFilter(f)}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-          <div className="cards">
-            {visible.map((p) => (
-              <ProjectCard key={p.title} project={p} onOpen={() => setSelected(p)} />
-            ))}
-          </div>
-        </section>
-
         <section id="experience" className="block about" aria-labelledby="exp-title">
           <Typed id="exp-title" text="Experience" font="var(--head)" />
           <div className="about-grid">
@@ -412,17 +390,6 @@ export default function App() {
 
           <h3 className="sub">Work history</h3>
           <ul className="timeline">
-            <li>
-              <span className="when">Project work</span>
-              <div>
-                <h4>AdaptiveHub</h4>
-                <p>
-                  Connected school and business products across web, mobile, and
-                  backend services: LMS, Library, payments, conferencing, and
-                  support.
-                </p>
-              </div>
-            </li>
             {[...experience].reverse().map((item) => (
               <li key={item.position + item.period}>
                 <span className="when">{item.period}</span>
@@ -447,6 +414,26 @@ export default function App() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section id="work" className="work" aria-labelledby="work-title">
+          <Typed id="work-title" text="Projects" font="var(--head)" />
+          <div className="filters" role="group" aria-label="Filter projects">
+            {filters.map((f) => (
+              <button
+                key={f}
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+          <div className="cards">
+            {visible.map((p) => (
+              <ProjectCard key={p.title} project={p} onOpen={() => setSelected(p)} />
+            ))}
+          </div>
         </section>
         <section id="art" className="block" aria-labelledby="art-title">
           <Typed id="art-title" text="Art" font="var(--head)" />

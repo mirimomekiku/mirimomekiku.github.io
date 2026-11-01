@@ -92,10 +92,11 @@ const experience: Experience[] = [
     position: "Mobile Developer (Antimony Technologies)",
     period: "December 2025 - Current",
     description:
-      "Focused on optimizing mobile user experiences and stabilizing core application modules through modern reactive programming.",
+      "Focused on optimizing mobile user experiences and stabilizing core application modules through modern reactive programming, on the Whipo product (whipo.ph).",
     details: [
       "Optimized application stability by implementing structured error handling and GetX dependency injection patterns.",
       "Streamlined data flow within the MVC architecture, significantly reducing memory overhead during heavy list rendering.",
+      "Worked on Whipo (https://whipo.ph/) as part of the Antimony Technologies team.",
     ],
     skills: [
       "Flutter",
@@ -104,6 +105,35 @@ const experience: Experience[] = [
       "API Integration",
     ],
     side: "end",
+    showMore: true,
+  },
+  {
+    position: "Software Developer (Oronikola)",
+    period: "May 2026 - Current",
+    description:
+      "Build and maintain Oronikola's Adaptive products (AdaptiveHub LMS, Adaptive Library, AdaptivePay, Adaptive Station) across Flutter, Expo, Laravel, Next.js, and Node, with roughly 1,500 commits across nine repositories in six months.",
+    details: [
+      "Built an adaptive mastery engine for a multi-tenant LMS: AI question generation, BKT/CAT ranking, smart retrieval, and audits for answer leaks and duplicate items.",
+      "Shipped offline learning packs and practice on the Flutter app, with keystore-backed sign-in and background book uploads.",
+      "Built the Expo/React Native library app for members and librarians, with push notifications, offline reading, and camera scanning.",
+      "Added publisher accounts, an ebook downloader, readers, and a mobile API to the Laravel library backend.",
+      "Rebuilt educentra.ai as a Node/TypeScript monorepo in three weeks, with dual MySQL/PostgreSQL support and Filipino and Cebuano localization.",
+      "Hardened face check-in for an offline-first RFID attendance system, and redesigned its portal and Flutter apps.",
+      "Redesigned the AdaptivePay front end with a shared design system and animated landing page.",
+    ],
+    skills: [
+      "Flutter",
+      "GetX",
+      "Laravel",
+      "Expo",
+      "React",
+      "Node.js",
+      "Next.js",
+      "MySQL",
+      "PostgreSQL",
+      "AI integrations",
+    ],
+    side: "start",
     showMore: true,
   },
 ];
