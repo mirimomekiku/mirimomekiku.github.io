@@ -94,6 +94,17 @@ export function ChatDock() {
     }, reduced() ? 0 : 650);
   }
 
+  /* tiles elsewhere on the page can hand the bot a question */
+  const sendRef = useRef(send);
+  useEffect(() => {
+    sendRef.current = send;
+  });
+  useEffect(() => {
+    const ask = (e: Event) => sendRef.current((e as CustomEvent<string>).detail);
+    window.addEventListener("portfolio:ask", ask);
+    return () => window.removeEventListener("portfolio:ask", ask);
+  }, []);
+
   function submit(e: FormEvent) {
     e.preventDefault();
     send(input);
@@ -109,7 +120,7 @@ export function ChatDock() {
       inert={hidden}
     >
       {open && (
-        <div className="chat-panel glass-panel">
+        <div className="chat-panel">
           <div className="chat-head">
             <span>tiny bot · answers come from this page</span>
             <button

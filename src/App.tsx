@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { ArrowUpRight, Github, Linkedin, Mail, Moon, Sun, X } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin, Mail, Moon, Radio, Sun, X } from "lucide-react";
 import projects, { type ProjectInterface } from "./types/projects";
 import education from "./types/education";
 import experience from "./types/experience";
 import images from "./types/images";
-import { HeroDesk } from "./component/hero_desk";
+import { HeroDesk, Tile } from "./component/hero_desk";
 import { ChatDock } from "./component/chat_dock";
 import { SmoothScroll } from "./component/smooth_scroll";
 import { usePageMotion } from "./hooks/page_motion";
@@ -12,15 +12,15 @@ import { usePageMotion } from "./hooks/page_motion";
 const EMAIL = "viernes.jhonlloydd@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/jhon-lloyd-viernes/";
 const GITHUB = "https://github.com/dlord213";
-const verbs = [
-  { word: "Building", font: "'Pixelify Sans', monospace" },
-  { word: "Shipping", font: "'Fredoka', sans-serif" },
-  { word: "Tinkering", font: "'Space Mono', monospace" },
-  { word: "Sketching", font: "'Gochi Hand', cursive" },
-  { word: "Debugging", font: "'VT323', monospace" },
-  { word: "Wiring", font: "'Audiowide', sans-serif" },
-];
+const verbs = ["Building", "Shipping", "Tinkering", "Sketching", "Debugging", "Wiring"];
 const filters = ["All", "Web", "Mobile", "AI & systems"];
+const nav = [
+  { href: "#about", label: "About" },
+  { href: "#experience", label: "Experience" },
+  { href: "#work", label: "Work" },
+  { href: "#art", label: "Art" },
+];
+const marquee = ["AdaptiveHub", "Whipo", "Oronikola", "educentra.ai", "Adaptive Library", "Checkpoint", "Wavvy", "QuickEase"];
 const playlists = [
   { id: "1852158159", title: ". untitled ." },
   { id: "1653426820", title: "[ 1 ]" },
@@ -98,7 +98,7 @@ function TypewriterVerb() {
   const [reduced] = useState(
     () => matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
-  const { word, font } = verbs[index];
+  const word = verbs[index];
 
   useEffect(() => {
     if (reduced) return;
@@ -116,7 +116,7 @@ function TypewriterVerb() {
   }, [length, deleting, word, reduced]);
 
   return (
-    <span className="verb" style={{ fontFamily: font }} aria-hidden="true">
+    <span className="verb" aria-hidden="true">
       {reduced ? word : word.slice(0, length)}
       <span className="verb-caret" />
     </span>
@@ -124,31 +124,6 @@ function TypewriterVerb() {
 }
 
 const prefersReduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/** Per-letter rise + blur-in, then a travelling sheen and gentle wave. */
-function Letters({ text, start = 0.4 }: { text: string; start?: number }) {
-  let n = 0;
-  return (
-    <>
-      {text.split(" ").map((word, w) => (
-        <span className="word" key={w}>
-          {word.split("").map((c) => {
-            const i = n++;
-            return (
-              <span
-                className="ch"
-                key={i}
-                style={{ "--i": i, "--d": `${start + i * 0.05}s` } as CSSProperties}
-              >
-                {c}
-              </span>
-            );
-          })}
-        </span>
-      ))}
-    </>
-  );
-}
 
 /** Slot-machine style word swap: the old word rolls up as the new one arrives. */
 function Roller({ words }: { words: string[] }) {
@@ -171,12 +146,10 @@ function Roller({ words }: { words: string[] }) {
 function Typed({
   id,
   text,
-  font,
-  className = "script",
+  className = "display",
 }: {
   id?: string;
   text: string;
-  font: string;
   className?: string;
 }) {
   return (
@@ -185,7 +158,6 @@ function Typed({
         className="typed"
         style={
           {
-            fontFamily: font,
             "--n": text.length,
             "--dur": `${Math.max(0.8, text.length * 0.07)}s`,
           } as CSSProperties
@@ -206,7 +178,7 @@ function ThemeToggle() {
     document.documentElement.dataset.theme = next;
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", next === "dark" ? "#0c100e" : "#fafaf8");
+      ?.setAttribute("content", next === "dark" ? "#0b0d4a" : "#1f2bff");
     try {
       localStorage.setItem("theme", next);
     } catch {
@@ -216,13 +188,13 @@ function ThemeToggle() {
   }
   return (
     <button
-      className="theme-toggle glass"
+      className="theme-toggle"
       onClick={toggle}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={dark}
     >
-      <Sun className="sun" size={20} aria-hidden="true" />
-      <Moon className="moon" size={20} aria-hidden="true" />
+      <Sun className="sun" size={16} aria-hidden="true" />
+      <Moon className="moon" size={16} aria-hidden="true" />
     </button>
   );
 }
@@ -231,13 +203,13 @@ function Cover({ project }: { project: ProjectInterface }) {
   const imgs = project.images ?? [];
   if (!imgs.length)
     return (
-      <div className="cover plain" style={{ background: project.tint }}>
+      <div className="cover plain">
         <span>{project.title}</span>
       </div>
     );
   if (project.shot === "web")
     return (
-      <div className="cover web" style={{ background: project.tint }}>
+      <div className="cover web">
         <div className="browser">
           <i /><i /><i />
           <img src={imgs[0]} alt="" loading="lazy" />
@@ -245,7 +217,7 @@ function Cover({ project }: { project: ProjectInterface }) {
       </div>
     );
   return (
-    <div className="cover phones" style={{ background: project.tint }}>
+    <div className="cover phones">
       {imgs.slice(0, 3).map((src, n) => (
         <img key={src} src={src} alt="" loading="lazy" data-n={n} />
       ))}
@@ -255,34 +227,41 @@ function Cover({ project }: { project: ProjectInterface }) {
 
 function ProjectCard({
   project,
+  index,
   onOpen,
 }: {
   project: ProjectInterface;
+  index: number;
   onOpen: () => void;
 }) {
   const tags = [project.group ?? "Personal", ...categoriesOf(project).slice(0, 2)];
   return (
-    <article className="card">
+    <article
+      className="card tile"
+      style={{ "--art": `url(/assets/art/tile-${(index % 4) + 1}.png)` } as CSSProperties}
+    >
       <button
         className="card-hit"
         onClick={onOpen}
         aria-label={`Open ${project.title}`}
       />
-      <Cover project={project} />
-      <div className="card-row">
-        <h3>
-          {project.title}
-          {(project.link || project.store) && (
-            <ArrowUpRight size={15} aria-hidden="true" />
-          )}
-        </h3>
+      <div className="tile-stage">
+        <Cover project={project} />
+      </div>
+      <div className="tile-cap">
         <p className="chips">
           {tags.map((t) => (
             <span key={t}>{t}</span>
           ))}
         </p>
+        <h3>
+          {project.title}
+          {(project.link || project.store) && (
+            <ArrowUpRight size={18} aria-hidden="true" />
+          )}
+        </h3>
+        <p>{project.description}</p>
       </div>
-      <p className="card-desc">{project.description}</p>
     </article>
   );
 }
@@ -322,53 +301,114 @@ export default function App() {
         Skip to content
       </a>
       <header className="nav">
-        <div className="nav-icons glass">
-          <a href={LINKEDIN} target="_blank" rel="noreferrer" aria-label="LinkedIn">
-            <Linkedin size={20} />
+        <div className="frame nav-row">
+          <a className="logo" href="#home" aria-label="mirimomekiku, back to top">
+            <span className="logo-mark" aria-hidden="true">m</span>
+            mirimomekiku
           </a>
-          <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub">
-            <Github size={20} />
-          </a>
-          <a href={`mailto:${EMAIL}`} aria-label="Email">
-            <Mail size={20} />
-          </a>
+          <nav className="nav-links" aria-label="Sections">
+            {nav.map((n) => (
+              <a key={n.href} href={n.href}>
+                {n.label}
+              </a>
+            ))}
+          </nav>
+          <div className="nav-cta">
+            <div className="nav-icons">
+              <a href={LINKEDIN} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <Linkedin size={16} />
+              </a>
+              <a href={GITHUB} target="_blank" rel="noreferrer" aria-label="GitHub">
+                <Github size={16} />
+              </a>
+            </div>
+            <ThemeToggle />
+            <a className="btn btn-light nav-hide" href="#work">See work</a>
+            <a className="btn btn-dark" href={`mailto:${EMAIL}`}>
+              <Mail size={14} aria-hidden="true" /> Email me
+            </a>
+          </div>
         </div>
-        <ThemeToggle />
       </header>
       <ChatDock />
 
       <main id="main">
         <section id="hero" className="hero" aria-labelledby="hero-title">
-          <HeroDesk />
-          <div className="hero-inner">
-            <h1 id="hero-title">
-              <span className="sr-only">Building apps people love.</span>
-              <span className="verb-line" aria-hidden="true">
-                <TypewriterVerb />
-              </span>
-              <span className="hero-rest" aria-hidden="true">
-                <Letters text="apps people love." />
-              </span>
-            </h1>
-            <p className="hero-sub">
-              I work across <Roller words={["mobile", "web", "backend", "AI"]} />
+          <div className="frame ticker">
+            <p className="tick-cell">
+              <span className="pill">Now</span>
+              <Radio size={15} aria-hidden="true" />
+              Software developer at Oronikola
             </p>
+            <p className="tick-cell tick-stack">
+              <span className="faces" aria-hidden="true">
+                {["flutter", "react", "kotlin"].map((i) => (
+                  <img key={i} src={`/assets/icons/${i}.svg`} alt="" width="16" height="16" />
+                ))}
+              </span>
+              Shipping with Flutter, React &amp; Laravel
+            </p>
+            <div className="tick-marquee" aria-label="Products I've worked on">
+              <div className="marquee-track">
+                {[...marquee, ...marquee].map((m, i) => (
+                  <span key={i} aria-hidden={i >= marquee.length}>{m}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="hero-art" aria-hidden="true">
+            <img src="/assets/art/hero.png" alt="" />
+          </div>
+          <div className="frame hero-frame">
+            <div className="hero-inner">
+              <h1 id="hero-title">
+                <span className="sr-only">Building apps people love.</span>
+                <span aria-hidden="true">
+                  <TypewriterVerb />
+                  <br />
+                  apps people love.
+                </span>
+              </h1>
+              <p className="hero-sub">
+                Software developer from Cagayan de Oro. I work across{" "}
+                <Roller words={["mobile", "web", "backend", "AI"]} />
+              </p>
+              <div className="hero-cta">
+                <a className="btn btn-light" href="#work">See selected work</a>
+                <a className="btn btn-dark" href="#contact">Say hello</a>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="experience" className="block about" aria-labelledby="exp-title">
-          <Typed id="exp-title" text="Experience" font="var(--head)" />
-          <div className="about-grid">
-            <div className="about-copy">
-              <p>
-                It started with modding GTA and building custom Android ROMs in
-                high school. Now I work across <em>mobile, web, and backend</em>{" "}
-                engineering, connecting interfaces to the systems behind them.
-              </p>
-              <p>
-                Off the clock: art, music, games, and usually another idea open
-                in a tab.
-              </p>
+        <section id="about" className="section" aria-labelledby="about-title">
+          <div className="frame section-frame">
+            <div className="section-head">
+              <h2 id="about-title" className="display" data-reveal>
+                Apps, sites &amp; the systems behind them
+              </h2>
+              <div className="section-lede">
+                <p>
+                  It started with modding GTA and building custom Android ROMs in
+                  high school. Now I work across <em>mobile, web, and backend</em>{" "}
+                  engineering, connecting interfaces to the systems behind them.
+                </p>
+              </div>
+            </div>
+            <HeroDesk />
+          </div>
+        </section>
+
+        <section id="experience" className="section" aria-labelledby="exp-title">
+          <div className="frame section-frame">
+            <div className="section-head">
+              <Typed id="exp-title" text="Experience" />
+              <div className="section-lede">
+                <p>
+                  From freelance commissions to full-time product work: mobile
+                  apps, web platforms, and the backends that hold them together.
+                </p>
+              </div>
             </div>
             <dl className="skills">
               <div>
@@ -386,117 +426,139 @@ export default function App() {
                 </dd>
               </div>
             </dl>
+
+            <div className="ledger">
+              <h3 className="ledger-label">Work history</h3>
+              <ul className="timeline">
+                {[...experience].reverse().map((item) => (
+                  <li key={item.position + item.period}>
+                    <span className="when">{item.period}</span>
+                    <div>
+                      <h4>{item.position}</h4>
+                      <p>{item.description}</p>
+                      <p className="tags">{item.skills.join(" · ")}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="ledger">
+              <h3 className="ledger-label">Education</h3>
+              <ul className="timeline">
+                {education.map((e) => (
+                  <li key={e.school}>
+                    <span className="when">{e.date}</span>
+                    <div>
+                      <h4>{e.degree}</h4>
+                      <p>{e.school}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-
-          <h3 className="sub">Work history</h3>
-          <ul className="timeline">
-            {[...experience].reverse().map((item) => (
-              <li key={item.position + item.period}>
-                <span className="when">{item.period}</span>
-                <div>
-                  <h4>{item.position}</h4>
-                  <p>{item.description}</p>
-                  <p className="tags">{item.skills.join(" · ")}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <h3 className="sub">Education</h3>
-          <ul className="timeline">
-            {education.map((e) => (
-              <li key={e.school}>
-                <span className="when">{e.date}</span>
-                <div>
-                  <h4>{e.degree}</h4>
-                  <p>{e.school}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
         </section>
 
-        <section id="work" className="work" aria-labelledby="work-title">
-          <Typed id="work-title" text="Projects" font="var(--head)" />
-          <div className="filters" role="group" aria-label="Filter projects">
-            {filters.map((f) => (
-              <button
-                key={f}
-                aria-pressed={filter === f}
-                onClick={() => setFilter(f)}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-          <div className="cards">
-            {visible.map((p) => (
-              <ProjectCard key={p.title} project={p} onOpen={() => setSelected(p)} />
-            ))}
-          </div>
-        </section>
-        <section id="art" className="block" aria-labelledby="art-title">
-          <Typed id="art-title" text="Art" font="var(--head)" />
-          <p className="lede">
-            Sketches and playlists, for a different kind of flow.
-          </p>
-          <div className="art-grid">
-            {images.slice(0, artCount).map((image, i) => (
-              <button
-                key={image.src}
-                onClick={() => setLightbox(i)}
-                aria-label={`View artwork ${i + 1}`}
-              >
-                <img
-                  src={image.src}
-                  alt={`Personal artwork ${i + 1}`}
-                  width={image.width}
-                  height={image.height}
-                  loading="lazy"
-                />
-              </button>
-            ))}
-          </div>
-          {artCount < images.length && (
-            <button
-              className="mono-btn"
-              onClick={() => setArtCount((c) => Math.min(c + 6, images.length))}
-            >
-              More sketches +
-            </button>
-          )}
-          <div className="playlists">
-            {playlists.map((pl) => (
-              <div key={pl.id}>
-                <h3>{pl.title}</h3>
-                <iframe
-                  title={`SoundCloud playlist: ${pl.title}`}
-                  width="100%"
-                  height="166"
-                  loading="lazy"
-                  allow="autoplay"
-                  src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${pl.id}&color=%23e8532f&auto_play=false&hide_related=true&show_comments=false`}
-                />
+        <section id="work" className="section work" aria-labelledby="work-title">
+          <div className="frame section-frame">
+            <div className="section-head">
+              <Typed id="work-title" text="Selected work" />
+              <div className="section-lede">
+                <p>
+                  Learning platforms, marketplaces, and small apps I made for
+                  myself. Open any card for notes and screenshots.
+                </p>
+                <div className="filters" role="group" aria-label="Filter projects">
+                  {filters.map((f) => (
+                    <button
+                      key={f}
+                      aria-pressed={filter === f}
+                      onClick={() => setFilter(f)}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
               </div>
-            ))}
+            </div>
+            <div className="cards">
+              {visible.map((p, i) => (
+                <ProjectCard key={p.title} project={p} index={i} onOpen={() => setSelected(p)} />
+              ))}
+            </div>
           </div>
         </section>
 
+        <section id="art" className="section" aria-labelledby="art-title">
+          <div className="frame section-frame">
+            <div className="section-head">
+              <Typed id="art-title" text="Art & sound" />
+              <div className="section-lede">
+                <p>Sketches and playlists, for a different kind of flow.</p>
+              </div>
+            </div>
+            <div className="art-grid">
+              {images.slice(0, artCount).map((image, i) => (
+                <button
+                  key={image.src}
+                  onClick={() => setLightbox(i)}
+                  aria-label={`View artwork ${i + 1}`}
+                >
+                  <img
+                    src={image.src}
+                    alt={`Personal artwork ${i + 1}`}
+                    width={image.width}
+                    height={image.height}
+                    loading="lazy"
+                  />
+                </button>
+              ))}
+            </div>
+            {artCount < images.length && (
+              <button
+                className="btn btn-dark more-btn"
+                onClick={() => setArtCount((c) => Math.min(c + 6, images.length))}
+              >
+                More sketches +
+              </button>
+            )}
+            <div className="playlists">
+              {playlists.map((pl, i) => (
+                <Tile key={pl.id} art={(i % 4) + 1} title={pl.title} text="SoundCloud playlist">
+                  <iframe
+                    title={`SoundCloud playlist: ${pl.title}`}
+                    width="100%"
+                    height="166"
+                    loading="lazy"
+                    allow="autoplay"
+                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${pl.id}&color=%231f2bff&auto_play=false&hide_related=true&show_comments=false`}
+                  />
+                </Tile>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="footer" id="contact">
-        <div className="footer-hello">
-          <Typed text="Say hello" font="var(--head)" className="script hello" />
-          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-        </div>
-        <div className="footer-lists">
-          {footerLists.map((list) => (
-            <div key={list.title}>
-              <h3 className="script">{list.title}</h3>
-              <ul>
-                {list.items.map((item) => (
-                  <li key={item.label}>
-                    {item.href ? (
+        <div className="frame footer-frame">
+          <div className="footer-hello">
+            <Typed text="Say hello" className="display hello" />
+            <div>
+              <p>Open to collaborations, freelance work, and good conversations about apps.</p>
+              <a className="btn btn-light" href={`mailto:${EMAIL}`}>
+                <Mail size={14} aria-hidden="true" /> {EMAIL}
+              </a>
+            </div>
+          </div>
+          <div className="footer-lists">
+            {footerLists.map((list) => (
+              <div key={list.title}>
+                <h3>{list.title}</h3>
+                <ul>
+                  {list.items.map((item) => (
+                    <li key={item.label}>
                       <a
                         href={item.href}
                         {...(item.href.startsWith("http")
@@ -505,22 +567,20 @@ export default function App() {
                       >
                         {item.label}
                       </a>
-                    ) : (
-                      item.label
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="footer-bar">
-          <p>Copyright @ mirimomekiku</p>
-          <p>Lives in the Philippines</p>
-          <p>Last updated on Oct 27 2026</p>
-          <a className="top-btn" href="#home" aria-label="Back to top">
-            ↑
-          </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="footer-bar">
+            <p>© mirimomekiku</p>
+            <p>Lives in the Philippines</p>
+            <p>Last updated Nov 20 2026</p>
+            <a className="top-btn" href="#home" aria-label="Back to top">
+              ↑
+            </a>
+          </div>
         </div>
       </footer>
 
@@ -570,7 +630,7 @@ export default function App() {
             <div className="sheet-actions">
               {selected.link && (
                 <a
-                  className="mono-btn"
+                  className="btn btn-dark"
                   href={selected.link}
                   target="_blank"
                   rel="noreferrer"
@@ -580,7 +640,7 @@ export default function App() {
               )}
               {selected.store && (
                 <a
-                  className="mono-btn"
+                  className="btn btn-dark"
                   href={selected.store}
                   target="_blank"
                   rel="noreferrer"

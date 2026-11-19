@@ -18,11 +18,11 @@ test("animated layout keeps fixed controls inside a touch viewport", async ({ br
 });
 
 for (const width of [320, 390, 540, 768, 860]) {
-  test(`hero and bottom bar fit a ${width}px mobile viewport`, async ({ page }) => {
+  test(`hero, tiles and bottom bar fit a ${width}px mobile viewport`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    const cards = await page.locator(".widget-park").evaluateAll((elements) =>
+    const cards = await page.locator(".bento .tile").evaluateAll((elements) =>
       elements.map((element) => {
         const { x, y, width, height } = element.getBoundingClientRect();
         return { x, y, width, height };
@@ -95,4 +95,11 @@ test("chat dock answers from page content and slides away at contact", async ({
   });
   await page.locator("#contact").scrollIntoViewIfNeeded();
   await expect(page.locator(".chatdock")).toHaveClass(/is-hidden/);
+});
+
+test("about tile hands its question to the chat dock", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Ask now" }).click();
+  await expect(page.locator(".msg.user").last()).toContainText("Where are you based");
+  await expect(page.locator(".msg.bot").last()).toContainText("Cagayan de Oro", { timeout: 8000 });
 });

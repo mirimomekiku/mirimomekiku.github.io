@@ -1,14 +1,5 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type PointerEvent,
-  type ReactNode,
-} from "react";
-import { ArrowUpRight, Mail } from "lucide-react";
-
-const EMAIL = "viernes.jhonlloydd@gmail.com";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { ArrowUpRight, MousePointer2, Sparkles } from "lucide-react";
 
 const dock = [
   { name: "Flutter", icon: "flutter", href: "https://flutter.dev" },
@@ -29,96 +20,49 @@ const interests = [
   { label: "Fedora ricing", href: "https://github.com/mirimomekiku/gnome-ricing" },
 ];
 
+const now = [
+  { name: "Oronikola", role: "Adaptive products", state: "Active" },
+  { name: "Antimony Technologies", role: "Whipo · Flutter", state: "Active" },
+  { name: "AdaptiveHub", role: "LMS · Library · Pay", state: "Shipping" },
+];
+
+const BOT_QUESTION = "Where are you based, and what time is it there?";
+
 const blank = { target: "_blank", rel: "noreferrer" } as const;
 const external = (href: string) => (href.startsWith("http") ? blank : {});
 
-/** A card that can be dragged around the desk; a tap (no movement) still clicks through. */
-function Widget({
-  className,
-  rotate,
-  delay,
+/** A framed halftone tile: a white UI panel on an engraved backdrop, caption underneath. */
+export function Tile({
+  art,
+  title,
+  text,
+  className = "",
   children,
 }: {
-  className: string;
-  rotate: number;
-  delay: number;
+  art: number;
+  title: ReactNode;
+  text?: ReactNode;
+  className?: string;
   children: ReactNode;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const pos = useRef({ x: 0, y: 0 });
-  const drag = useRef<{
-    sx: number;
-    sy: number;
-    ox: number;
-    oy: number;
-    moved: boolean;
-  } | null>(null);
-  const suppress = useRef(false);
-
-  function down(e: PointerEvent<HTMLDivElement>) {
-    if (e.button !== 0 || !matchMedia("(min-width: 861px) and (pointer: fine)").matches) return;
-    drag.current = {
-      sx: e.clientX,
-      sy: e.clientY,
-      ox: pos.current.x,
-      oy: pos.current.y,
-      moved: false,
-    };
-  }
-  function move(e: PointerEvent<HTMLDivElement>) {
-    const d = drag.current;
-    const el = ref.current;
-    if (!d || !el) return;
-    const dx = e.clientX - d.sx;
-    const dy = e.clientY - d.sy;
-    if (!d.moved) {
-      if (Math.hypot(dx, dy) < 5) return;
-      d.moved = true;
-      el.setPointerCapture(e.pointerId);
-      el.classList.add("dragging");
-    }
-    pos.current = { x: d.ox + dx, y: d.oy + dy };
-    el.style.translate = `${pos.current.x}px ${pos.current.y}px`;
-  }
-  function up() {
-    const d = drag.current;
-    drag.current = null;
-    ref.current?.classList.remove("dragging");
-    if (d?.moved) {
-      suppress.current = true;
-      setTimeout(() => (suppress.current = false), 0);
-    }
-  }
-
-  /* The outer "park" owns position and the scroll parallax (GSAP); the inner card owns
-     rotation, scale, drag and its entrance, so GSAP never absorbs those CSS transforms. */
   return (
-    <div className={`widget-park ${className.split(" ").find((c) => c.startsWith("p-")) ?? ""}`}>
-      <div
-        ref={ref}
-        className={`widget ${className}`}
-        style={{ "--r": `${rotate}deg`, "--delay": `${delay}s` } as CSSProperties}
-        onPointerDown={down}
-        onPointerMove={move}
-        onPointerUp={up}
-        onPointerCancel={up}
-        onClickCapture={(e) => {
-          if (suppress.current) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        }}
-      >
-        {children}
+    <article
+      className={`tile ${className}`}
+      style={{ "--art": `url(/assets/art/tile-${art}.png)` } as CSSProperties}
+    >
+      <div className="tile-stage">{children}</div>
+      <div className="tile-cap">
+        <h3>{title}</h3>
+        {text && <p>{text}</p>}
       </div>
-    </div>
+    </article>
   );
 }
 
 function Clock() {
-  const [now, setNow] = useState(() => new Date());
+  const [time, setTime] = useState(() => new Date());
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
+    const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -127,148 +71,113 @@ function Clock() {
     minute: "2-digit",
     second: "2-digit",
     hour12: true,
-  }).formatToParts(now);
+  }).formatToParts(time);
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", hour: "numeric", hour12: false }).format(time),
+  ) % 24;
   return (
-    <>
-      <span className="w-label">Cagayan de Oro, PH</span>
+    <div className="panel">
+      <div className="panel-head">
+        <span>Cagayan de Oro, PH</span>
+        <span className="panel-dots" aria-hidden="true">⋮</span>
+      </div>
       <p className="clock">
         {get("hour")}:{get("minute")}:{get("second")}
         <small>{get("dayPeriod")}</small>
       </p>
-      <span className="w-meta">PHT · UTC+8</span>
-    </>
-  );
-}
-
-function Stars() {
-  const [hover, setHover] = useState(0);
-  const [rating, setRating] = useState(0);
-  const shown = hover || rating;
-  return (
-    <>
-      <span className="w-label">Rate this portfolio</span>
-      <div className="stars" onPointerLeave={() => setHover(0)}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            className={n <= shown ? "on" : ""}
-            aria-label={`${n} star${n > 1 ? "s" : ""}`}
-            onPointerEnter={() => setHover(n)}
-            onClick={() => setRating(n)}
-          >
-            ★
-          </button>
+      <p className="panel-meta">PHT · UTC+8</p>
+      <div className="hours" aria-hidden="true">
+        {Array.from({ length: 24 }, (_, h) => (
+          <i key={h} className={h === hour ? "on" : h >= 9 && h <= 22 ? "awake" : ""} />
         ))}
       </div>
-      <span className="w-meta" role="status">
-        {rating ? `Thanks for the ${rating}★!` : "Tap a star"}
-      </span>
-    </>
+      <div className="hours-axis" aria-hidden="true">
+        <span>12a</span><span>6a</span><span>12p</span><span>6p</span>
+      </div>
+    </div>
   );
 }
 
 export function HeroDesk() {
   return (
-    <div className="desk">
-      <Widget className="p-photo w-paper" rotate={-5} delay={0.5}>
-        <a href="#experience" className="polaroid" aria-label="About mirimomekiku">
-          <img src="/assets/images/profile.jpeg" alt="mirimomekiku" width="557" height="991" />
-          <span className="cap">mirimomekiku · CDO</span>
-        </a>
-      </Widget>
-
-      <Widget className="p-hi w-dark" rotate={-4} delay={0.8}>
-        <a href={`mailto:${EMAIL}`} className="w-link">
-          <span className="w-label">Say hi</span>
-          <strong>
-            <Mail size={15} /> Send an email
-          </strong>
-          <small>Open to collaborations</small>
-        </a>
-      </Widget>
-
-      <Widget className="p-now w-green" rotate={4} delay={0.95}>
-        <a href="#experience" className="w-link">
-          <span className="w-label">
-            <i className="dot" /> Now
+    <div className="bento">
+      <Tile art={1} title="Tiny bot" text="Ask anything — answers come straight from this page.">
+        <div className="panel panel-bot">
+          <div className="panel-title">
+            <span className="panel-icon"><Sparkles size={14} aria-hidden="true" /></span>
+            Ask mirimomekiku
+          </div>
+          <p className="panel-q">How can I help you today?</p>
+          <p className="panel-box">{BOT_QUESTION}</p>
+          <button
+            className="panel-btn"
+            onClick={() => window.dispatchEvent(new CustomEvent("portfolio:ask", { detail: BOT_QUESTION }))}
+          >
+            <Sparkles size={15} aria-hidden="true" /> Ask now
+          </button>
+          <span className="cursor-tag" aria-hidden="true">
+            <MousePointer2 size={16} /> <b>you</b>
           </span>
-          <strong>Software developer</strong>
-          <ul>
-            <li>Oronikola</li>
-            <li>Antimony Technologies</li>
-            <li>Cagayan de Oro, PH</li>
+        </div>
+      </Tile>
+
+      <Tile art={2} title="Currently" text="Where I'm shipping right now.">
+        <div className="panel">
+          <div className="panel-head"><span>Work in progress</span></div>
+          <ul className="now-list">
+            {now.map((n) => (
+              <li key={n.name}>
+                <span className="now-avatar" aria-hidden="true">{n.name[0]}</span>
+                <span>
+                  <strong>{n.name}</strong>
+                  <small>{n.role}</small>
+                </span>
+                <em>{n.state}</em>
+              </li>
+            ))}
           </ul>
-        </a>
-      </Widget>
+        </div>
+      </Tile>
 
-      <Widget className="p-clock w-paper" rotate={-3} delay={1.1}>
+      <Tile art={3} title="Local time" text="Based in the Philippines, online mostly PHT hours.">
         <Clock />
-      </Widget>
+      </Tile>
 
-      <Widget className="p-dock w-paper" rotate={3} delay={1.25}>
-        <span className="w-label">My tech stack</span>
-        <div className="dock">
-          {dock.map((d) => (
-            <a
-              key={d.name}
-              href={d.href}
-              {...external(d.href)}
-              aria-label={d.name}
-              title={d.name}
-            >
-              <img src={`/assets/icons/${d.icon}.svg`} alt="" width="26" height="26" />
-            </a>
-          ))}
+      <Tile art={4} title="Daily drivers" text="The tools I reach for first.">
+        <div className="panel">
+          <div className="panel-head"><span>My tech stack</span></div>
+          <div className="dock">
+            {dock.map((d) => (
+              <a key={d.name} href={d.href} {...external(d.href)} aria-label={d.name} title={d.name}>
+                <img src={`/assets/icons/${d.icon}.svg`} alt="" width="24" height="24" />
+              </a>
+            ))}
+          </div>
         </div>
-      </Widget>
+      </Tile>
 
-      <Widget className="p-learn w-yellow" rotate={-4} delay={1.4}>
-        <span className="note">Currently learning</span>
-        <strong className="note-big">Kotlin + Jetpack Compose</strong>
-      </Widget>
-
-      <Widget className="p-stars w-paper" rotate={-2} delay={1.5}>
-        <Stars />
-      </Widget>
-
-      <Widget className="p-folder" rotate={0} delay={1.6}>
-        <a href="#work" className="folder" aria-label="Open projects">
-          <svg viewBox="0 0 120 92" aria-hidden="true">
-            <path
-              className="back"
-              d="M6 14a8 8 0 0 1 8-8h28l10 12h54a8 8 0 0 1 8 8v52a8 8 0 0 1-8 8H14a8 8 0 0 1-8-8z"
-            />
-            <rect className="sheet-in" x="16" y="22" width="88" height="50" rx="4" />
-            <path
-              className="front"
-              d="M6 34a8 8 0 0 1 8-8h92a8 8 0 0 1 8 8v44a8 8 0 0 1-8 8H14a8 8 0 0 1-8-8z"
-            />
-          </svg>
-          <span className="w-label">My projects</span>
+      <Tile art={2} title="Hi, I'm mirimomekiku" text="Developer, sketcher, playlist curator.">
+        <a href="#experience" className="panel polaroid" aria-label="About mirimomekiku">
+          <img src="/assets/images/profile.jpeg" alt="mirimomekiku" width="557" height="991" />
+          <span className="cap">mirimomekiku · CDO <ArrowUpRight size={13} aria-hidden="true" /></span>
         </a>
-      </Widget>
+      </Tile>
 
-      <Widget className="p-links w-blue" rotate={-4} delay={1.85}>
-        <span className="w-label">Find me online</span>
-        <a className="w-row" href="https://www.linkedin.com/in/jhon-lloyd-viernes/" {...blank}>
-          LinkedIn <ArrowUpRight size={13} />
-        </a>
-        <a className="w-row" href="https://github.com/mirimomekiku" {...blank}>
-          GitHub <ArrowUpRight size={13} />
-        </a>
-      </Widget>
-
-      <Widget className="p-chips w-paper" rotate={-2} delay={2}>
-        <span className="w-label">Interests</span>
-        <div className="chip-row">
-          {interests.map((i) => (
-            <a key={i.label} href={i.href} {...external(i.href)}>
-              {i.label}
-            </a>
-          ))}
+      <Tile art={1} title="Off the clock" text="Art, music, games, and another idea open in a tab.">
+        <div className="panel">
+          <div className="panel-head"><span>Currently learning</span><span>72%</span></div>
+          <strong className="learn">Kotlin + Jetpack Compose</strong>
+          <div className="meter" aria-hidden="true"><i style={{ width: "72%" }} /></div>
+          <div className="chip-row">
+            {interests.map((i) => (
+              <a key={i.label} href={i.href} {...external(i.href)}>
+                {i.label}
+              </a>
+            ))}
+          </div>
         </div>
-      </Widget>
+      </Tile>
     </div>
   );
 }
