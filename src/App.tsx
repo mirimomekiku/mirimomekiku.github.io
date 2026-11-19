@@ -178,7 +178,7 @@ function ThemeToggle() {
     document.documentElement.dataset.theme = next;
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", next === "dark" ? "#0a2616" : "#15803d");
+      ?.setAttribute("content", next === "dark" ? "#0c100e" : "#ffffff");
     try {
       localStorage.setItem("theme", next);
     } catch {
@@ -532,7 +532,7 @@ export default function App() {
                     height="166"
                     loading="lazy"
                     allow="autoplay"
-                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${pl.id}&color=%2315803d&auto_play=false&hide_related=true&show_comments=false`}
+                    src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/${pl.id}&color=%232f4a3c&auto_play=false&hide_related=true&show_comments=false`}
                   />
                 </Tile>
               ))}
